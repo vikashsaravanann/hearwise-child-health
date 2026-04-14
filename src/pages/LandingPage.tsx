@@ -2,9 +2,10 @@ import { useNavigate } from 'react-router-dom';
 import { useSession } from '@/contexts/SessionContext';
 import { t } from '@/lib/i18n';
 import OwlIcon from '@/components/OwlIcon';
-import LanguageToggle from '@/components/LanguageToggle';
 import SoundWaveBackground from '@/components/SoundWaveBackground';
+import LanguageToggle from '@/components/LanguageToggle';
 import { Button } from '@/components/ui/button';
+import owlMascot from '@/assets/owl-mascot.png';
 
 export default function LandingPage() {
   const navigate = useNavigate();
@@ -16,8 +17,8 @@ export default function LandingPage() {
       <div className="absolute right-4 top-4">
         <LanguageToggle />
       </div>
-      <div className="z-10 flex flex-col items-center gap-6 text-center">
-        <OwlIcon size={100} />
+      <div className="z-10 flex flex-col items-center gap-4 text-center">
+        <img src={owlMascot} alt="HearWise Owl" width={120} height={120} className="drop-shadow-lg" />
         <h1 className="text-3xl font-extrabold text-foreground">HearWise</h1>
         <p className="max-w-xs text-base text-muted-foreground">{t('tagline', lang)}</p>
         <div className="flex w-full max-w-xs flex-col gap-3 pt-4">
@@ -28,7 +29,8 @@ export default function LandingPage() {
             {t('viewDashboard', lang)}
           </Button>
         </div>
-        <p className="pt-8 text-xs text-muted-foreground">v1.0.0 • © 2025 HearWise Technologies</p>
+        <p className="pt-6 text-xs text-muted-foreground">v1.0.0 • © 2025 HearWise Technologies</p>
+        <p className="text-[10px] text-muted-foreground max-w-xs">All student data is stored securely and used only for hearing health purposes.</p>
       </div>
     </div>
   );

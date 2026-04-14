@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
 import { Language, getLanguage, setLanguage as setLangStorage } from '@/lib/i18n';
+import { syncOfflineQueue } from '@/lib/database';
 
 interface SessionData {
   schoolName: string;
@@ -42,10 +43,18 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const [online, setOnline] = useState(navigator.onLine);
 
   useEffect(() => {
-    const on = () => setOnline(true);
+    const on = () => {
+      setOnline(true);
+      // Auto-sync when back online
+      syncOfflineQueue().catch(console.error);
+    };
     const off = () => setOnline(false);
     window.addEventListener('online', on);
     window.addEventListener('offline', off);
+
+    // Try sync on mount
+    if (navigator.onLine) syncOfflineQueue().catch(console.error);
+
     return () => { window.removeEventListener('online', on); window.removeEventListener('offline', off); };
   }, []);
 
