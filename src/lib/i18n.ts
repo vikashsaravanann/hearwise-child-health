@@ -3,7 +3,7 @@ export type Language = 'en' | 'ta';
 const translations: Record<string, Record<Language, string>> = {
   tagline: { en: 'Smart Hearing Care for Every Child', ta: 'ஒவ்வொரு குழந்தைக்கும் புத்திசாலி காது பரிசோதனை' },
   startAsTeacher: { en: 'Start as Teacher', ta: 'ஆசிரியராக தொடங்கு' },
-  viewDashboard: { en: 'View Dashboard', ta: 'டாஷ்போர்டு பார்' },
+  viewDashboard: { en: 'View Dashboard', ta: 'டாஷ்போர்டு பார்க்க' },
   adminDashboard: { en: 'Admin Dashboard', ta: 'நிர்வாக டாஷ்போர்டு' },
   schoolName: { en: 'School Name', ta: 'பள்ளி பெயர்' },
   teacherName: { en: 'Teacher Name', ta: 'ஆசிரியர் பெயர்' },
@@ -18,7 +18,7 @@ const translations: Record<string, Record<Language, string>> = {
   female: { en: 'Female', ta: 'பெண்' },
   other: { en: 'Other', ta: 'மற்றவை' },
   rollNumber: { en: 'Roll Number (Optional)', ta: 'வரிசை எண் (விரும்பினால்)' },
-  beginTest: { en: 'Begin Hearing Test', ta: 'காது பரிசோதனை தொடங்கு' },
+  beginTest: { en: 'Begin Hearing Test', ta: 'கேட்கும் சோதனை தொடங்கு' },
   headphoneCheck: { en: 'Headphone Check', ta: 'ஹெட்ஃபோன் சரிபார்ப்பு' },
   volumeMax: { en: 'Device volume is at maximum', ta: 'சாதன ஒலி அதிகபட்சத்தில் உள்ளது' },
   headphonesOn: { en: 'Headphones are properly on both ears', ta: 'ஹெட்ஃபோன் இரு காதிலும் சரியாக உள்ளது' },
@@ -26,24 +26,25 @@ const translations: Record<string, Record<Language, string>> = {
   confirmContinue: { en: 'Confirm and Continue', ta: 'உறுதிசெய் & தொடர்' },
   playSampleTone: { en: 'Play a Sample Tone', ta: 'சோதனை ஒலி இயக்கு' },
   practiceRound: { en: 'Practice Round', ta: 'பயிற்சி சுற்று' },
-  tapWhenHear: { en: 'Tap when you hear the sound!', ta: 'ஒலி கேட்டால் திரையை தொடுங்கள்!' },
+  tapWhenHear: { en: 'Tap when you hear the sound', ta: 'ஒலி கேட்டால் திரையை தொடுங்கள்' },
   imReady: { en: "I'm Ready!", ta: 'நான் தயார்!' },
   leftEar: { en: 'Left Ear', ta: 'இடது காது' },
   rightEar: { en: 'Right Ear', ta: 'வலது காது' },
   normal: { en: 'Normal', ta: 'சாதாரணம்' },
   startTest: { en: 'Start Test', ta: 'சோதனை தொடங்கு' },
   saveResult: { en: 'Save Result', ta: 'முடிவை சேமி' },
-  excellent: { en: 'Excellent! Hearing is normal.', ta: 'அருமை! கேட்கும் திறன் சாதாரணம்.' },
-  mildConcern: { en: 'Mild concern detected. Re-test recommended in 3 months.', ta: 'லேசான கவலை கண்டறியப்பட்டது. 3 மாதங்களில் மறு பரிசோதனை பரிந்துரைக்கப்படுகிறது.' },
-  hearingIssue: { en: 'Hearing issue detected. Please consult a doctor.', ta: 'கேட்கும் திறன் பிரச்சனை கண்டறியப்பட்டது. மருத்துவரை அணுகவும்.' },
+  excellent: { en: 'Excellent! Hearing is normal.', ta: 'சிறப்பு! கேட்கும் திறன் சாதாரணமாக உள்ளது.' },
+  mildConcern: { en: 'Mild concern detected.', ta: 'சிறிய பிரச்சனை கண்டறியப்பட்டது.' },
+  hearingIssue: { en: 'Hearing issue detected. Please consult a doctor.', ta: 'கேட்கும் பிரச்சனை உள்ளது. மருத்துவரை அணுகவும்.' },
+  mildConcernLabel: { en: 'Mild Concern', ta: 'சிறிய பிரச்சனை' },
   saveTestNext: { en: 'Save & Test Next Student', ta: 'சேமி & அடுத்த மாணவர்' },
-  shareWhatsApp: { en: 'Share Report via WhatsApp', ta: 'வாட்ஸ்அப் வழியாக பகிர்' },
+  shareWhatsApp: { en: 'Share via WhatsApp', ta: 'வாட்ஸ்அப்பில் பகிர்' },
   sessionSummary: { en: 'Session Summary', ta: 'அமர்வு சுருக்கம்' },
   totalTested: { en: 'Total Students Tested', ta: 'மொத்த பரிசோதிக்கப்பட்ட மாணவர்கள்' },
   normalResults: { en: 'Normal Results', ta: 'சாதாரண முடிவுகள்' },
   mildConcerns: { en: 'Mild Concerns', ta: 'லேசான கவலைகள்' },
   needsReferral: { en: 'Needs Referral', ta: 'பரிந்துரை தேவை' },
-  exportPDF: { en: 'Export as PDF', ta: 'PDF ஆக ஏற்றுமதி' },
+  exportPDF: { en: 'Download PDF', ta: 'PDF பதிவிறக்கு' },
   endSession: { en: 'End Session', ta: 'அமர்வை முடி' },
   playPracticeTone: { en: 'Play Practice Tone', ta: 'பயிற்சி ஒலி இயக்கு' },
   testing: { en: 'Testing', ta: 'பரிசோதனை' },
@@ -76,12 +77,27 @@ const translations: Record<string, Record<Language, string>> = {
   studentDataSyncLater: { en: 'Student data will sync later.', ta: 'மாணவர் தரவு பின்னர் ஒத்திசைக்கப்படும்.' },
   unknownStudent: { en: 'Unknown Student', ta: 'அறியப்படாத மாணவர்' },
   hearingReportTitle: { en: 'HearWise Hearing Report 🎧', ta: 'ஹியர்வைஸ் கேள்வித்திறன் அறிக்கை 🎧' },
+  hearWiseOwlAlt: { en: 'HearWise Owl', ta: 'ஹியர்வைஸ் ஆந்தை' },
   student: { en: 'Student', ta: 'மாணவர்' },
   school: { en: 'School', ta: 'பள்ளி' },
+  teacher: { en: 'Teacher', ta: 'ஆசிரியர்' },
   date: { en: 'Date', ta: 'தேதி' },
+  result: { en: 'Result', ta: 'முடிவு' },
   overallResult: { en: 'Overall Result', ta: 'மொத்த முடிவு' },
   referToDoctor: { en: 'Refer to Doctor', ta: 'மருத்துவரை அணுகவும்' },
   poweredByHearWise: { en: 'Powered by HearWise — Smart Hearing Care for Every Child', ta: 'ஹியர்வைஸ் வழங்குகிறது — ஒவ்வொரு குழந்தைக்கும் புத்திசாலி கேள்வித்திறன் பராமரிப்பு' },
+  pendingSync: { en: 'results pending sync', ta: 'முடிவுகள் ஒத்திசைவை காத்திருக்கின்றன' },
+  allResultsSaved: { en: 'All results saved', ta: 'அனைத்து முடிவுகளும் சேமிக்கப்பட்டன' },
+  totalTestedLabel: { en: 'Total Tested', ta: 'மொத்த பரிசோதனை' },
+  nextStudent: { en: 'Next Student', ta: 'அடுத்த மாணவர்' },
+  landingFeatureFast: { en: '2-minute hearing checks', ta: '2 நிமிட கேள்வி திறன் சோதனை' },
+  landingFeatureOffline: { en: 'Works offline in classrooms', ta: 'இணையமின்றியும் வகுப்பறையில் இயங்கும்' },
+  landingFeatureReports: { en: 'Instant referral-ready reports', ta: 'உடனடி பரிந்துரை அறிக்கைகள்' },
+  parentGuidance: { en: 'Parent Guidance', ta: 'பெற்றோர் வழிகாட்டல்' },
+  readinessRequired: { en: 'Complete readiness checks before test', ta: 'சோதனைக்கு முன் அனைத்து தயாரிப்பு படிகளையும் முடிக்கவும்' },
+  sampleToneRequired: { en: 'Play sample tone once before continuing', ta: 'தொடருவதற்கு முன் மாதிரி ஒலியை ஒருமுறை இயக்கவும்' },
+  practiceRequired: { en: 'Complete practice round before test', ta: 'சோதனைக்கு முன் பயிற்சி சுற்றை முடிக்கவும்' },
+  saveQueuedForSync: { en: 'Result saved locally. It will sync automatically.', ta: 'முடிவு உள்ளூரில் சேமிக்கப்பட்டது. இணையம் வந்ததும் தானாக ஒத்திசையும்.' },
 };
 
 export function t(key: string, lang: Language): string {
@@ -89,9 +105,10 @@ export function t(key: string, lang: Language): string {
 }
 
 export function getLanguage(): Language {
-  return (localStorage.getItem('hearwise-lang') as Language) || 'en';
+  return (localStorage.getItem('hearwise_lang') as Language) || (localStorage.getItem('hearwise-lang') as Language) || 'en';
 }
 
 export function setLanguage(lang: Language) {
-  localStorage.setItem('hearwise-lang', lang);
+  localStorage.setItem('hearwise_lang', lang);
+  localStorage.removeItem('hearwise-lang');
 }

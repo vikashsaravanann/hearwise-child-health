@@ -168,11 +168,18 @@ export type Database = {
           left_ear_2000hz: boolean
           left_ear_4000hz: boolean
           left_ear_500hz: boolean
+          left_false_positive_count: number
           overall_result: string
+          parent_summary_en: string | null
+          parent_summary_ta: string | null
+          practice_passed: boolean
+          readiness_checklist: Json | null
           right_ear_1000hz: boolean
           right_ear_2000hz: boolean
           right_ear_4000hz: boolean
           right_ear_500hz: boolean
+          right_false_positive_count: number
+          screening_version: string
           session_id: string
           student_id: string
         }
@@ -184,11 +191,18 @@ export type Database = {
           left_ear_2000hz?: boolean
           left_ear_4000hz?: boolean
           left_ear_500hz?: boolean
+          left_false_positive_count?: number
           overall_result?: string
+          parent_summary_en?: string | null
+          parent_summary_ta?: string | null
+          practice_passed?: boolean
+          readiness_checklist?: Json | null
           right_ear_1000hz?: boolean
           right_ear_2000hz?: boolean
           right_ear_4000hz?: boolean
           right_ear_500hz?: boolean
+          right_false_positive_count?: number
+          screening_version?: string
           session_id: string
           student_id: string
         }
@@ -200,11 +214,18 @@ export type Database = {
           left_ear_2000hz?: boolean
           left_ear_4000hz?: boolean
           left_ear_500hz?: boolean
+          left_false_positive_count?: number
           overall_result?: string
+          parent_summary_en?: string | null
+          parent_summary_ta?: string | null
+          practice_passed?: boolean
+          readiness_checklist?: Json | null
           right_ear_1000hz?: boolean
           right_ear_2000hz?: boolean
           right_ear_4000hz?: boolean
           right_ear_500hz?: boolean
+          right_false_positive_count?: number
+          screening_version?: string
           session_id?: string
           student_id?: string
         }

@@ -2,8 +2,10 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSession } from '@/contexts/SessionContext';
 import { t } from '@/lib/i18n';
+import { validateStudentInput } from '@/lib/clinicalSafety';
 import { createStudent } from '@/lib/database';
 import { createLocalStudent, getServerId } from '@/lib/offlineSync';
+import LanguageToggle from '@/components/LanguageToggle';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -13,14 +15,15 @@ import { toast } from '@/hooks/use-toast';
 
 export default function StudentEntryPage() {
   const navigate = useNavigate();
-  const { lang, session, setStudent } = useSession();
+  const { lang, session, setStudent, resetReadiness } = useSession();
   const [name, setName] = useState('');
   const [age, setAge] = useState('');
   const [gender, setGender] = useState('');
   const [rollNumber, setRollNumber] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const canProceed = name.trim() && age && gender;
+  const errors = validateStudentInput(name, age, gender);
+  const canProceed = Object.keys(errors).length === 0;
 
   const handleBegin = async () => {
     setLoading(true);
@@ -45,6 +48,7 @@ export default function StudentEntryPage() {
         studentLocalId,
         studentId: getServerId('students', studentLocalId),
       });
+      resetReadiness();
       navigate('/headphone-check');
     } catch (error) {
       console.error('Student creation error:', error);
@@ -69,6 +73,7 @@ export default function StudentEntryPage() {
         studentLocalId: fallbackStudentLocalId,
         studentId: getServerId('students', fallbackStudentLocalId),
       });
+      resetReadiness();
       toast({ title: t('offlineMode', lang), description: t('studentDataSyncLater', lang) });
       navigate('/headphone-check');
     } finally {
@@ -78,15 +83,20 @@ export default function StudentEntryPage() {
 
   return (
     <div className="flex min-h-screen flex-col px-6 py-6">
-      <h2 className="text-xl font-bold text-foreground">{t('beginTest', lang)}</h2>
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-bold text-foreground">{t('beginTest', lang)}</h2>
+        <LanguageToggle />
+      </div>
       <div className="mt-8 flex flex-col gap-5">
         <div>
           <Label className="text-sm font-medium">{t('studentName', lang)}</Label>
           <Input className="mt-1.5 h-12 rounded-xl" value={name} onChange={e => setName(e.target.value)} />
+          {errors.name && <p className="mt-1 text-xs text-destructive">{errors.name}</p>}
         </div>
         <div>
           <Label className="text-sm font-medium">{t('age', lang)}</Label>
           <Input className="mt-1.5 h-12 rounded-xl" type="number" min="4" max="16" value={age} onChange={e => setAge(e.target.value)} />
+          {errors.age && <p className="mt-1 text-xs text-destructive">{errors.age}</p>}
         </div>
         <div>
           <Label className="text-sm font-medium">{t('gender', lang)}</Label>
@@ -98,6 +108,7 @@ export default function StudentEntryPage() {
               <SelectItem value="other">{t('other', lang)}</SelectItem>
             </SelectContent>
           </Select>
+          {errors.gender && <p className="mt-1 text-xs text-destructive">{errors.gender}</p>}
         </div>
         <div>
           <Label className="text-sm font-medium">{t('rollNumber', lang)}</Label>

@@ -37,6 +37,12 @@ interface TestedStudent {
   timestamp: string;
 }
 
+export interface ScreeningReadiness {
+  headphoneChecklistComplete: boolean;
+  sampleTonePlayed: boolean;
+  practicePassed: boolean;
+}
+
 interface SessionContextType {
   lang: Language;
   setLang: (l: Language) => void;
@@ -47,6 +53,9 @@ interface SessionContextType {
   testedStudents: TestedStudent[];
   addTestedStudent: (result: TestedStudent) => void;
   clearTestedStudents: () => void;
+  readiness: ScreeningReadiness;
+  setReadiness: React.Dispatch<React.SetStateAction<ScreeningReadiness>>;
+  resetReadiness: () => void;
   online: boolean;
   pendingResultsCount: number;
   syncState: 'offline' | 'pending' | 'synced';
@@ -59,6 +68,11 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<SessionData | null>(null);
   const [student, setStudent] = useState<StudentData | null>(null);
   const [testedStudents, setTestedStudents] = useState<TestedStudent[]>([]);
+  const [readiness, setReadiness] = useState<ScreeningReadiness>({
+    headphoneChecklistComplete: false,
+    sampleTonePlayed: false,
+    practicePassed: false,
+  });
   const [online, setOnline] = useState(navigator.onLine);
   const [pendingResultsCount, setPendingResultsCount] = useState(getPendingResultCount());
 
@@ -114,6 +128,13 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   };
 
   const clearTestedStudents = () => setTestedStudents([]);
+  const resetReadiness = () => {
+    setReadiness({
+      headphoneChecklistComplete: false,
+      sampleTonePlayed: false,
+      practicePassed: false,
+    });
+  };
   const syncState: 'offline' | 'pending' | 'synced' = !online ? 'offline' : pendingResultsCount > 0 ? 'pending' : 'synced';
 
   return (
@@ -128,6 +149,9 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         testedStudents,
         addTestedStudent,
         clearTestedStudents,
+        readiness,
+        setReadiness,
+        resetReadiness,
         online,
         pendingResultsCount,
         syncState,

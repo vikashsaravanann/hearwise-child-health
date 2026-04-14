@@ -1,8 +1,10 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useSession } from '@/contexts/SessionContext';
 import { t } from '@/lib/i18n';
+import { getParentSummary } from '@/lib/clinicalSafety';
 import type { TestResult } from '@/lib/testEngine';
 import OwlIcon from '@/components/OwlIcon';
+import LanguageToggle from '@/components/LanguageToggle';
 import { Button } from '@/components/ui/button';
 import { Share2 } from 'lucide-react';
 
@@ -32,18 +34,22 @@ export default function ResultsPage() {
   const owlMood = results.overall === 'normal' ? 'happy' : results.overall === 'mild' ? 'thoughtful' : 'concerned';
   const bgColor = results.overall === 'normal' ? 'bg-success/10 border-success' : results.overall === 'mild' ? 'bg-warning/10 border-warning' : 'bg-destructive/10 border-destructive';
   const message = results.overall === 'normal' ? t('excellent', lang) : results.overall === 'mild' ? t('mildConcern', lang) : t('hearingIssue', lang);
+  const parentSummary = getParentSummary(results, lang);
 
   const shareWhatsApp = () => {
     const isEarNormal = (ear: TestResult['left']) => ear['500'] && ear['1000'] && ear['2000'] && ear['4000'];
-    const leftResult = isEarNormal(results.left) ? 'Normal' : 'Mild Concern';
-    const rightResult = isEarNormal(results.right) ? 'Normal' : 'Mild Concern';
-    const overallLabel = results.overall === 'normal' ? 'Normal' : results.overall === 'mild' ? 'Mild Concern' : 'Refer to Doctor';
-    const text = `HearWise Hearing Report 🎧\nStudent: ${student.name}\nAge: ${student.age}\nSchool: ${session?.schoolName ?? '-'}\nDate: ${new Date().toLocaleDateString()}\nLeft Ear: ${leftResult}\nRight Ear: ${rightResult}\nOverall Result: ${overallLabel}\n\nPowered by HearWise — Smart Hearing Care for Every Child`;
+    const leftResult = isEarNormal(results.left) ? t('normal', lang) : t('mildConcernLabel', lang);
+    const rightResult = isEarNormal(results.right) ? t('normal', lang) : t('mildConcernLabel', lang);
+    const overallLabel = results.overall === 'normal' ? t('normal', lang) : results.overall === 'mild' ? t('mildConcernLabel', lang) : t('referToDoctor', lang);
+    const text = `${t('hearingReportTitle', lang)}\n${t('student', lang)}: ${student.name}\n${t('age', lang)}: ${student.age}\n${t('school', lang)}: ${session?.schoolName ?? '-'}\n${t('date', lang)}: ${new Date().toLocaleDateString()}\n${t('leftEar', lang)}: ${leftResult}\n${t('rightEar', lang)}: ${rightResult}\n${t('overallResult', lang)}: ${overallLabel}\n\n${t('poweredByHearWise', lang)}`;
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center px-6 py-8">
+    <div className="relative flex min-h-screen flex-col items-center px-6 py-8">
+      <div className="absolute right-4 top-4">
+        <LanguageToggle />
+      </div>
       <div className={`flex w-full max-w-sm flex-col items-center rounded-2xl border-2 p-6 ${bgColor}`}>
         <OwlIcon mood={owlMood} size={80} />
         <p className="mt-4 text-center text-lg font-bold text-foreground">{message}</p>
@@ -62,10 +68,14 @@ export default function ResultsPage() {
           {freqs.map(f => <FreqBar key={`r-${f}`} label={f} passed={results.right[f]} />)}
         </div>
       </div>
+      <div className="mt-6 w-full max-w-sm rounded-xl border bg-card p-4">
+        <h4 className="text-sm font-semibold text-foreground">{t('parentGuidance', lang)}</h4>
+        <p className="mt-2 text-sm text-muted-foreground">{parentSummary}</p>
+      </div>
 
       <div className="mt-auto flex w-full max-w-sm flex-col gap-3 pt-8">
         <Button className="h-14 rounded-2xl text-base font-semibold" onClick={() => navigate('/student-entry')}>
-          {t('saveTestNext', lang)}
+          {t('nextStudent', lang)}
         </Button>
         <Button variant="outline" className="h-14 gap-2 rounded-2xl text-base" onClick={shareWhatsApp}>
           <Share2 size={18} />

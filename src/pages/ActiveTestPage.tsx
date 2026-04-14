@@ -2,12 +2,15 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSession } from '@/contexts/SessionContext';
 import { t } from '@/lib/i18n';
+import { getParentSummary, isReadinessComplete } from '@/lib/clinicalSafety';
 import { buildTestSequence, playTestTone, getRandomDelay, computeResults, type TestStepResult } from '@/lib/testEngine';
 import { saveTestResult, createReferral } from '@/lib/database';
+import LanguageToggle from '@/components/LanguageToggle';
+import { toast } from '@/hooks/use-toast';
 
 export default function ActiveTestPage() {
   const navigate = useNavigate();
-  const { lang, student, session, addTestedStudent } = useSession();
+  const { lang, student, session, addTestedStudent, readiness } = useSession();
   const [stepIndex, setStepIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [waitingForResponse, setWaitingForResponse] = useState(false);
@@ -70,14 +73,22 @@ export default function ActiveTestPage() {
       // Always queue results locally first; sync happens in background.
       try {
         if (session?.sessionLocalId && student?.studentLocalId) {
-          const resultId = await saveTestResult(session.sessionLocalId, student.studentLocalId, results);
+          const resultId = await saveTestResult(session.sessionLocalId, student.studentLocalId, results, {
+            readinessChecklist: readiness,
+            parentSummaryEn: getParentSummary(results, 'en'),
+            parentSummaryTa: getParentSummary(results, 'ta'),
+          });
           const isOfflineQueued = resultId.startsWith('local_result_');
+          if (isOfflineQueued) {
+            toast({ title: t('saveQueuedForSync', lang) });
+          }
           if (!isOfflineQueued && (results.overall === 'refer' || results.overall === 'mild')) {
             await createReferral(student.studentId || student.studentLocalId, resultId);
           }
         }
       } catch (e) {
         console.error('Failed to save result to DB:', e);
+        toast({ title: t('saveQueuedForSync', lang) });
       }
 
       navigate('/results', { state: { results } });
@@ -87,16 +98,25 @@ export default function ActiveTestPage() {
   }, [stepIndex, totalSteps, sequence, student, session, addTestedStudent, navigate]);
 
   useEffect(() => {
+    if (!isReadinessComplete(readiness)) {
+      toast({ title: t('readinessRequired', lang) });
+      navigate('/headphone-check');
+      return;
+    }
+
     const timeout = setTimeout(() => runStep(), 500);
     return () => clearTimeout(timeout);
-  }, [runStep]);
+  }, [runStep, readiness, navigate, lang]);
 
   const currentEar = currentStep?.ear;
 
   return (
     <div className="relative flex min-h-screen flex-col items-center justify-center px-6 py-6">
+      <div className="absolute right-4 top-4">
+        <LanguageToggle />
+      </div>
       {/* Ear indicator */}
-      <div className="absolute top-8 flex items-center gap-4">
+      <div className="absolute top-14 flex items-center gap-4">
         <div className={`flex flex-col items-center rounded-xl px-4 py-2 ${currentEar === 'left' ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}>
           <span className="text-xs font-medium">{t('leftEar', lang)}</span>
         </div>
@@ -106,7 +126,7 @@ export default function ActiveTestPage() {
       </div>
 
       {/* Progress dots */}
-      <div className="absolute top-20 flex flex-wrap justify-center gap-1 px-4">
+      <div className="absolute top-28 flex flex-wrap justify-center gap-1 px-4">
         {Array.from({ length: Math.min(totalSteps, 40) }).map((_, i) => (
           <div key={i} className={`h-2 w-2 rounded-full transition-colors ${i <= stepIndex ? 'bg-primary' : 'bg-muted'}`} />
         ))}

@@ -49,6 +49,13 @@ interface ExportResultRow {
   overall_result: string;
 }
 
+function escapeCsvCell(value: unknown): string {
+  if (value === null || value === undefined) return '';
+  const stringValue = String(value);
+  if (!/[",\n\r]/.test(stringValue)) return stringValue;
+  return `"${stringValue.replace(/"/g, '""')}"`;
+}
+
 export async function getOrCreateSchool(name: string, district: string): Promise<string> {
   const localId = createLocalSchool(name, district);
   if (!isOnline()) return localId;
@@ -110,7 +117,16 @@ export async function createStudent(
 export async function saveTestResult(
   sessionId: string,
   studentId: string,
-  results: TestResult
+  results: TestResult,
+  options?: {
+    readinessChecklist?: {
+      headphoneChecklistComplete: boolean;
+      sampleTonePlayed: boolean;
+      practicePassed: boolean;
+    };
+    parentSummaryEn?: string;
+    parentSummaryTa?: string;
+  }
 ): Promise<string> {
   const queueItemLocalId = `local_result_${createResultIdSuffix()}`;
   const queuePayload = {
@@ -128,6 +144,13 @@ export async function saveTestResult(
       right_ear_4000hz: results.right['4000'],
       false_positive_count: results.left.falsePositives + results.right.falsePositives,
       overall_result: results.overall,
+      left_false_positive_count: results.left.falsePositives,
+      right_false_positive_count: results.right.falsePositives,
+      screening_version: 'phase1_clinical_safe',
+      readiness_checklist: options?.readinessChecklist || null,
+      practice_passed: options?.readinessChecklist?.practicePassed ?? false,
+      parent_summary_en: options?.parentSummaryEn || null,
+      parent_summary_ta: options?.parentSummaryTa || null,
     },
     timestamp: Date.now(),
   };
@@ -293,7 +316,9 @@ export async function exportCSV() {
     r.false_positive_count, r.overall_result
   ]);
 
-  return [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+  const serializedHeader = headers.map(escapeCsvCell).join(',');
+  const serializedRows = rows.map((row) => row.map(escapeCsvCell).join(','));
+  return [serializedHeader, ...serializedRows].join('\n');
 }
 
 // Offline sync
