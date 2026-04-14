@@ -3,23 +3,43 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import Index from "./pages/Index.tsx";
-import NotFound from "./pages/NotFound.tsx";
+import { SessionProvider } from "@/contexts/SessionContext";
+import OfflineBadge from "@/components/OfflineBadge";
+import LandingPage from "./pages/LandingPage";
+import SessionSetupPage from "./pages/SessionSetupPage";
+import StudentEntryPage from "./pages/StudentEntryPage";
+import HeadphoneCheckPage from "./pages/HeadphoneCheckPage";
+import PracticeRoundPage from "./pages/PracticeRoundPage";
+import ActiveTestPage from "./pages/ActiveTestPage";
+import ResultsPage from "./pages/ResultsPage";
+import SessionSummaryPage from "./pages/SessionSummaryPage";
+import DashboardPage from "./pages/DashboardPage";
+import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
+      <SessionProvider>
+        <Toaster />
+        <Sonner />
+        <OfflineBadge />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/setup" element={<SessionSetupPage />} />
+            <Route path="/student-entry" element={<StudentEntryPage />} />
+            <Route path="/headphone-check" element={<HeadphoneCheckPage />} />
+            <Route path="/practice" element={<PracticeRoundPage />} />
+            <Route path="/test" element={<ActiveTestPage />} />
+            <Route path="/results" element={<ResultsPage />} />
+            <Route path="/session-summary" element={<SessionSummaryPage />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </SessionProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );
