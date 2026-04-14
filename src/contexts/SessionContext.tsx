@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
 import { Language, getLanguage, setLanguage as setLangStorage } from '@/lib/i18n';
 import { syncPendingResults } from '@/lib/database';
-import { getPendingResultCount, getSyncQueueEventName } from '@/lib/offlineSync';
+import { getFailedPendingResultCount, getPendingResultCount, getSyncQueueEventName } from '@/lib/offlineSync';
 import { toast } from '@/hooks/use-toast';
 
 interface SessionData {
@@ -58,6 +58,7 @@ interface SessionContextType {
   resetReadiness: () => void;
   online: boolean;
   pendingResultsCount: number;
+  failedResultsCount: number;
   syncState: 'offline' | 'pending' | 'synced';
 }
 
@@ -75,10 +76,14 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   });
   const [online, setOnline] = useState(navigator.onLine);
   const [pendingResultsCount, setPendingResultsCount] = useState(getPendingResultCount());
+  const [failedResultsCount, setFailedResultsCount] = useState(getFailedPendingResultCount());
 
   useEffect(() => {
     const queueEvent = getSyncQueueEventName();
-    const refreshPendingCount = () => setPendingResultsCount(getPendingResultCount());
+    const refreshPendingCount = () => {
+      setPendingResultsCount(getPendingResultCount());
+      setFailedResultsCount(getFailedPendingResultCount());
+    };
 
     const on = async () => {
       setOnline(true);
@@ -111,10 +116,16 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       })
       .catch(() => refreshPendingCount());
 
+    const interval = window.setInterval(() => {
+      if (!navigator.onLine) return;
+      syncPendingResults().then(refreshPendingCount).catch(refreshPendingCount);
+    }, 15000);
+
     return () => {
       window.removeEventListener('online', on);
       window.removeEventListener('offline', off);
       window.removeEventListener(queueEvent, refreshPendingCount);
+      window.clearInterval(interval);
     };
   }, []);
 
@@ -154,6 +165,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         resetReadiness,
         online,
         pendingResultsCount,
+        failedResultsCount,
         syncState,
       }}
     >

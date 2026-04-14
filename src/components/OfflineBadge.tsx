@@ -2,16 +2,19 @@ import { useSession } from '@/contexts/SessionContext';
 import { t } from '@/lib/i18n';
 
 export default function OfflineBadge() {
-  const { syncState, pendingResultsCount, lang } = useSession();
+  const { syncState, pendingResultsCount, failedResultsCount, lang } = useSession();
   const isOffline = syncState === 'offline';
   const isPending = syncState === 'pending';
+  const hasFailures = failedResultsCount > 0;
   const badgeText = isOffline
     ? t('offlineMode', lang)
-    : isPending
-      ? `${pendingResultsCount} pending sync`
-      : 'All synced';
-  const dotClass = isOffline ? 'bg-destructive' : isPending ? 'bg-warning' : 'bg-success';
-  const badgeClass = isOffline
+    : hasFailures
+      ? `${failedResultsCount} ${t('syncFailures', lang)}`
+      : isPending
+        ? `${pendingResultsCount} ${t('pendingSync', lang)}`
+        : t('allSynced', lang);
+  const dotClass = isOffline ? 'bg-destructive' : hasFailures ? 'bg-destructive' : isPending ? 'bg-warning' : 'bg-success';
+  const badgeClass = isOffline || hasFailures
     ? 'bg-destructive/15 text-destructive'
     : isPending
       ? 'bg-warning/15 text-warning'

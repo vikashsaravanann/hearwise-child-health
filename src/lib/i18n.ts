@@ -98,6 +98,8 @@ const translations: Record<string, Record<Language, string>> = {
   sampleToneRequired: { en: 'Play sample tone once before continuing', ta: 'தொடருவதற்கு முன் மாதிரி ஒலியை ஒருமுறை இயக்கவும்' },
   practiceRequired: { en: 'Complete practice round before test', ta: 'சோதனைக்கு முன் பயிற்சி சுற்றை முடிக்கவும்' },
   saveQueuedForSync: { en: 'Result saved locally. It will sync automatically.', ta: 'முடிவு உள்ளூரில் சேமிக்கப்பட்டது. இணையம் வந்ததும் தானாக ஒத்திசையும்.' },
+  syncFailures: { en: 'sync retries', ta: 'ஒத்திசைவு மீண்டும் முயற்சிகள்' },
+  allSynced: { en: 'All synced', ta: 'அனைத்தும் ஒத்திசைந்தது' },
 };
 
 export function t(key: string, lang: Language): string {

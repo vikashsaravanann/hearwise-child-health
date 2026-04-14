@@ -53,11 +53,17 @@ interface LocalIdMapStore {
 
 export interface PendingResultItem {
   localId: string;
+  clientResultId: string;
   sessionLocalId: string;
   studentLocalId: string;
   result: Record<string, unknown>;
   timestamp: number;
   synced: boolean;
+  status?: 'queued' | 'syncing' | 'synced' | 'failed';
+  attempts?: number;
+  lastAttemptAt?: number;
+  nextRetryAt?: number;
+  lastError?: string;
 }
 
 function createUuid(): string {
@@ -195,7 +201,13 @@ export function getServerId(table: keyof LocalIdMapStore, localId: string): stri
 
 export function getPendingResults(): PendingResultItem[] {
   try {
-    return JSON.parse(localStorage.getItem(PENDING_RESULTS_KEY) || '[]') as PendingResultItem[];
+    const parsed = JSON.parse(localStorage.getItem(PENDING_RESULTS_KEY) || '[]') as PendingResultItem[];
+    return parsed.map((item) => ({
+      ...item,
+      clientResultId: item.clientResultId || item.localId,
+      status: item.synced ? 'synced' : item.status || 'queued',
+      attempts: item.attempts || 0,
+    }));
   } catch {
     return [];
   }
@@ -208,12 +220,22 @@ export function setPendingResults(queue: PendingResultItem[]) {
 
 export function enqueuePendingResult(item: Omit<PendingResultItem, 'synced'>) {
   const queue = getPendingResults();
-  queue.push({ ...item, synced: false });
+  queue.push({
+    ...item,
+    synced: false,
+    status: 'queued',
+    attempts: 0,
+    nextRetryAt: Date.now(),
+  });
   setPendingResults(queue);
 }
 
 export function getPendingResultCount(): number {
   return getPendingResults().filter((item) => !item.synced).length;
+}
+
+export function getFailedPendingResultCount(): number {
+  return getPendingResults().filter((item) => !item.synced && item.status === 'failed').length;
 }
 
 export function getSyncQueueEventName(): string {

@@ -5,6 +5,7 @@ import {
   createLocalStudent,
   createLocalTeacher,
   enqueuePendingResult,
+  type PendingResultItem,
   getLocalSchool,
   getLocalSession,
   getLocalStudent,
@@ -129,8 +130,10 @@ export async function saveTestResult(
   }
 ): Promise<string> {
   const queueItemLocalId = `local_result_${createResultIdSuffix()}`;
+  const clientResultId = queueItemLocalId;
   const queuePayload = {
     localId: queueItemLocalId,
+    clientResultId,
     sessionLocalId: sessionId,
     studentLocalId: studentId,
     result: {
@@ -332,12 +335,16 @@ export async function syncPendingResults(): Promise<{ synced: number }> {
   for (let i = 0; i < updatedQueue.length; i += 1) {
     const item = updatedQueue[i];
     if (item.synced) continue;
+    if (!isItemEligibleForRetry(item)) continue;
 
     try {
       const { synced: itemSynced } = await syncOnePendingResult(item);
       if (itemSynced) synced += 1;
     } catch (error) {
       console.error('Result sync failed:', error);
+      item.status = 'failed';
+      item.lastError = error instanceof Error ? error.message : 'Unknown sync error';
+      item.nextRetryAt = Date.now() + getRetryDelayMs((item.attempts || 0) + 1);
     }
   }
 
@@ -353,33 +360,65 @@ async function syncPendingResultByLocalId(localResultId: string): Promise<{ serv
 
   const item = updatedQueue[index];
   if (item.synced) return {};
+  if (!isItemEligibleForRetry(item)) return {};
 
-  const result = await syncOnePendingResult(item);
+  let result: { serverResultId?: string } = {};
+  try {
+    result = await syncOnePendingResult(item);
+  } catch (error) {
+    item.status = 'failed';
+    item.lastError = error instanceof Error ? error.message : 'Unknown sync error';
+    item.nextRetryAt = Date.now() + getRetryDelayMs((item.attempts || 0) + 1);
+  }
   setPendingResults(updatedQueue);
   return { serverResultId: result.serverResultId };
 }
 
-async function syncOnePendingResult(item: { synced: boolean; sessionLocalId: string; studentLocalId: string; result: Record<string, unknown> }) {
+async function syncOnePendingResult(item: PendingResultItem) {
+  item.status = 'syncing';
+  item.lastAttemptAt = Date.now();
+  item.attempts = (item.attempts || 0) + 1;
+
   const sessionServerId = await ensureSessionSynced(item.sessionLocalId);
   const studentServerId = await ensureStudentSynced(item.studentLocalId);
 
   const { data, error } = await supabase
     .from('test_results')
-    .insert({
+    .upsert({
       session_id: sessionServerId,
       student_id: studentServerId,
+      client_result_id: item.clientResultId,
       ...(item.result as Record<string, unknown>),
-    })
+    }, { onConflict: 'client_result_id' })
     .select('id')
     .single();
 
   if (error) {
     console.error('Result sync error:', error);
+    item.status = 'failed';
+    item.lastError = error.message;
+    item.nextRetryAt = Date.now() + getRetryDelayMs(item.attempts);
     return { synced: false as const };
   }
 
   item.synced = true;
+  item.status = 'synced';
+  item.nextRetryAt = undefined;
+  item.lastError = undefined;
   return { synced: true as const, serverResultId: data.id };
+}
+
+function getRetryDelayMs(attempts: number): number {
+  const base = 2000;
+  const max = 5 * 60 * 1000;
+  const delay = Math.min(max, base * Math.pow(2, Math.max(0, attempts - 1)));
+  const jitter = Math.floor(Math.random() * 500);
+  return delay + jitter;
+}
+
+function isItemEligibleForRetry(item: PendingResultItem): boolean {
+  const nextRetryAt = item.nextRetryAt || 0;
+  return Date.now() >= nextRetryAt;
 }
 
 async function ensureSchoolSynced(localSchoolId: string): Promise<string> {

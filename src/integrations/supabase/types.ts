@@ -161,6 +161,7 @@ export type Database = {
       }
       test_results: {
         Row: {
+          client_result_id: string
           created_at: string
           false_positive_count: number
           id: string
@@ -184,6 +185,7 @@ export type Database = {
           student_id: string
         }
         Insert: {
+          client_result_id: string
           created_at?: string
           false_positive_count?: number
           id?: string
@@ -207,6 +209,7 @@ export type Database = {
           student_id: string
         }
         Update: {
+          client_result_id?: string
           created_at?: string
           false_positive_count?: number
           id?: string
