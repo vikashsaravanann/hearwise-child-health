@@ -14,7 +14,259 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      referrals: {
+        Row: {
+          created_at: string
+          doctor_visited: boolean
+          follow_up_date: string | null
+          id: string
+          notes: string | null
+          referred_on: string
+          result_id: string
+          student_id: string
+        }
+        Insert: {
+          created_at?: string
+          doctor_visited?: boolean
+          follow_up_date?: string | null
+          id?: string
+          notes?: string | null
+          referred_on?: string
+          result_id: string
+          student_id: string
+        }
+        Update: {
+          created_at?: string
+          doctor_visited?: boolean
+          follow_up_date?: string | null
+          id?: string
+          notes?: string | null
+          referred_on?: string
+          result_id?: string
+          student_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "referrals_result_id_fkey"
+            columns: ["result_id"]
+            isOneToOne: false
+            referencedRelation: "test_results"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "referrals_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      schools: {
+        Row: {
+          created_at: string
+          district: string
+          id: string
+          name: string
+          state: string
+          type: string | null
+        }
+        Insert: {
+          created_at?: string
+          district: string
+          id?: string
+          name: string
+          state?: string
+          type?: string | null
+        }
+        Update: {
+          created_at?: string
+          district?: string
+          id?: string
+          name?: string
+          state?: string
+          type?: string | null
+        }
+        Relationships: []
+      }
+      students: {
+        Row: {
+          age: number
+          created_at: string
+          gender: string
+          id: string
+          name: string
+          roll_number: string | null
+          school_id: string
+        }
+        Insert: {
+          age: number
+          created_at?: string
+          gender: string
+          id?: string
+          name: string
+          roll_number?: string | null
+          school_id: string
+        }
+        Update: {
+          age?: number
+          created_at?: string
+          gender?: string
+          id?: string
+          name?: string
+          roll_number?: string | null
+          school_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "students_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      teachers: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          phone: string | null
+          school_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          phone?: string | null
+          school_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          phone?: string | null
+          school_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "teachers_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      test_results: {
+        Row: {
+          created_at: string
+          false_positive_count: number
+          id: string
+          left_ear_1000hz: boolean
+          left_ear_2000hz: boolean
+          left_ear_4000hz: boolean
+          left_ear_500hz: boolean
+          overall_result: string
+          right_ear_1000hz: boolean
+          right_ear_2000hz: boolean
+          right_ear_4000hz: boolean
+          right_ear_500hz: boolean
+          session_id: string
+          student_id: string
+        }
+        Insert: {
+          created_at?: string
+          false_positive_count?: number
+          id?: string
+          left_ear_1000hz?: boolean
+          left_ear_2000hz?: boolean
+          left_ear_4000hz?: boolean
+          left_ear_500hz?: boolean
+          overall_result?: string
+          right_ear_1000hz?: boolean
+          right_ear_2000hz?: boolean
+          right_ear_4000hz?: boolean
+          right_ear_500hz?: boolean
+          session_id: string
+          student_id: string
+        }
+        Update: {
+          created_at?: string
+          false_positive_count?: number
+          id?: string
+          left_ear_1000hz?: boolean
+          left_ear_2000hz?: boolean
+          left_ear_4000hz?: boolean
+          left_ear_500hz?: boolean
+          overall_result?: string
+          right_ear_1000hz?: boolean
+          right_ear_2000hz?: boolean
+          right_ear_4000hz?: boolean
+          right_ear_500hz?: boolean
+          session_id?: string
+          student_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "test_results_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "test_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "test_results_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      test_sessions: {
+        Row: {
+          created_at: string
+          device_info: string | null
+          id: string
+          school_id: string
+          session_date: string
+          teacher_id: string
+        }
+        Insert: {
+          created_at?: string
+          device_info?: string | null
+          id?: string
+          school_id: string
+          session_date?: string
+          teacher_id: string
+        }
+        Update: {
+          created_at?: string
+          device_info?: string | null
+          id?: string
+          school_id?: string
+          session_date?: string
+          teacher_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "test_sessions_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "test_sessions_teacher_id_fkey"
+            columns: ["teacher_id"]
+            isOneToOne: false
+            referencedRelation: "teachers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
