@@ -4,6 +4,7 @@ import { useSession } from '@/contexts/SessionContext';
 import { t } from '@/lib/i18n';
 import { TAMIL_NADU_DISTRICTS } from '@/lib/districts';
 import { getOrCreateSchool, getOrCreateTeacher, createSession } from '@/lib/database';
+import { getServerId } from '@/lib/offlineSync';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -25,17 +26,52 @@ export default function SessionSetupPage() {
 
   const handleStart = async () => {
     setLoading(true);
+    let schoolLocalId = '';
+    let teacherLocalId = '';
+    let sessionLocalId = '';
+
     try {
-      const schoolId = await getOrCreateSchool(schoolName.trim(), district);
-      const teacherId = await getOrCreateTeacher(teacherName.trim(), schoolId);
-      const sessionId = await createSession(teacherId, schoolId);
-      setSession({ schoolName, teacherName, classGrade, district, schoolId, teacherId, sessionId });
+      schoolLocalId = await getOrCreateSchool(schoolName.trim(), district);
+      teacherLocalId = await getOrCreateTeacher(teacherName.trim(), schoolLocalId);
+      sessionLocalId = await createSession(teacherLocalId, schoolLocalId);
+
+      setSession({
+        schoolName,
+        teacherName,
+        classGrade,
+        district,
+        schoolLocalId,
+        teacherLocalId,
+        sessionLocalId,
+        schoolId: getServerId('schools', schoolLocalId),
+        teacherId: getServerId('teachers', teacherLocalId),
+        sessionId: getServerId('sessions', sessionLocalId),
+      });
       navigate('/student-entry');
     } catch (error) {
       console.error('Session setup error:', error);
-      // Fallback: continue without DB (offline mode)
-      setSession({ schoolName, teacherName, classGrade, district });
-      toast({ title: 'Offline mode', description: 'Data will sync when connection is restored.' });
+      if (!schoolLocalId) {
+        schoolLocalId = await getOrCreateSchool(schoolName.trim(), district);
+      }
+      if (!teacherLocalId) {
+        teacherLocalId = await getOrCreateTeacher(teacherName.trim(), schoolLocalId);
+      }
+      if (!sessionLocalId) {
+        sessionLocalId = await createSession(teacherLocalId, schoolLocalId);
+      }
+      setSession({
+        schoolName,
+        teacherName,
+        classGrade,
+        district,
+        schoolLocalId,
+        teacherLocalId,
+        sessionLocalId,
+        schoolId: getServerId('schools', schoolLocalId),
+        teacherId: getServerId('teachers', teacherLocalId),
+        sessionId: getServerId('sessions', sessionLocalId),
+      });
+      toast({ title: t('offlineMode', lang), description: t('dataSyncWhenOnline', lang) });
       navigate('/student-entry');
     } finally {
       setLoading(false);
@@ -63,7 +99,7 @@ export default function SessionSetupPage() {
             <SelectTrigger className="mt-1.5 h-12 rounded-xl"><SelectValue placeholder={t('select', lang)} /></SelectTrigger>
             <SelectContent>
               {Array.from({ length: 10 }, (_, i) => (
-                <SelectItem key={i + 1} value={String(i + 1)}>Grade {i + 1}</SelectItem>
+                <SelectItem key={i + 1} value={String(i + 1)}>{t('grade', lang)} {i + 1}</SelectItem>
               ))}
             </SelectContent>
           </Select>

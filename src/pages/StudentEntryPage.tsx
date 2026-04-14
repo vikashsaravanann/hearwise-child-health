@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useSession } from '@/contexts/SessionContext';
 import { t } from '@/lib/i18n';
 import { createStudent } from '@/lib/database';
+import { createLocalStudent, getServerId } from '@/lib/offlineSync';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -24,16 +25,51 @@ export default function StudentEntryPage() {
   const handleBegin = async () => {
     setLoading(true);
     try {
-      let studentId: string | undefined;
-      if (session?.schoolId) {
-        studentId = await createStudent(name.trim(), Number(age), gender, session.schoolId, rollNumber || undefined);
+      if (!session?.schoolLocalId) {
+        throw new Error('Session local school ID is missing');
       }
-      setStudent({ name, age: Number(age), gender, rollNumber: rollNumber || undefined, studentId });
+
+      const studentLocalId = await createStudent(
+        name.trim(),
+        Number(age),
+        gender,
+        session.schoolLocalId,
+        rollNumber || undefined
+      );
+      setStudent({
+        name,
+        age: Number(age),
+        gender,
+        schoolLocalId: session.schoolLocalId,
+        rollNumber: rollNumber || undefined,
+        studentLocalId,
+        studentId: getServerId('students', studentLocalId),
+      });
       navigate('/headphone-check');
     } catch (error) {
       console.error('Student creation error:', error);
-      setStudent({ name, age: Number(age), gender, rollNumber: rollNumber || undefined });
-      toast({ title: 'Offline mode', description: 'Student data will sync later.' });
+      if (!session?.schoolLocalId) {
+        toast({ title: t('offlineMode', lang), description: t('dataSyncWhenOnline', lang) });
+        navigate('/setup');
+        return;
+      }
+      const fallbackStudentLocalId = createLocalStudent(
+        name.trim(),
+        Number(age),
+        gender,
+        session.schoolLocalId,
+        rollNumber || undefined
+      );
+      setStudent({
+        name,
+        age: Number(age),
+        gender,
+        schoolLocalId: session.schoolLocalId,
+        rollNumber: rollNumber || undefined,
+        studentLocalId: fallbackStudentLocalId,
+        studentId: getServerId('students', fallbackStudentLocalId),
+      });
+      toast({ title: t('offlineMode', lang), description: t('studentDataSyncLater', lang) });
       navigate('/headphone-check');
     } finally {
       setLoading(false);

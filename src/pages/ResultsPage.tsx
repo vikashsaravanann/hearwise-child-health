@@ -21,7 +21,8 @@ export default function ResultsPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { lang, student, session } = useSession();
-  const results = (location.state as any)?.results as TestResult | undefined;
+  const state = location.state as { results?: TestResult } | null;
+  const results = state?.results;
 
   if (!results || !student) {
     navigate('/');
@@ -33,9 +34,11 @@ export default function ResultsPage() {
   const message = results.overall === 'normal' ? t('excellent', lang) : results.overall === 'mild' ? t('mildConcern', lang) : t('hearingIssue', lang);
 
   const shareWhatsApp = () => {
-    const leftResult = results.overall === 'normal' ? 'Normal' : results.overall === 'mild' ? 'Mild Concern' : 'Refer';
-    const rightResult = leftResult;
-    const text = `HearWise Hearing Report 🎧\n\nStudent: ${student.name} | Age: ${student.age}\nSchool: ${session?.schoolName}\nDate: ${new Date().toLocaleDateString()}\n\nLeft Ear: ${leftResult} | Right Ear: ${rightResult}\nOverall: ${results.overall.toUpperCase()}\n\n${results.overall !== 'normal' ? 'Please visit an ENT doctor for a full evaluation.\n\n' : ''}Powered by HearWise — Smart Hearing Care for Every Child`;
+    const isEarNormal = (ear: TestResult['left']) => ear['500'] && ear['1000'] && ear['2000'] && ear['4000'];
+    const leftResult = isEarNormal(results.left) ? 'Normal' : 'Mild Concern';
+    const rightResult = isEarNormal(results.right) ? 'Normal' : 'Mild Concern';
+    const overallLabel = results.overall === 'normal' ? 'Normal' : results.overall === 'mild' ? 'Mild Concern' : 'Refer to Doctor';
+    const text = `HearWise Hearing Report 🎧\nStudent: ${student.name}\nAge: ${student.age}\nSchool: ${session?.schoolName ?? '-'}\nDate: ${new Date().toLocaleDateString()}\nLeft Ear: ${leftResult}\nRight Ear: ${rightResult}\nOverall Result: ${overallLabel}\n\nPowered by HearWise — Smart Hearing Care for Every Child`;
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
   };
 

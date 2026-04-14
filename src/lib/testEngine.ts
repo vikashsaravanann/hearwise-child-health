@@ -60,18 +60,24 @@ export async function playTestTone(step: TestStep): Promise<void> {
 export function computeResults(stepResults: TestStepResult[]): TestResult {
   const calc = (ear: 'left' | 'right'): EarResult => {
     const earResults = stepResults.filter(r => r.step.ear === ear);
-    const result: any = { falsePositives: 0 };
+    const result: EarResult = {
+      '500': false,
+      '1000': false,
+      '2000': false,
+      '4000': false,
+      falsePositives: 0,
+    };
 
     for (const freq of TEST_FREQUENCIES) {
       const freqResults = earResults.filter(r => r.step.frequency === freq);
       const correct = freqResults.filter(r => r.responded).length;
-      result[String(freq)] = correct >= 2; // 2 out of 3 rule
+      result[String(freq) as keyof Omit<EarResult, 'falsePositives'>] = correct >= 2; // 2 out of 3 rule
     }
 
     // Count false positives (responded to silent trials)
     result.falsePositives = earResults.filter(r => r.step.frequency === 0 && r.responded).length;
 
-    return result as EarResult;
+    return result;
   };
 
   const left = calc('left');

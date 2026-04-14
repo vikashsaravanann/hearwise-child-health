@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { getDashboardStats, getRecentSessions, getMonthlyTrend, exportCSV } from '@/lib/database';
 import { TAMIL_NADU_DISTRICTS } from '@/lib/districts';
+import { useSession } from '@/contexts/SessionContext';
+import { t } from '@/lib/i18n';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -18,16 +20,31 @@ interface Stats {
   totalSessions: number;
 }
 
+interface SessionRow {
+  id: string;
+  session_date: string;
+  schools: { name: string; district: string } | null;
+  teachers: { name: string } | null;
+}
+
+interface TrendRow {
+  month: string;
+  normal: number;
+  mild: number;
+  refer: number;
+}
+
 export default function DashboardPage() {
   const navigate = useNavigate();
+  const { lang } = useSession();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [authLoading, setAuthLoading] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loginLoading, setLoginLoading] = useState(false);
   const [stats, setStats] = useState<Stats>({ totalSchools: 0, totalStudents: 0, totalReferrals: 0, totalSessions: 0 });
-  const [sessions, setSessions] = useState<any[]>([]);
-  const [trend, setTrend] = useState<any[]>([]);
+  const [sessions, setSessions] = useState<SessionRow[]>([]);
+  const [trend, setTrend] = useState<TrendRow[]>([]);
   const [dataLoading, setDataLoading] = useState(false);
   const [filterDistrict, setFilterDistrict] = useState('all');
   const [exporting, setExporting] = useState(false);
@@ -79,8 +96,9 @@ export default function DashboardPage() {
     try {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
-    } catch (error: any) {
-      toast({ title: 'Login failed', description: error.message, variant: 'destructive' });
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : t('unexpectedAuthError', lang);
+      toast({ title: t('loginFailed', lang), description: message, variant: 'destructive' });
     } finally {
       setLoginLoading(false);
     }
@@ -96,7 +114,7 @@ export default function DashboardPage() {
     try {
       const csv = await exportCSV();
       if (!csv) {
-        toast({ title: 'No data to export' });
+        toast({ title: t('noDataToExport', lang) });
         return;
       }
       const blob = new Blob([csv], { type: 'text/csv' });
@@ -107,7 +125,7 @@ export default function DashboardPage() {
       a.click();
       URL.revokeObjectURL(url);
     } catch (e) {
-      toast({ title: 'Export failed', variant: 'destructive' });
+      toast({ title: t('exportFailed', lang), variant: 'destructive' });
     } finally {
       setExporting(false);
     }
@@ -126,24 +144,24 @@ export default function DashboardPage() {
       <div className="flex min-h-screen flex-col items-center justify-center px-6 py-8">
         <Card className="w-full max-w-sm rounded-2xl">
           <CardHeader className="text-center">
-            <CardTitle className="text-xl">Admin Dashboard</CardTitle>
-            <p className="text-sm text-muted-foreground">Sign in with your admin credentials</p>
+            <CardTitle className="text-xl">{t('adminDashboard', lang)}</CardTitle>
+            <p className="text-sm text-muted-foreground">{t('signInWithCredentials', lang)}</p>
           </CardHeader>
           <CardContent className="flex flex-col gap-4">
             <div>
-              <Label>Email</Label>
+              <Label>{t('email', lang)}</Label>
               <Input className="mt-1.5 h-12 rounded-xl" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="admin@hearwise.in" />
             </div>
             <div>
-              <Label>Password</Label>
+              <Label>{t('password', lang)}</Label>
               <Input className="mt-1.5 h-12 rounded-xl" type="password" value={password} onChange={e => setPassword(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleLogin()} />
             </div>
             <Button className="h-14 rounded-2xl text-base font-semibold" onClick={handleLogin} disabled={loginLoading || !email || !password}>
               {loginLoading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <LogIn size={18} className="mr-2" />}
-              Sign In
+              {t('signIn', lang)}
             </Button>
             <Button variant="ghost" className="h-10" onClick={() => navigate('/')}>
-              <ArrowLeft size={16} className="mr-1" /> Back to Home
+              <ArrowLeft size={16} className="mr-1" /> {t('backToHome', lang)}
             </Button>
           </CardContent>
         </Card>
@@ -153,7 +171,7 @@ export default function DashboardPage() {
 
   const filteredSessions = filterDistrict === 'all'
     ? sessions
-    : sessions.filter((s: any) => s.schools?.district === filterDistrict);
+    : sessions.filter((s) => s.schools?.district === filterDistrict);
 
   // Simple bar chart via divs
   const maxTrendVal = Math.max(1, ...trend.map(t => t.normal + t.mild + t.refer));
@@ -161,9 +179,9 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen px-4 py-6 pb-20 sm:px-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold text-foreground">Admin Dashboard</h1>
+        <h1 className="text-xl font-bold text-foreground">{t('adminDashboard', lang)}</h1>
         <Button variant="ghost" size="sm" onClick={handleLogout}>
-          <LogOut size={16} className="mr-1" /> Logout
+          <LogOut size={16} className="mr-1" /> {t('logout', lang)}
         </Button>
       </div>
 
@@ -177,28 +195,28 @@ export default function DashboardPage() {
               <CardContent className="flex flex-col items-center p-4">
                 <School className="text-primary" size={24} />
                 <span className="mt-1 text-2xl font-bold">{stats.totalSchools}</span>
-                <span className="text-[11px] text-muted-foreground">Total Schools</span>
+                <span className="text-[11px] text-muted-foreground">{t('totalSchools', lang)}</span>
               </CardContent>
             </Card>
             <Card className="rounded-2xl">
               <CardContent className="flex flex-col items-center p-4">
                 <Users className="text-primary" size={24} />
                 <span className="mt-1 text-2xl font-bold">{stats.totalStudents}</span>
-                <span className="text-[11px] text-muted-foreground">Students Tested</span>
+                <span className="text-[11px] text-muted-foreground">{t('studentsTested', lang)}</span>
               </CardContent>
             </Card>
             <Card className="rounded-2xl border-destructive/20">
               <CardContent className="flex flex-col items-center p-4">
                 <AlertOctagon className="text-destructive" size={24} />
                 <span className="mt-1 text-2xl font-bold">{stats.totalReferrals}</span>
-                <span className="text-[11px] text-muted-foreground">Total Referrals</span>
+                <span className="text-[11px] text-muted-foreground">{t('totalReferrals', lang)}</span>
               </CardContent>
             </Card>
             <Card className="rounded-2xl">
               <CardContent className="flex flex-col items-center p-4">
                 <BarChart3 className="text-secondary" size={24} />
                 <span className="mt-1 text-2xl font-bold">{stats.totalSessions}</span>
-                <span className="text-[11px] text-muted-foreground">Sessions</span>
+                <span className="text-[11px] text-muted-foreground">{t('sessions', lang)}</span>
               </CardContent>
             </Card>
           </div>
@@ -207,7 +225,7 @@ export default function DashboardPage() {
           {trend.length > 0 && (
             <Card className="mt-6 rounded-2xl">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm">Hearing Health Trend</CardTitle>
+                <CardTitle className="text-sm">{t('hearingHealthTrend', lang)}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex items-end gap-2 h-32">
@@ -226,9 +244,9 @@ export default function DashboardPage() {
                   })}
                 </div>
                 <div className="mt-3 flex gap-4 text-[10px]">
-                  <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-success" /> Normal</span>
-                  <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-warning" /> Mild</span>
-                  <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-destructive" /> Refer</span>
+                  <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-success" /> {t('normal', lang)}</span>
+                  <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-warning" /> {t('mild', lang)}</span>
+                  <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-destructive" /> {t('refer', lang)}</span>
                 </div>
               </CardContent>
             </Card>
@@ -237,20 +255,20 @@ export default function DashboardPage() {
           {/* Filter & Sessions */}
           <div className="mt-6">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-semibold">Recent Sessions</h3>
+              <h3 className="text-sm font-semibold">{t('recentSessions', lang)}</h3>
               <Select value={filterDistrict} onValueChange={setFilterDistrict}>
                 <SelectTrigger className="h-8 w-36 text-xs rounded-lg"><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Districts</SelectItem>
+                  <SelectItem value="all">{t('allDistricts', lang)}</SelectItem>
                   {TAMIL_NADU_DISTRICTS.map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}
                 </SelectContent>
               </Select>
             </div>
             <div className="mt-3 flex flex-col gap-2">
               {filteredSessions.length === 0 ? (
-                <p className="py-8 text-center text-sm text-muted-foreground">No sessions found</p>
+                <p className="py-8 text-center text-sm text-muted-foreground">{t('noSessionsFound', lang)}</p>
               ) : (
-                filteredSessions.map((s: any) => (
+                filteredSessions.map((s) => (
                   <Card key={s.id} className="rounded-xl">
                     <CardContent className="flex items-center justify-between p-3">
                       <div>
@@ -269,15 +287,15 @@ export default function DashboardPage() {
           <div className="mt-6 flex flex-col gap-3">
             <Button variant="outline" className="h-12 gap-2 rounded-xl" onClick={handleExportCSV} disabled={exporting}>
               {exporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download size={16} />}
-              Export Data to CSV
+              {t('exportDataCsv', lang)}
             </Button>
           </div>
         </>
       )}
 
       <div className="mt-8 text-center">
-        <p className="text-[10px] text-muted-foreground">© 2025 HearWise Technologies. Making hearing care accessible for every child in India.</p>
-        <p className="mt-1 text-[10px] text-muted-foreground">All student data is stored securely and used only for hearing health purposes.</p>
+        <p className="text-[10px] text-muted-foreground">© 2025 HearWise Technologies. {t('footerTagline', lang)}</p>
+        <p className="mt-1 text-[10px] text-muted-foreground">{t('dataPrivacyNote', lang)}</p>
       </div>
     </div>
   );

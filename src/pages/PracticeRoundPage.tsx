@@ -21,7 +21,6 @@ export default function PracticeRoundPage() {
       <OwlIcon mood="happy" size={90} />
       <h2 className="mt-6 text-xl font-bold text-foreground">{t('practiceRound', lang)}</h2>
       <p className="mt-3 text-base text-foreground">{t('tapWhenHear', lang)}</p>
-      {lang === 'en' && <p className="mt-1 text-sm text-muted-foreground">ஒலி கேட்டால் திரையை தொடுங்கள்!</p>}
 
       <button
         onClick={handleTap}

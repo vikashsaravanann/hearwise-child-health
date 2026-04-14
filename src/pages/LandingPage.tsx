@@ -30,7 +30,7 @@ export default function LandingPage() {
           </Button>
         </div>
         <p className="pt-6 text-xs text-muted-foreground">v1.0.0 • © 2025 HearWise Technologies</p>
-        <p className="text-[10px] text-muted-foreground max-w-xs">All student data is stored securely and used only for hearing health purposes.</p>
+        <p className="text-[10px] text-muted-foreground max-w-xs">{t('dataPrivacyNote', lang)}</p>
       </div>
     </div>
   );

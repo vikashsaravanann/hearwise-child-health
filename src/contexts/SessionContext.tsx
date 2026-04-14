@@ -1,12 +1,17 @@
 import React, { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
 import { Language, getLanguage, setLanguage as setLangStorage } from '@/lib/i18n';
-import { syncOfflineQueue } from '@/lib/database';
+import { syncPendingResults } from '@/lib/database';
+import { getPendingResultCount, getSyncQueueEventName } from '@/lib/offlineSync';
+import { toast } from '@/hooks/use-toast';
 
 interface SessionData {
   schoolName: string;
   teacherName: string;
   classGrade: string;
   district: string;
+  schoolLocalId: string;
+  teacherLocalId: string;
+  sessionLocalId: string;
   schoolId?: string;
   teacherId?: string;
   sessionId?: string;
@@ -16,8 +21,20 @@ interface StudentData {
   name: string;
   age: number;
   gender: string;
+  studentLocalId: string;
+  schoolLocalId: string;
   rollNumber?: string;
   studentId?: string;
+}
+
+interface TestedStudentResult {
+  overall: 'normal' | 'mild' | 'refer';
+}
+
+interface TestedStudent {
+  student: StudentData | null;
+  results: TestedStudentResult;
+  timestamp: string;
 }
 
 interface SessionContextType {
@@ -27,10 +44,12 @@ interface SessionContextType {
   setSession: (s: SessionData | null) => void;
   student: StudentData | null;
   setStudent: (s: StudentData | null) => void;
-  testedStudents: any[];
-  addTestedStudent: (result: any) => void;
+  testedStudents: TestedStudent[];
+  addTestedStudent: (result: TestedStudent) => void;
   clearTestedStudents: () => void;
   online: boolean;
+  pendingResultsCount: number;
+  syncState: 'offline' | 'pending' | 'synced';
 }
 
 const SessionContext = createContext<SessionContextType | null>(null);
@@ -39,23 +58,50 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Language>(getLanguage());
   const [session, setSession] = useState<SessionData | null>(null);
   const [student, setStudent] = useState<StudentData | null>(null);
-  const [testedStudents, setTestedStudents] = useState<any[]>([]);
+  const [testedStudents, setTestedStudents] = useState<TestedStudent[]>([]);
   const [online, setOnline] = useState(navigator.onLine);
+  const [pendingResultsCount, setPendingResultsCount] = useState(getPendingResultCount());
 
   useEffect(() => {
-    const on = () => {
+    const queueEvent = getSyncQueueEventName();
+    const refreshPendingCount = () => setPendingResultsCount(getPendingResultCount());
+
+    const on = async () => {
       setOnline(true);
-      // Auto-sync when back online
-      syncOfflineQueue().catch(console.error);
+      refreshPendingCount();
+      try {
+        const { synced } = await syncPendingResults();
+        refreshPendingCount();
+        if (synced > 0) {
+          toast({ title: `${synced} results synced` });
+        }
+      } catch (error) {
+        console.error(error);
+      }
     };
-    const off = () => setOnline(false);
+    const off = () => {
+      setOnline(false);
+      refreshPendingCount();
+    };
     window.addEventListener('online', on);
     window.addEventListener('offline', off);
+    window.addEventListener(queueEvent, refreshPendingCount);
 
-    // Try sync on mount
-    if (navigator.onLine) syncOfflineQueue().catch(console.error);
+    // Run sync pass on every app load.
+    syncPendingResults()
+      .then(({ synced }) => {
+        refreshPendingCount();
+        if (synced > 0) {
+          toast({ title: `${synced} results synced` });
+        }
+      })
+      .catch(() => refreshPendingCount());
 
-    return () => { window.removeEventListener('online', on); window.removeEventListener('offline', off); };
+    return () => {
+      window.removeEventListener('online', on);
+      window.removeEventListener('offline', off);
+      window.removeEventListener(queueEvent, refreshPendingCount);
+    };
   }, []);
 
   const setLang = (l: Language) => {
@@ -63,14 +109,30 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     setLangStorage(l);
   };
 
-  const addTestedStudent = (result: any) => {
+  const addTestedStudent = (result: TestedStudent) => {
     setTestedStudents(prev => [...prev, result]);
   };
 
   const clearTestedStudents = () => setTestedStudents([]);
+  const syncState: 'offline' | 'pending' | 'synced' = !online ? 'offline' : pendingResultsCount > 0 ? 'pending' : 'synced';
 
   return (
-    <SessionContext.Provider value={{ lang, setLang, session, setSession, student, setStudent, testedStudents, addTestedStudent, clearTestedStudents, online }}>
+    <SessionContext.Provider
+      value={{
+        lang,
+        setLang,
+        session,
+        setSession,
+        student,
+        setStudent,
+        testedStudents,
+        addTestedStudent,
+        clearTestedStudents,
+        online,
+        pendingResultsCount,
+        syncState,
+      }}
+    >
       {children}
     </SessionContext.Provider>
   );

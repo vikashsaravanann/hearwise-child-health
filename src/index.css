@@ -66,6 +66,17 @@
   100% { transform: scale(1.8); opacity: 0; }
 }
 
+@keyframes blue-glow {
+  0%, 100% { opacity: 0.2; transform: scale(0.98); }
+  50% { opacity: 0.42; transform: scale(1.04); }
+}
+
+@keyframes star-burst {
+  0% { transform: translateY(0) scale(0.7); opacity: 0; }
+  25% { opacity: 1; }
+  100% { transform: translateY(-24px) scale(1.05); opacity: 0; }
+}
+
 .animate-sound-wave {
   animation: sound-wave 1.2s ease-in-out infinite;
 }
@@ -76,4 +87,34 @@
 
 .animate-pulse-ring {
   animation: pulse-ring 1.5s ease-out infinite;
+}
+
+.animate-blue-glow {
+  animation: blue-glow 1.4s ease-in-out infinite;
+}
+
+.animate-star-burst {
+  animation: star-burst 600ms ease-out forwards;
+}
+
+.animate-star-burst-delay-1 {
+  animation: star-burst 650ms ease-out 60ms forwards;
+  opacity: 0;
+}
+
+.animate-star-burst-delay-2 {
+  animation: star-burst 650ms ease-out 120ms forwards;
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-sound-wave,
+  .animate-float-up,
+  .animate-pulse-ring,
+  .animate-blue-glow,
+  .animate-star-burst,
+  .animate-star-burst-delay-1,
+  .animate-star-burst-delay-2 {
+    animation: none !important;
+  }
 }

@@ -13,6 +13,7 @@ export default function ActiveTestPage() {
   const [waitingForResponse, setWaitingForResponse] = useState(false);
   const [tapped, setTapped] = useState(false);
   const [showBalloon, setShowBalloon] = useState(false);
+  const [showStars, setShowStars] = useState(false);
   const resultsRef = useRef<TestStepResult[]>([]);
   const toneStartRef = useRef<number>(0);
   const respondedRef = useRef(false);
@@ -29,8 +30,13 @@ export default function ActiveTestPage() {
 
     setTapped(true);
     if (currentStep.frequency !== 0) {
+      if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+        navigator.vibrate(20);
+      }
       setShowBalloon(true);
+      setShowStars(true);
       setTimeout(() => setShowBalloon(false), 1500);
+      setTimeout(() => setShowStars(false), 650);
     }
     setTimeout(() => setTapped(false), 300);
   }, [waitingForResponse, currentStep]);
@@ -61,12 +67,13 @@ export default function ActiveTestPage() {
       const results = computeResults(resultsRef.current);
       addTestedStudent({ student, results, timestamp: new Date().toISOString() });
 
-      // Save to database
+      // Always queue results locally first; sync happens in background.
       try {
-        if (session?.sessionId && student?.studentId) {
-          const resultId = await saveTestResult(session.sessionId, student.studentId, results);
-          if (results.overall === 'refer' || results.overall === 'mild') {
-            await createReferral(student.studentId, resultId);
+        if (session?.sessionLocalId && student?.studentLocalId) {
+          const resultId = await saveTestResult(session.sessionLocalId, student.studentLocalId, results);
+          const isOfflineQueued = resultId.startsWith('local_result_');
+          if (!isOfflineQueued && (results.overall === 'refer' || results.overall === 'mild')) {
+            await createReferral(student.studentId || student.studentLocalId, resultId);
           }
         }
       } catch (e) {
@@ -82,12 +89,12 @@ export default function ActiveTestPage() {
   useEffect(() => {
     const timeout = setTimeout(() => runStep(), 500);
     return () => clearTimeout(timeout);
-  }, [stepIndex]);
+  }, [runStep]);
 
   const currentEar = currentStep?.ear;
 
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center px-6" onClick={handleTap}>
+    <div className="relative flex min-h-screen flex-col items-center justify-center px-6 py-6">
       {/* Ear indicator */}
       <div className="absolute top-8 flex items-center gap-4">
         <div className={`flex flex-col items-center rounded-xl px-4 py-2 ${currentEar === 'left' ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}>
@@ -106,12 +113,25 @@ export default function ActiveTestPage() {
       </div>
 
       {/* Tap zone */}
-      <div className="relative flex items-center justify-center">
-        {isPlaying && <div className="absolute h-44 w-44 rounded-full bg-primary/20 animate-pulse-ring" />}
-        <div className={`flex h-40 w-40 items-center justify-center rounded-full transition-all duration-150 ${tapped ? 'scale-110 bg-primary/40' : isPlaying ? 'bg-primary/20' : 'bg-muted'}`}>
+      <button
+        type="button"
+        aria-label={t('tapWhenHear', lang)}
+        className="relative flex items-center justify-center rounded-full"
+        onClick={handleTap}
+      >
+        {isPlaying && <div className="absolute h-56 w-56 rounded-full bg-blue-500/20 animate-blue-glow" />}
+        {isPlaying && <div className="absolute h-56 w-56 rounded-full bg-blue-500/20 animate-pulse-ring" />}
+        <div className={`flex h-[200px] w-[200px] items-center justify-center rounded-full transition-all duration-150 ${tapped ? 'scale-105 bg-primary/40' : isPlaying ? 'bg-primary/20' : 'bg-muted'}`}>
           <div className={`h-24 w-24 rounded-full bg-primary transition-transform ${tapped ? 'scale-110' : ''}`} />
         </div>
-      </div>
+        {showStars && (
+          <>
+            <span className="pointer-events-none absolute -top-3 left-1/2 -translate-x-1/2 text-lg text-yellow-400 animate-star-burst">✦</span>
+            <span className="pointer-events-none absolute left-7 top-5 text-sm text-yellow-500 animate-star-burst-delay-1">✦</span>
+            <span className="pointer-events-none absolute right-7 top-5 text-sm text-yellow-500 animate-star-burst-delay-2">✦</span>
+          </>
+        )}
+      </button>
 
       <p className="mt-8 text-lg font-medium text-foreground">{t('tapWhenHear', lang)}</p>
 

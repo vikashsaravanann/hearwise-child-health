@@ -1,63 +1,91 @@
 import { supabase } from '@/integrations/supabase/client';
-import { addToQueue, isOnline, getQueue, clearQueue } from './offlineSync';
+import {
+  createLocalSchool,
+  createLocalSession,
+  createLocalStudent,
+  createLocalTeacher,
+  enqueuePendingResult,
+  getLocalSchool,
+  getLocalSession,
+  getLocalStudent,
+  getLocalTeacher,
+  getPendingResults,
+  getServerId,
+  isOnline,
+  setPendingResults,
+  setServerId,
+} from './offlineSync';
 import type { TestResult } from './testEngine';
 
+interface DateRangeResultRow {
+  test_sessions?: {
+    schools?: {
+      district?: string;
+    };
+  };
+}
+
+interface ExportResultRow {
+  students?: {
+    name?: string;
+    age?: number;
+    gender?: string;
+    roll_number?: string;
+  };
+  test_sessions?: {
+    session_date?: string;
+    schools?: { name?: string; district?: string };
+    teachers?: { name?: string };
+  };
+  left_ear_500hz: boolean;
+  left_ear_1000hz: boolean;
+  left_ear_2000hz: boolean;
+  left_ear_4000hz: boolean;
+  right_ear_500hz: boolean;
+  right_ear_1000hz: boolean;
+  right_ear_2000hz: boolean;
+  right_ear_4000hz: boolean;
+  false_positive_count: number;
+  overall_result: string;
+}
+
 export async function getOrCreateSchool(name: string, district: string): Promise<string> {
-  // Check if school exists
-  const { data: existing } = await supabase
-    .from('schools')
-    .select('id')
-    .eq('name', name)
-    .eq('district', district)
-    .limit(1)
-    .single();
+  const localId = createLocalSchool(name, district);
+  if (!isOnline()) return localId;
 
-  if (existing) return existing.id;
+  try {
+    await ensureSchoolSynced(localId);
+  } catch (error) {
+    console.error('School sync failed:', error);
+  }
 
-  const { data, error } = await supabase
-    .from('schools')
-    .insert({ name, district })
-    .select('id')
-    .single();
-
-  if (error) throw error;
-  return data!.id;
+  return localId;
 }
 
 export async function getOrCreateTeacher(name: string, schoolId: string): Promise<string> {
-  const { data: existing } = await supabase
-    .from('teachers')
-    .select('id')
-    .eq('name', name)
-    .eq('school_id', schoolId)
-    .limit(1)
-    .single();
+  const localId = createLocalTeacher(name, schoolId);
+  if (!isOnline()) return localId;
 
-  if (existing) return existing.id;
+  try {
+    await ensureTeacherSynced(localId);
+  } catch (error) {
+    console.error('Teacher sync failed:', error);
+  }
 
-  const { data, error } = await supabase
-    .from('teachers')
-    .insert({ name, school_id: schoolId })
-    .select('id')
-    .single();
-
-  if (error) throw error;
-  return data!.id;
+  return localId;
 }
 
 export async function createSession(teacherId: string, schoolId: string): Promise<string> {
-  const { data, error } = await supabase
-    .from('test_sessions')
-    .insert({
-      teacher_id: teacherId,
-      school_id: schoolId,
-      device_info: navigator.userAgent,
-    })
-    .select('id')
-    .single();
+  const localId = createLocalSession(teacherId, schoolId);
+  if (!isOnline()) return localId;
 
-  if (error) throw error;
-  return data!.id;
+  try {
+    await ensureSessionSynced(localId);
+  } catch (error) {
+    console.error('Session sync failed:', error);
+  }
+
+  return localId;
 }
 
 export async function createStudent(
@@ -67,20 +95,16 @@ export async function createStudent(
   schoolId: string,
   rollNumber?: string
 ): Promise<string> {
-  const { data, error } = await supabase
-    .from('students')
-    .insert({
-      name,
-      age,
-      gender,
-      school_id: schoolId,
-      roll_number: rollNumber || null,
-    })
-    .select('id')
-    .single();
+  const localId = createLocalStudent(name, age, gender, schoolId, rollNumber);
+  if (!isOnline()) return localId;
 
-  if (error) throw error;
-  return data!.id;
+  try {
+    await ensureStudentSynced(localId);
+  } catch (error) {
+    console.error('Student sync failed:', error);
+  }
+
+  return localId;
 }
 
 export async function saveTestResult(
@@ -88,11 +112,12 @@ export async function saveTestResult(
   studentId: string,
   results: TestResult
 ): Promise<string> {
-  const { data, error } = await supabase
-    .from('test_results')
-    .insert({
-      session_id: sessionId,
-      student_id: studentId,
+  const queueItemLocalId = `local_result_${createResultIdSuffix()}`;
+  const queuePayload = {
+    localId: queueItemLocalId,
+    sessionLocalId: sessionId,
+    studentLocalId: studentId,
+    result: {
       left_ear_500hz: results.left['500'],
       left_ear_1000hz: results.left['1000'],
       left_ear_2000hz: results.left['2000'],
@@ -103,23 +128,37 @@ export async function saveTestResult(
       right_ear_4000hz: results.right['4000'],
       false_positive_count: results.left.falsePositives + results.right.falsePositives,
       overall_result: results.overall,
-    })
-    .select('id')
-    .single();
+    },
+    timestamp: Date.now(),
+  };
 
-  if (error) throw error;
-  return data!.id;
+  enqueuePendingResult(queuePayload);
+  if (!isOnline()) return queueItemLocalId;
+
+  const { serverResultId } = await syncPendingResultByLocalId(queueItemLocalId);
+  return serverResultId || queueItemLocalId;
 }
 
 export async function createReferral(studentId: string, resultId: string) {
+  const resolvedStudentId = studentId.startsWith('local_student_')
+    ? await ensureStudentSynced(studentId)
+    : studentId;
+
   const { error } = await supabase
     .from('referrals')
     .insert({
-      student_id: studentId,
+      student_id: resolvedStudentId,
       result_id: resultId,
     });
 
   if (error) throw error;
+}
+
+function createResultIdSuffix() {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID();
+  }
+  return `${Date.now()}-${Math.random().toString(16).slice(2, 10)}`;
 }
 
 // Dashboard queries
@@ -189,7 +228,7 @@ export async function getResultsByDateRange(from?: string, to?: string, district
 
   // Filter by district client-side since nested filtering is limited
   if (district && data) {
-    return data.filter((r: any) => r.test_sessions?.schools?.district === district);
+    return (data as DateRangeResultRow[]).filter((r) => r.test_sessions?.schools?.district === district);
   }
   return data || [];
 }
@@ -243,7 +282,7 @@ export async function exportCSV() {
     'False Positives', 'Overall Result'
   ];
 
-  const rows = data.map((r: any) => [
+  const rows = (data as ExportResultRow[]).map((r) => [
     r.students?.name, r.students?.age, r.students?.gender, r.students?.roll_number || '',
     r.test_sessions?.schools?.name, r.test_sessions?.schools?.district, r.test_sessions?.teachers?.name,
     r.test_sessions?.session_date,
@@ -258,18 +297,215 @@ export async function exportCSV() {
 }
 
 // Offline sync
-export async function syncOfflineQueue() {
-  const queue = getQueue();
-  if (queue.length === 0 || !isOnline()) return;
+export async function syncPendingResults(): Promise<{ synced: number }> {
+  const queue = getPendingResults();
+  if (queue.length === 0 || !isOnline()) return { synced: 0 };
 
-  for (const item of queue) {
+  let synced = 0;
+  const updatedQueue = [...queue];
+
+  for (let i = 0; i < updatedQueue.length; i += 1) {
+    const item = updatedQueue[i];
+    if (item.synced) continue;
+
     try {
-      const { error } = await supabase.from(item.table as any).insert(item.data as any);
-      if (error) console.error('Sync error:', error);
-    } catch (e) {
-      console.error('Sync failed:', e);
-      return; // Stop on failure, will retry later
+      const { synced: itemSynced } = await syncOnePendingResult(item);
+      if (itemSynced) synced += 1;
+    } catch (error) {
+      console.error('Result sync failed:', error);
     }
   }
-  clearQueue();
+
+  setPendingResults(updatedQueue);
+  return { synced };
+}
+
+async function syncPendingResultByLocalId(localResultId: string): Promise<{ serverResultId?: string }> {
+  const queue = getPendingResults();
+  const updatedQueue = [...queue];
+  const index = updatedQueue.findIndex((item) => item.localId === localResultId);
+  if (index === -1) return {};
+
+  const item = updatedQueue[index];
+  if (item.synced) return {};
+
+  const result = await syncOnePendingResult(item);
+  setPendingResults(updatedQueue);
+  return { serverResultId: result.serverResultId };
+}
+
+async function syncOnePendingResult(item: { synced: boolean; sessionLocalId: string; studentLocalId: string; result: Record<string, unknown> }) {
+  const sessionServerId = await ensureSessionSynced(item.sessionLocalId);
+  const studentServerId = await ensureStudentSynced(item.studentLocalId);
+
+  const { data, error } = await supabase
+    .from('test_results')
+    .insert({
+      session_id: sessionServerId,
+      student_id: studentServerId,
+      ...(item.result as Record<string, unknown>),
+    })
+    .select('id')
+    .single();
+
+  if (error) {
+    console.error('Result sync error:', error);
+    return { synced: false as const };
+  }
+
+  item.synced = true;
+  return { synced: true as const, serverResultId: data.id };
+}
+
+async function ensureSchoolSynced(localSchoolId: string): Promise<string> {
+  const existing = getServerId('schools', localSchoolId);
+  if (existing) return existing;
+
+  const localSchool = getLocalSchool(localSchoolId);
+  if (!localSchool) throw new Error(`Missing local school: ${localSchoolId}`);
+
+  const { data: found } = await supabase
+    .from('schools')
+    .select('id')
+    .eq('name', localSchool.name)
+    .eq('district', localSchool.district)
+    .limit(1)
+    .maybeSingle();
+
+  if (found?.id) {
+    setServerId('schools', localSchoolId, found.id);
+    return found.id;
+  }
+
+  const { data, error } = await supabase
+    .from('schools')
+    .insert({
+      name: localSchool.name,
+      district: localSchool.district,
+    })
+    .select('id')
+    .single();
+
+  if (error) throw error;
+  setServerId('schools', localSchoolId, data.id);
+  return data.id;
+}
+
+async function ensureTeacherSynced(localTeacherId: string): Promise<string> {
+  const existing = getServerId('teachers', localTeacherId);
+  if (existing) return existing;
+
+  const localTeacher = getLocalTeacher(localTeacherId);
+  if (!localTeacher) throw new Error(`Missing local teacher: ${localTeacherId}`);
+
+  const schoolServerId = await ensureSchoolSynced(localTeacher.schoolLocalId);
+
+  const { data: found } = await supabase
+    .from('teachers')
+    .select('id')
+    .eq('name', localTeacher.name)
+    .eq('school_id', schoolServerId)
+    .limit(1)
+    .maybeSingle();
+
+  if (found?.id) {
+    setServerId('teachers', localTeacherId, found.id);
+    return found.id;
+  }
+
+  const { data, error } = await supabase
+    .from('teachers')
+    .insert({
+      name: localTeacher.name,
+      school_id: schoolServerId,
+    })
+    .select('id')
+    .single();
+
+  if (error) throw error;
+  setServerId('teachers', localTeacherId, data.id);
+  return data.id;
+}
+
+async function ensureSessionSynced(localSessionId: string): Promise<string> {
+  const existing = getServerId('sessions', localSessionId);
+  if (existing) return existing;
+
+  const localSession = getLocalSession(localSessionId);
+  if (!localSession) throw new Error(`Missing local session: ${localSessionId}`);
+
+  const schoolServerId = await ensureSchoolSynced(localSession.schoolLocalId);
+  const teacherServerId = await ensureTeacherSynced(localSession.teacherLocalId);
+  const taggedDeviceInfo = `${localSession.deviceInfo} | local:${localSession.localId}`;
+
+  const { data: found } = await supabase
+    .from('test_sessions')
+    .select('id')
+    .eq('teacher_id', teacherServerId)
+    .eq('school_id', schoolServerId)
+    .eq('device_info', taggedDeviceInfo)
+    .limit(1)
+    .maybeSingle();
+
+  if (found?.id) {
+    setServerId('sessions', localSessionId, found.id);
+    return found.id;
+  }
+
+  const { data, error } = await supabase
+    .from('test_sessions')
+    .insert({
+      teacher_id: teacherServerId,
+      school_id: schoolServerId,
+      device_info: taggedDeviceInfo,
+    })
+    .select('id')
+    .single();
+
+  if (error) throw error;
+  setServerId('sessions', localSessionId, data.id);
+  return data.id;
+}
+
+async function ensureStudentSynced(localStudentId: string): Promise<string> {
+  const existing = getServerId('students', localStudentId);
+  if (existing) return existing;
+
+  const localStudent = getLocalStudent(localStudentId);
+  if (!localStudent) throw new Error(`Missing local student: ${localStudentId}`);
+  const schoolServerId = await ensureSchoolSynced(localStudent.schoolLocalId);
+
+  let query = supabase
+    .from('students')
+    .select('id')
+    .eq('name', localStudent.name)
+    .eq('age', localStudent.age)
+    .eq('gender', localStudent.gender)
+    .eq('school_id', schoolServerId);
+
+  if (localStudent.rollNumber) {
+    query = query.eq('roll_number', localStudent.rollNumber);
+  }
+
+  const { data: found } = await query.limit(1).maybeSingle();
+  if (found?.id) {
+    setServerId('students', localStudentId, found.id);
+    return found.id;
+  }
+
+  const { data, error } = await supabase
+    .from('students')
+    .insert({
+      name: localStudent.name,
+      age: localStudent.age,
+      gender: localStudent.gender,
+      school_id: schoolServerId,
+      roll_number: localStudent.rollNumber || null,
+    })
+    .select('id')
+    .single();
+
+  if (error) throw error;
+  setServerId('students', localStudentId, data.id);
+  return data.id;
 }
