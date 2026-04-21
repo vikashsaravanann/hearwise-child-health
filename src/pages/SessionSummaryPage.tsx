@@ -1,11 +1,14 @@
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSession } from '@/contexts/SessionContext';
 import { t } from '@/lib/i18n';
+import LanguageToggle from '@/components/LanguageToggle';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Users, CheckCircle, AlertTriangle, AlertOctagon } from 'lucide-react';
 import jsPDF from 'jspdf';
 import autoTable, { type RowInput } from 'jspdf-autotable';
+import { addObservabilityBreadcrumb, captureEvent, clearObservabilityContext } from '@/lib/observability';
 
 export default function SessionSummaryPage() {
   const navigate = useNavigate();
@@ -17,9 +20,28 @@ export default function SessionSummaryPage() {
   const refer = testedStudents.filter(s => s.results.overall === 'refer').length;
 
   const handleEndSession = () => {
+    captureEvent('session_ended', {
+      total_tested: total,
+      normal_count: normal,
+      mild_count: mild,
+      refer_count: refer,
+      pending_results_count: pendingResultsCount,
+    });
+    addObservabilityBreadcrumb('Session ended', 'session.lifecycle', { total_tested: total });
+    clearObservabilityContext();
     clearTestedStudents();
     navigate('/');
   };
+
+  useEffect(() => {
+    if (!session?.sessionLocalId) {
+      navigate('/setup');
+      return;
+    }
+    if (testedStudents.length === 0) {
+      navigate('/student-entry');
+    }
+  }, [session?.sessionLocalId, testedStudents.length, navigate]);
 
   const handleDownloadPDF = () => {
     const doc = new jsPDF();
@@ -33,17 +55,17 @@ export default function SessionSummaryPage() {
 
     doc.setFontSize(11);
     doc.setTextColor(70, 70, 70);
-    doc.text(`School: ${schoolName}`, 14, 28);
-    doc.text(`Teacher: ${teacherName}`, 14, 34);
-    doc.text(`Date: ${reportDate}`, 14, 40);
+    doc.text(`${t('school', lang)}: ${schoolName}`, 14, 28);
+    doc.text(`${t('teacher', lang)}: ${teacherName}`, 14, 34);
+    doc.text(`${t('date', lang)}: ${reportDate}`, 14, 40);
 
     const tableRows: RowInput[] = testedStudents.map((entry) => {
       const resultLabel =
         entry.results.overall === 'normal'
-          ? 'Normal'
+          ? t('normal', lang)
           : entry.results.overall === 'mild'
-            ? 'Mild Concern'
-            : 'Refer to Doctor';
+            ? t('mildConcernLabel', lang)
+            : t('referToDoctor', lang);
 
       return [
         entry.student?.name ?? t('unknownStudent', lang),
@@ -53,7 +75,7 @@ export default function SessionSummaryPage() {
 
     const tableResult = autoTable(doc, {
       startY: 48,
-      head: [['Student Name', 'Result']],
+      head: [[t('studentName', lang), t('result', lang)]],
       body: tableRows,
       styles: { fontSize: 10, cellPadding: 3 },
       headStyles: { fillColor: [40, 111, 255], textColor: 255 },
@@ -61,11 +83,11 @@ export default function SessionSummaryPage() {
         if (data.section !== 'body') return;
         const row = data.row.raw as string[];
         const resultText = row[1];
-        if (resultText === 'Normal') {
+        if (resultText === t('normal', lang)) {
           data.cell.styles.fillColor = [232, 245, 233];
-        } else if (resultText === 'Mild Concern') {
+        } else if (resultText === t('mildConcernLabel', lang)) {
           data.cell.styles.fillColor = [255, 249, 196];
-        } else if (resultText === 'Refer to Doctor') {
+        } else if (resultText === t('referToDoctor', lang)) {
           data.cell.styles.fillColor = [255, 235, 238];
         }
       },
@@ -74,24 +96,33 @@ export default function SessionSummaryPage() {
     const totalStartY = tableResult.finalY + 12;
     doc.setFontSize(11);
     doc.setTextColor(20, 20, 20);
-    doc.text(`Total Tested: ${total}`, 14, totalStartY);
-    doc.text(`Normal: ${normal}`, 14, totalStartY + 7);
-    doc.text(`Mild Concern: ${mild}`, 14, totalStartY + 14);
-    doc.text(`Refer to Doctor: ${refer}`, 14, totalStartY + 21);
+    doc.text(`${t('totalTestedLabel', lang)}: ${total}`, 14, totalStartY);
+    doc.text(`${t('normal', lang)}: ${normal}`, 14, totalStartY + 7);
+    doc.text(`${t('mildConcernLabel', lang)}: ${mild}`, 14, totalStartY + 14);
+    doc.text(`${t('referToDoctor', lang)}: ${refer}`, 14, totalStartY + 21);
 
     doc.setFontSize(10);
     doc.setTextColor(90, 90, 90);
-    doc.text('HearWise Technologies — Smart Hearing Care for Every Child', 14, 285);
+    doc.text(t('poweredByHearWise', lang), 14, 285);
 
     doc.save(`hearwise-session-summary-${new Date().toISOString().slice(0, 10)}.pdf`);
+    captureEvent('session_summary_exported', {
+      total_tested: total,
+      normal_count: normal,
+      mild_count: mild,
+      refer_count: refer,
+    });
   };
 
   return (
     <div className="flex min-h-screen flex-col px-6 py-8">
-      <h2 className="text-xl font-bold text-foreground">{t('sessionSummary', lang)}</h2>
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-bold text-foreground">{t('sessionSummary', lang)}</h2>
+        <LanguageToggle />
+      </div>
       <p className="mt-1 text-sm text-muted-foreground">{session?.schoolName} • {t('grade', lang)} {session?.classGrade}</p>
       <p className="mt-2 text-sm font-medium text-muted-foreground">
-        {pendingResultsCount > 0 ? `${pendingResultsCount} results pending sync` : 'All results saved'}
+        {pendingResultsCount > 0 ? `${pendingResultsCount} ${t('pendingSync', lang)}` : t('allResultsSaved', lang)}
       </p>
 
       <div className="mt-8 grid grid-cols-2 gap-4">
@@ -146,7 +177,7 @@ export default function SessionSummaryPage() {
           {t('saveTestNext', lang)}
         </Button>
         <Button variant="outline" className="h-14 rounded-2xl text-base" onClick={handleDownloadPDF}>
-          Download PDF Report
+          {t('exportPDF', lang)}
         </Button>
         <Button className="h-14 rounded-2xl text-base font-semibold" onClick={handleEndSession}>
           {t('endSession', lang)}
