@@ -51,6 +51,20 @@
   }
 }
 
+@layer components {
+  .page-shell {
+    @apply relative min-h-screen bg-gradient-to-b from-background via-background to-muted/40 px-4 py-6 sm:px-6 sm:py-8;
+  }
+
+  .glass-panel {
+    @apply rounded-3xl border border-border/70 bg-card/90 shadow-xl backdrop-blur-sm;
+  }
+
+  .soft-panel {
+    @apply rounded-2xl border border-border/60 bg-muted/40;
+  }
+}
+
 @keyframes sound-wave {
   0%, 100% { transform: scaleY(0.3); }
   50% { transform: scaleY(1); }

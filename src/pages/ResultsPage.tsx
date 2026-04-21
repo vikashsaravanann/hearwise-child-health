@@ -46,38 +46,40 @@ export default function ResultsPage() {
   };
 
   return (
-    <div className="relative flex min-h-screen flex-col items-center px-6 py-8">
-      <div className="absolute right-4 top-4">
+    <div className="page-shell relative flex flex-col items-center">
+      <div className="absolute right-4 top-4 z-10">
         <LanguageToggle />
       </div>
-      <div className={`flex w-full max-w-sm flex-col items-center rounded-2xl border-2 p-6 ${bgColor}`}>
+      <div className={`glass-panel flex w-full max-w-3xl flex-col items-center border-2 p-6 ${bgColor}`}>
         <OwlIcon mood={owlMood} size={80} />
         <p className="mt-4 text-center text-lg font-bold text-foreground">{message}</p>
       </div>
 
-      <div className="mt-6 w-full max-w-sm">
-        <h3 className="text-sm font-semibold text-foreground">{t('leftEar', lang)}</h3>
-        <div className="mt-2 flex flex-col gap-2">
-          {freqs.map(f => <FreqBar key={`l-${f}`} label={f} passed={results.left[f]} />)}
+      <div className="mt-6 grid w-full max-w-3xl gap-4 md:grid-cols-2">
+        <div className="soft-panel p-4">
+          <h3 className="text-sm font-semibold text-foreground">{t('leftEar', lang)}</h3>
+          <div className="mt-2 flex flex-col gap-2">
+            {freqs.map(f => <FreqBar key={`l-${f}`} label={f} passed={results.left[f]} />)}
+          </div>
+        </div>
+        <div className="soft-panel p-4">
+          <h3 className="text-sm font-semibold text-foreground">{t('rightEar', lang)}</h3>
+          <div className="mt-2 flex flex-col gap-2">
+            {freqs.map(f => <FreqBar key={`r-${f}`} label={f} passed={results.right[f]} />)}
+          </div>
         </div>
       </div>
 
-      <div className="mt-6 w-full max-w-sm">
-        <h3 className="text-sm font-semibold text-foreground">{t('rightEar', lang)}</h3>
-        <div className="mt-2 flex flex-col gap-2">
-          {freqs.map(f => <FreqBar key={`r-${f}`} label={f} passed={results.right[f]} />)}
-        </div>
-      </div>
-      <div className="mt-6 w-full max-w-sm rounded-xl border bg-card p-4">
+      <div className="mt-4 w-full max-w-3xl rounded-2xl border border-border/70 bg-card/90 p-4 shadow-sm">
         <h4 className="text-sm font-semibold text-foreground">{t('parentGuidance', lang)}</h4>
         <p className="mt-2 text-sm text-muted-foreground">{parentSummary}</p>
       </div>
 
-      <div className="mt-auto flex w-full max-w-sm flex-col gap-3 pt-8">
-        <Button className="h-14 rounded-2xl text-base font-semibold" onClick={() => navigate('/student-entry')}>
+      <div className="mt-auto flex w-full max-w-3xl flex-col gap-3 pt-8">
+        <Button className="h-14 rounded-2xl text-base font-semibold shadow-lg shadow-primary/20" onClick={() => navigate('/student-entry')}>
           {t('nextStudent', lang)}
         </Button>
-        <Button variant="outline" className="h-14 gap-2 rounded-2xl text-base" onClick={shareWhatsApp}>
+        <Button variant="outline" className="h-14 gap-2 rounded-2xl bg-background/70 text-base" onClick={shareWhatsApp}>
           <Share2 size={18} />
           {t('shareWhatsApp', lang)}
         </Button>

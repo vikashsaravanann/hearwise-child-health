@@ -95,7 +95,7 @@ export default function ActiveTestPage() {
     } else {
       setStepIndex(nextIdx);
     }
-  }, [stepIndex, totalSteps, sequence, student, session, addTestedStudent, navigate]);
+  }, [stepIndex, totalSteps, sequence, student, session, addTestedStudent, navigate, lang, readiness]);
 
   useEffect(() => {
     if (!isReadinessComplete(readiness)) {
@@ -111,49 +111,53 @@ export default function ActiveTestPage() {
   const currentEar = currentStep?.ear;
 
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center px-6 py-6">
-      <div className="absolute right-4 top-4">
+    <div className="page-shell relative flex flex-col items-center justify-center">
+      <div className="absolute right-4 top-4 z-10">
         <LanguageToggle />
       </div>
       {/* Ear indicator */}
-      <div className="absolute top-14 flex items-center gap-4">
-        <div className={`flex flex-col items-center rounded-xl px-4 py-2 ${currentEar === 'left' ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}>
+      <div className="absolute top-16 flex items-center gap-4">
+        <div className={`flex flex-col items-center rounded-xl px-4 py-2 shadow-sm ${currentEar === 'left' ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}>
           <span className="text-xs font-medium">{t('leftEar', lang)}</span>
         </div>
-        <div className={`flex flex-col items-center rounded-xl px-4 py-2 ${currentEar === 'right' ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}>
+        <div className={`flex flex-col items-center rounded-xl px-4 py-2 shadow-sm ${currentEar === 'right' ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}>
           <span className="text-xs font-medium">{t('rightEar', lang)}</span>
         </div>
       </div>
 
       {/* Progress dots */}
-      <div className="absolute top-28 flex flex-wrap justify-center gap-1 px-4">
+      <div className="absolute top-32 flex max-w-xl flex-wrap justify-center gap-1 px-4">
         {Array.from({ length: Math.min(totalSteps, 40) }).map((_, i) => (
           <div key={i} className={`h-2 w-2 rounded-full transition-colors ${i <= stepIndex ? 'bg-primary' : 'bg-muted'}`} />
         ))}
       </div>
 
       {/* Tap zone */}
-      <button
-        type="button"
-        aria-label={t('tapWhenHear', lang)}
-        className="relative flex items-center justify-center rounded-full"
-        onClick={handleTap}
-      >
-        {isPlaying && <div className="absolute h-56 w-56 rounded-full bg-blue-500/20 animate-blue-glow" />}
-        {isPlaying && <div className="absolute h-56 w-56 rounded-full bg-blue-500/20 animate-pulse-ring" />}
-        <div className={`flex h-[200px] w-[200px] items-center justify-center rounded-full transition-all duration-150 ${tapped ? 'scale-105 bg-primary/40' : isPlaying ? 'bg-primary/20' : 'bg-muted'}`}>
-          <div className={`h-24 w-24 rounded-full bg-primary transition-transform ${tapped ? 'scale-110' : ''}`} />
+      <div className="glass-panel w-full max-w-3xl p-6 sm:p-8">
+        <div className="flex flex-col items-center">
+          <button
+            type="button"
+            aria-label={t('tapWhenHear', lang)}
+            className="relative flex items-center justify-center rounded-full"
+            onClick={handleTap}
+          >
+            {isPlaying && <div className="absolute h-56 w-56 rounded-full bg-blue-500/20 animate-blue-glow" />}
+            {isPlaying && <div className="absolute h-56 w-56 rounded-full bg-blue-500/20 animate-pulse-ring" />}
+            <div className={`flex h-[210px] w-[210px] items-center justify-center rounded-full border border-primary/20 transition-all duration-150 ${tapped ? 'scale-105 bg-primary/40' : isPlaying ? 'bg-primary/20' : 'bg-muted'}`}>
+              <div className={`h-24 w-24 rounded-full bg-primary transition-transform ${tapped ? 'scale-110' : ''}`} />
+            </div>
+            {showStars && (
+              <>
+                <span className="pointer-events-none absolute -top-3 left-1/2 -translate-x-1/2 text-lg text-yellow-400 animate-star-burst">✦</span>
+                <span className="pointer-events-none absolute left-7 top-5 text-sm text-yellow-500 animate-star-burst-delay-1">✦</span>
+                <span className="pointer-events-none absolute right-7 top-5 text-sm text-yellow-500 animate-star-burst-delay-2">✦</span>
+              </>
+            )}
+          </button>
+          <p className="mt-6 text-lg font-semibold text-foreground">{t('tapWhenHear', lang)}</p>
+          <p className="mt-1 text-sm text-muted-foreground">{waitingForResponse ? 'Listening window active' : 'Wait for next tone'}</p>
         </div>
-        {showStars && (
-          <>
-            <span className="pointer-events-none absolute -top-3 left-1/2 -translate-x-1/2 text-lg text-yellow-400 animate-star-burst">✦</span>
-            <span className="pointer-events-none absolute left-7 top-5 text-sm text-yellow-500 animate-star-burst-delay-1">✦</span>
-            <span className="pointer-events-none absolute right-7 top-5 text-sm text-yellow-500 animate-star-burst-delay-2">✦</span>
-          </>
-        )}
-      </button>
-
-      <p className="mt-8 text-lg font-medium text-foreground">{t('tapWhenHear', lang)}</p>
+      </div>
 
       {showBalloon && <div className="absolute bottom-1/3 text-4xl animate-float-up">🎈</div>}
     </div>
