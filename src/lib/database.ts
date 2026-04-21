@@ -17,6 +17,8 @@ import {
   setServerId,
 } from './offlineSync';
 import type { TestResult } from './testEngine';
+import { addObservabilityBreadcrumb, captureError, captureEvent } from './observability';
+import { getSyncHealthRuns, getSyncHealthSummary, recordSyncRun, type SyncSource } from './syncHealth';
 
 interface DateRangeResultRow {
   test_sessions?: {
@@ -325,11 +327,28 @@ export async function exportCSV() {
 }
 
 // Offline sync
-export async function syncPendingResults(): Promise<{ synced: number }> {
+export async function syncPendingResults(
+  source: SyncSource = 'manual'
+): Promise<{ synced: number }> {
   const queue = getPendingResults();
   if (queue.length === 0 || !isOnline()) return { synced: 0 };
 
+  const runStartedAt = Date.now();
+  const unsyncedItems = queue.filter((item) => !item.synced);
+  const eligibleItems = unsyncedItems.filter((item) => isItemEligibleForRetry(item));
+  captureEvent('sync_attempted', {
+    source,
+    queue_depth: unsyncedItems.length,
+    eligible_count: eligibleItems.length,
+  });
+  addObservabilityBreadcrumb('Sync pass started', 'sync.lifecycle', {
+    source,
+    queue_depth: unsyncedItems.length,
+    eligible_count: eligibleItems.length,
+  });
+
   let synced = 0;
+  let failed = 0;
   const updatedQueue = [...queue];
 
   for (let i = 0; i < updatedQueue.length; i += 1) {
@@ -342,6 +361,7 @@ export async function syncPendingResults(): Promise<{ synced: number }> {
       if (itemSynced) synced += 1;
     } catch (error) {
       console.error('Result sync failed:', error);
+      failed += 1;
       item.status = 'failed';
       item.lastError = error instanceof Error ? error.message : 'Unknown sync error';
       item.nextRetryAt = Date.now() + getRetryDelayMs((item.attempts || 0) + 1);
@@ -349,7 +369,137 @@ export async function syncPendingResults(): Promise<{ synced: number }> {
   }
 
   setPendingResults(updatedQueue);
+  recordSyncRun({
+    at: Date.now(),
+    source,
+    queueDepth: unsyncedItems.length,
+    eligibleCount: eligibleItems.length,
+    syncedCount: synced,
+    failedCount: failed,
+    durationMs: Date.now() - runStartedAt,
+  });
+  captureEvent('sync_completed', {
+    source,
+    queue_depth: unsyncedItems.length,
+    eligible_count: eligibleItems.length,
+    synced_count: synced,
+    failed_count: failed,
+    duration_ms: Date.now() - runStartedAt,
+  });
+  if (failed > 0) {
+    captureEvent('sync_failed', {
+      source,
+      failed_count: failed,
+      synced_count: synced,
+      duration_ms: Date.now() - runStartedAt,
+    });
+  }
+  addObservabilityBreadcrumb('Sync pass completed', 'sync.lifecycle', {
+    source,
+    synced_count: synced,
+    failed_count: failed,
+    duration_ms: Date.now() - runStartedAt,
+  });
   return { synced };
+}
+
+export async function retryFailedPendingResultsNow(): Promise<{ synced: number; retried: number }> {
+  const queue = getPendingResults();
+  let retried = 0;
+  const updatedQueue = queue.map((item) => {
+    if (item.synced || item.status !== 'failed') return item;
+    retried += 1;
+    return {
+      ...item,
+      status: 'queued' as const,
+      nextRetryAt: Date.now(),
+      lastError: undefined,
+    };
+  });
+  setPendingResults(updatedQueue);
+  const { synced } = await syncPendingResults('manual');
+  return { synced, retried };
+}
+
+export function clearStuckQueueItems(maxAgeDays = 7): { removed: number; remaining: number } {
+  const thresholdMs = maxAgeDays * 24 * 60 * 60 * 1000;
+  const now = Date.now();
+  const queue = getPendingResults();
+  const keep: PendingResultItem[] = [];
+  let removed = 0;
+
+  for (const item of queue) {
+    if (item.synced) {
+      keep.push(item);
+      continue;
+    }
+    const referenceTs = item.lastAttemptAt || item.timestamp || now;
+    const isStale = now - referenceTs >= thresholdMs;
+    const isStuck = item.status === 'failed' || item.status === 'syncing';
+    if (isStale && isStuck) {
+      removed += 1;
+      continue;
+    }
+    keep.push(item);
+  }
+
+  setPendingResults(keep);
+  captureEvent('sync_queue_cleared_stale', {
+    removed_count: removed,
+    remaining_count: keep.filter((item) => !item.synced).length,
+    max_age_days: maxAgeDays,
+  });
+  return { removed, remaining: keep.filter((item) => !item.synced).length };
+}
+
+export function getStuckQueueItemCount(maxAgeDays = 7): number {
+  const thresholdMs = maxAgeDays * 24 * 60 * 60 * 1000;
+  const now = Date.now();
+  const queue = getPendingResults();
+  let count = 0;
+
+  for (const item of queue) {
+    if (item.synced) continue;
+    const referenceTs = item.lastAttemptAt || item.timestamp || now;
+    const isStale = now - referenceTs >= thresholdMs;
+    const isStuck = item.status === 'failed' || item.status === 'syncing';
+    if (isStale && isStuck) count += 1;
+  }
+
+  return count;
+}
+
+export function exportSyncDiagnostics() {
+  const queue = getPendingResults();
+  const unsynced = queue.filter((item) => !item.synced);
+  const diagnostics = {
+    exportedAt: new Date().toISOString(),
+    online: isOnline(),
+    queue: {
+      total: queue.length,
+      unsynced: unsynced.length,
+      failed: unsynced.filter((item) => item.status === 'failed').length,
+      syncing: unsynced.filter((item) => item.status === 'syncing').length,
+      queued: unsynced.filter((item) => item.status === 'queued').length,
+      items: unsynced.map((item) => ({
+        localId: item.localId,
+        clientResultId: item.clientResultId,
+        sessionLocalId: item.sessionLocalId,
+        studentLocalId: item.studentLocalId,
+        status: item.status,
+        attempts: item.attempts || 0,
+        lastAttemptAt: item.lastAttemptAt || null,
+        nextRetryAt: item.nextRetryAt || null,
+        lastError: item.lastError || null,
+      })),
+    },
+    syncHealth: {
+      summary: getSyncHealthSummary(),
+      recentRuns: getSyncHealthRuns(100),
+    },
+  };
+
+  return JSON.stringify(diagnostics, null, 2);
 }
 
 async function syncPendingResultByLocalId(localResultId: string): Promise<{ serverResultId?: string }> {
@@ -366,6 +516,12 @@ async function syncPendingResultByLocalId(localResultId: string): Promise<{ serv
   try {
     result = await syncOnePendingResult(item);
   } catch (error) {
+    captureError(error, { stage: 'sync_pending_result_by_local_id', local_result_id: localResultId }, 'warning');
+    captureEvent('sync_failed', {
+      source: 'manual',
+      failed_count: 1,
+      local_result_id: localResultId,
+    });
     item.status = 'failed';
     item.lastError = error instanceof Error ? error.message : 'Unknown sync error';
     item.nextRetryAt = Date.now() + getRetryDelayMs((item.attempts || 0) + 1);

@@ -1,7 +1,18 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import { getDashboardStats, getRecentSessions, getMonthlyTrend, exportCSV } from '@/lib/database';
+import {
+  clearStuckQueueItems,
+  exportCSV,
+  exportSyncDiagnostics,
+  getStuckQueueItemCount,
+  getDashboardStats,
+  getRecentSessions,
+  getMonthlyTrend,
+  retryFailedPendingResultsNow,
+} from '@/lib/database';
+import { captureError } from '@/lib/observability';
+import { getSyncHealthSummary, type SyncHealthSummary } from '@/lib/syncHealth';
 import { TAMIL_NADU_DISTRICTS } from '@/lib/districts';
 import { useSession } from '@/contexts/SessionContext';
 import { t } from '@/lib/i18n';
@@ -10,7 +21,18 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { BarChart3, Users, School, AlertOctagon, LogIn, Download, Loader2, LogOut, ArrowLeft } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import { BarChart3, Users, School, AlertOctagon, LogIn, Download, Loader2, LogOut, ArrowLeft, RefreshCw, Trash2, FileDown } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
 interface Stats {
@@ -48,6 +70,10 @@ export default function DashboardPage() {
   const [dataLoading, setDataLoading] = useState(false);
   const [filterDistrict, setFilterDistrict] = useState('all');
   const [exporting, setExporting] = useState(false);
+  const [syncHealth, setSyncHealth] = useState<SyncHealthSummary>(() => getSyncHealthSummary());
+  const [syncActionLoading, setSyncActionLoading] = useState(false);
+  const [clearDialogOpen, setClearDialogOpen] = useState(false);
+  const [clearPreviewCount, setClearPreviewCount] = useState(0);
 
   // Check existing auth
   useEffect(() => {
@@ -71,6 +97,13 @@ export default function DashboardPage() {
 
     checkAuth();
     return () => subscription.unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    const refresh = () => setSyncHealth(getSyncHealthSummary());
+    refresh();
+    const interval = window.setInterval(refresh, 5000);
+    return () => window.clearInterval(interval);
   }, []);
 
   const loadData = async () => {
@@ -131,6 +164,62 @@ export default function DashboardPage() {
     }
   };
 
+  const handleSentryTest = () => {
+    try {
+      throw new Error('This is your first error!');
+    } catch (error) {
+      captureError(error, { source: 'dashboard_test_button' });
+      toast({ title: 'Sentry test event sent' });
+    }
+  };
+
+  const refreshSyncHealth = () => setSyncHealth(getSyncHealthSummary());
+
+  const handleRetryFailedNow = async () => {
+    setSyncActionLoading(true);
+    try {
+      const { synced, retried } = await retryFailedPendingResultsNow();
+      refreshSyncHealth();
+      toast({ title: `Retried ${retried} failed items, synced ${synced}` });
+    } catch (error) {
+      captureError(error, { stage: 'dashboard_retry_failed_now' }, 'warning');
+      toast({ title: 'Retry failed', variant: 'destructive' });
+    } finally {
+      setSyncActionLoading(false);
+    }
+  };
+
+  const handleClearStuckItems = () => {
+    setSyncActionLoading(true);
+    try {
+      const { removed, remaining } = clearStuckQueueItems(7);
+      refreshSyncHealth();
+      toast({ title: `Removed ${removed} stuck items`, description: `${remaining} unsynced items remain` });
+    } catch (error) {
+      captureError(error, { stage: 'dashboard_clear_stuck_items' }, 'warning');
+      toast({ title: 'Failed to clear stuck items', variant: 'destructive' });
+    } finally {
+      setSyncActionLoading(false);
+    }
+  };
+
+  const handleExportSyncDiagnostics = () => {
+    try {
+      const json = exportSyncDiagnostics();
+      const blob = new Blob([json], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `hearwise-sync-diagnostics-${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast({ title: 'Sync diagnostics exported' });
+    } catch (error) {
+      captureError(error, { stage: 'dashboard_export_sync_diagnostics' }, 'warning');
+      toast({ title: 'Diagnostics export failed', variant: 'destructive' });
+    }
+  };
+
   if (authLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
@@ -175,6 +264,20 @@ export default function DashboardPage() {
 
   // Simple bar chart via divs
   const maxTrendVal = Math.max(1, ...trend.map(t => t.normal + t.mild + t.refer));
+  const syncSuccessPct = Math.round(syncHealth.averageSuccessRate * 100);
+  const statusClasses =
+    syncHealth.status === 'critical'
+      ? 'border-destructive/40 bg-destructive/5'
+      : syncHealth.status === 'warning'
+        ? 'border-warning/40 bg-warning/5'
+        : 'border-success/40 bg-success/5';
+  const statusLabel =
+    syncHealth.status === 'critical'
+      ? 'Critical'
+      : syncHealth.status === 'warning'
+        ? 'Warning'
+        : 'Healthy';
+  const lastSyncText = syncHealth.lastRunAt ? new Date(syncHealth.lastRunAt).toLocaleTimeString() : '--';
 
   return (
     <div className="min-h-screen px-4 py-6 pb-20 sm:px-6">
@@ -220,6 +323,87 @@ export default function DashboardPage() {
               </CardContent>
             </Card>
           </div>
+
+          <Card className={`mt-6 rounded-2xl border ${statusClasses}`}>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm">Sync Health (this device)</CardTitle>
+            </CardHeader>
+            <CardContent className="grid grid-cols-2 gap-3 text-sm">
+              <div className="rounded-lg bg-background/70 p-3">
+                <p className="text-[11px] text-muted-foreground">Status</p>
+                <p className="font-semibold">{statusLabel}</p>
+              </div>
+              <div className="rounded-lg bg-background/70 p-3">
+                <p className="text-[11px] text-muted-foreground">Success Rate</p>
+                <p className="font-semibold">{syncSuccessPct}%</p>
+              </div>
+              <div className="rounded-lg bg-background/70 p-3">
+                <p className="text-[11px] text-muted-foreground">Failed Syncs</p>
+                <p className="font-semibold">{syncHealth.totalFailed}</p>
+              </div>
+              <div className="rounded-lg bg-background/70 p-3">
+                <p className="text-[11px] text-muted-foreground">Avg Duration</p>
+                <p className="font-semibold">{syncHealth.averageDurationMs} ms</p>
+              </div>
+              <div className="rounded-lg bg-background/70 p-3">
+                <p className="text-[11px] text-muted-foreground">Consecutive Fail Runs</p>
+                <p className="font-semibold">{syncHealth.consecutiveFailureRuns}</p>
+              </div>
+              <div className="rounded-lg bg-background/70 p-3">
+                <p className="text-[11px] text-muted-foreground">Last Sync</p>
+                <p className="font-semibold">{lastSyncText}</p>
+              </div>
+            </CardContent>
+            <CardContent className="pt-0">
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+                <Button variant="outline" className="h-10 rounded-xl text-xs" onClick={handleRetryFailedNow} disabled={syncActionLoading}>
+                  {syncActionLoading ? <Loader2 className="mr-1 h-3.5 w-3.5 animate-spin" /> : <RefreshCw className="mr-1 h-3.5 w-3.5" />}
+                  Retry failed now
+                </Button>
+                <AlertDialog open={clearDialogOpen} onOpenChange={setClearDialogOpen}>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="h-10 rounded-xl text-xs"
+                      disabled={syncActionLoading}
+                      onClick={() => setClearPreviewCount(getStuckQueueItemCount(7))}
+                    >
+                      <Trash2 className="mr-1 h-3.5 w-3.5" />
+                      Clear stuck (7d+)
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Clear stale sync items?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This will permanently remove failed or stuck unsynced results older than 7 days from this device queue.
+                        {clearPreviewCount > 0
+                          ? ` ${clearPreviewCount} item${clearPreviewCount === 1 ? '' : 's'} will be removed.`
+                          : ' No stale stuck items were found to remove.'}
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction
+                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                        disabled={clearPreviewCount === 0}
+                        onClick={() => {
+                          setClearDialogOpen(false);
+                          handleClearStuckItems();
+                        }}
+                      >
+                        Confirm clear
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+                <Button variant="outline" className="h-10 rounded-xl text-xs" onClick={handleExportSyncDiagnostics}>
+                  <FileDown className="mr-1 h-3.5 w-3.5" />
+                  Export diagnostics
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
 
           {/* Trend chart */}
           {trend.length > 0 && (
@@ -289,6 +473,11 @@ export default function DashboardPage() {
               {exporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download size={16} />}
               {t('exportDataCsv', lang)}
             </Button>
+            {import.meta.env.DEV && (
+              <Button variant="destructive" className="h-12 rounded-xl" onClick={handleSentryTest}>
+                Send test Sentry event
+              </Button>
+            )}
           </div>
         </>
       )}
