@@ -35,6 +35,8 @@ import {
 import { BarChart3, Users, School, AlertOctagon, LogIn, Download, Loader2, LogOut, ArrowLeft, RefreshCw, Trash2, FileDown } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
+const ADMIN_EMAIL = 'vikash07052008@gmail.com';
+
 interface Stats {
   totalSchools: number;
   totalStudents: number;
@@ -127,6 +129,15 @@ export default function DashboardPage() {
   const handleLogin = async () => {
     setLoginLoading(true);
     try {
+      if (email.trim().toLowerCase() !== ADMIN_EMAIL) {
+        toast({
+          title: 'Access denied',
+          description: 'This dashboard is restricted to the HearWise administrator.',
+          variant: 'destructive',
+        });
+        setLoginLoading(false);
+        return;
+      }
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
     } catch (error: unknown) {
