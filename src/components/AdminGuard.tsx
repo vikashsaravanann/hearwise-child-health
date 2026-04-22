@@ -1,18 +1,14 @@
 /**
- * AdminGuard — wraps routes that require the admin to be authenticated.
+ * AdminGuard — wraps routes that require a whitelisted admin.
  *
- * Behaviour:
- *  • While the Supabase session is loading → shows a full-screen spinner.
- *  • If not authenticated (or wrong account) → redirects to /admin.
- *  • If authenticated as the allowed admin email → renders children normally.
+ * 1. Checks Supabase auth session.
+ * 2. Queries admin_whitelist to verify the email server-side.
+ * 3. If not whitelisted → redirects to /admin/login with "Access Denied" message.
  */
-
 import { type ReactNode, useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Loader2 } from 'lucide-react';
-
-const ALLOWED_ADMIN_EMAIL = (import.meta.env.VITE_ADMIN_EMAIL as string | undefined)?.trim().toLowerCase() ?? '';
 
 type AuthState = 'loading' | 'allowed' | 'denied';
 
@@ -24,25 +20,48 @@ export default function AdminGuard({ children }: AdminGuardProps) {
   const [authState, setAuthState] = useState<AuthState>('loading');
 
   useEffect(() => {
-    // Initial check
     const check = async () => {
       const { data: { session } } = await supabase.auth.getSession();
-      if (session && session.user.email?.toLowerCase() === ALLOWED_ADMIN_EMAIL) {
-        setAuthState('allowed');
-      } else {
-        if (session) await supabase.auth.signOut(); // clean up wrong account
+      if (!session) {
         setAuthState('denied');
+        return;
       }
+
+      // Server-side check: is this email in admin_whitelist?
+      const { data, error } = await supabase
+        .from('admin_whitelist')
+        .select('id')
+        .eq('email', session.user.email?.toLowerCase() ?? '')
+        .maybeSingle();
+
+      if (error || !data) {
+        await supabase.auth.signOut();
+        setAuthState('denied');
+        return;
+      }
+
+      setAuthState('allowed');
     };
 
     check();
 
-    // Listen for future auth state changes (logout, token refresh, etc.)
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session && session.user.email?.toLowerCase() === ALLOWED_ADMIN_EMAIL) {
-        setAuthState('allowed');
-      } else {
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      if (!session) {
         setAuthState('denied');
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from('admin_whitelist')
+        .select('id')
+        .eq('email', session.user.email?.toLowerCase() ?? '')
+        .maybeSingle();
+
+      if (error || !data) {
+        setAuthState('denied');
+      } else {
+        setAuthState('allowed');
       }
     });
 
@@ -51,14 +70,14 @@ export default function AdminGuard({ children }: AdminGuardProps) {
 
   if (authState === 'loading') {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="flex min-h-screen items-center justify-center bg-[#0f1729]">
+        <Loader2 className="h-8 w-8 animate-spin text-[#2F80ED]" />
       </div>
     );
   }
 
   if (authState === 'denied') {
-    return <Navigate to="/admin" replace />;
+    return <Navigate to="/admin/login" replace state={{ accessDenied: true }} />;
   }
 
   return <>{children}</>;
