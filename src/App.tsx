@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { SessionProvider } from "@/contexts/SessionContext";
 import OfflineBadge from "@/components/OfflineBadge";
+import AdminGuard from "@/components/AdminGuard";
 import LandingPage from "./pages/LandingPage";
 import SessionSetupPage from "./pages/SessionSetupPage";
 import StudentEntryPage from "./pages/StudentEntryPage";
@@ -14,6 +15,7 @@ import ActiveTestPage from "./pages/ActiveTestPage";
 import ResultsPage from "./pages/ResultsPage";
 import SessionSummaryPage from "./pages/SessionSummaryPage";
 import DashboardPage from "./pages/DashboardPage";
+import AdminLoginPage from "./pages/AdminLoginPage";
 import AboutPage from "./pages/AboutPage";
 import NotFound from "./pages/NotFound";
 
@@ -36,7 +38,15 @@ const App = () => (
             <Route path="/test" element={<ActiveTestPage />} />
             <Route path="/results" element={<ResultsPage />} />
             <Route path="/session-summary" element={<SessionSummaryPage />} />
-            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/admin" element={<AdminLoginPage />} />
+            <Route
+              path="/dashboard"
+              element={
+                <AdminGuard>
+                  <DashboardPage />
+                </AdminGuard>
+              }
+            />
             <Route path="/about" element={<AboutPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

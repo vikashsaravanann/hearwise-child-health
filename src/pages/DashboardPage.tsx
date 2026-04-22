@@ -18,8 +18,6 @@ import { TAMIL_NADU_DISTRICTS } from '@/lib/districts';
 import { useSession } from '@/contexts/SessionContext';
 import { t } from '@/lib/i18n';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
@@ -33,10 +31,10 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { BarChart3, Users, School, AlertOctagon, LogIn, Download, Loader2, LogOut, ArrowLeft, RefreshCw, Trash2, FileDown } from 'lucide-react';
+import { BarChart3, Users, School, AlertOctagon, Download, Loader2, LogOut, RefreshCw, Trash2, FileDown } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
-const ADMIN_EMAIL = 'vikash07052008@gmail.com';
+
 
 interface Stats {
   totalSchools: number;
@@ -74,11 +72,7 @@ interface ScreeningRow {
 export default function DashboardPage() {
   const navigate = useNavigate();
   const { lang } = useSession();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [authLoading, setAuthLoading] = useState(true);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [loginLoading, setLoginLoading] = useState(false);
+  // Auth is guaranteed by AdminGuard — no login state needed here.
   const [stats, setStats] = useState<Stats>({ totalSchools: 0, totalStudents: 0, totalReferrals: 0, totalSessions: 0 });
   const [sessions, setSessions] = useState<SessionRow[]>([]);
   const [trend, setTrend] = useState<TrendRow[]>([]);
@@ -91,31 +85,9 @@ export default function DashboardPage() {
   const [clearDialogOpen, setClearDialogOpen] = useState(false);
   const [clearPreviewCount, setClearPreviewCount] = useState(0);
 
-  // Check existing auth
+  // Load dashboard data on mount
   useEffect(() => {
-    const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session && session.user.email?.toLowerCase() === ADMIN_EMAIL) {
-        setIsLoggedIn(true);
-        loadData();
-      } else if (session) {
-        // Wrong account signed in — sign them out
-        await supabase.auth.signOut();
-      }
-      setAuthLoading(false);
-    };
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (session && session.user.email?.toLowerCase() === ADMIN_EMAIL) {
-        setIsLoggedIn(true);
-        loadData();
-      } else {
-        setIsLoggedIn(false);
-      }
-    });
-
-    checkAuth();
-    return () => subscription.unsubscribe();
+    loadData();
   }, []);
 
   useEffect(() => {
@@ -190,7 +162,7 @@ export default function DashboardPage() {
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    setIsLoggedIn(false);
+    navigate('/admin', { replace: true });
   };
 
   const handleExportCSV = async () => {
@@ -271,43 +243,7 @@ export default function DashboardPage() {
     }
   };
 
-  if (authLoading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
-  }
 
-  if (!isLoggedIn) {
-    return (
-      <div className="flex min-h-screen flex-col items-center justify-center px-6 py-8">
-        <Card className="w-full max-w-sm rounded-2xl">
-          <CardHeader className="text-center">
-            <CardTitle className="text-xl">{t('adminDashboard', lang)}</CardTitle>
-            <p className="text-sm text-muted-foreground">{t('signInWithCredentials', lang)}</p>
-          </CardHeader>
-          <CardContent className="flex flex-col gap-4">
-            <div>
-              <Label>{t('email', lang)}</Label>
-              <Input className="mt-1.5 h-12 rounded-xl" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="admin@hearwise.in" />
-            </div>
-            <div>
-              <Label>{t('password', lang)}</Label>
-              <Input className="mt-1.5 h-12 rounded-xl" type="password" value={password} onChange={e => setPassword(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleLogin()} />
-            </div>
-            <Button className="h-14 rounded-2xl text-base font-semibold" onClick={handleLogin} disabled={loginLoading || !email || !password}>
-              {loginLoading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <LogIn size={18} className="mr-2" />}
-              {t('signIn', lang)}
-            </Button>
-            <Button variant="ghost" className="h-10" onClick={() => navigate('/')}>
-              <ArrowLeft size={16} className="mr-1" /> {t('backToHome', lang)}
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
 
   const filteredSessions = filterDistrict === 'all'
     ? sessions

@@ -2,7 +2,8 @@ import * as Sentry from '@sentry/react';
 import posthog from 'posthog-js';
 
 let posthogReady = false;
-const SENTRY_DSN_FALLBACK = 'https://13d49669ea2471726404b26a5ba99248@o4511212614582272.ingest.us.sentry.io/4511218986516480';
+// IMPORTANT: Sentry DSN is sourced exclusively from the VITE_SENTRY_DSN environment variable.
+// Never hardcode a DSN here — it would be bundled into the public JS and expose your project.
 const REDACTED = '[REDACTED]';
 
 type Primitive = string | number | boolean | null | undefined;
@@ -48,13 +49,13 @@ function sanitizeTelemetry(data?: object): TelemetryData {
 
 export function initObservability() {
   const env = import.meta.env as Record<string, string | undefined>;
-  const sentryDsn = (import.meta.env.VITE_SENTRY_DSN as string | undefined) || SENTRY_DSN_FALLBACK;
+  const sentryDsn = import.meta.env.VITE_SENTRY_DSN as string | undefined;
   if (sentryDsn) {
     Sentry.init({
       dsn: sentryDsn,
       tracesSampleRate: 0.2,
       environment: import.meta.env.MODE,
-      sendDefaultPii: true,
+      sendDefaultPii: false,
     });
     Sentry.setTag('app', 'hearwise-child-health');
   }
