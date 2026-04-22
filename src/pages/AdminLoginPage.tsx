@@ -80,14 +80,16 @@ export default function AdminLoginPage() {
         return;
       }
 
-      // Server-side whitelist check
-      const { data: wl } = await supabase
+      // Server-side whitelist check — use 'as any' to bypass generated types
+      const { data: wl, error: wlError } = await (supabase as any)
         .from('admin_whitelist')
         .select('id')
         .eq('email', authData.user.email?.toLowerCase() ?? '')
         .maybeSingle();
 
-      if (!wl) {
+      console.log('Whitelist check:', { wl, wlError });
+
+      if (wlError || !wl) {
         await supabase.auth.signOut();
         setError('Access Denied. You are not authorized.');
         setLoading(false);

@@ -28,7 +28,7 @@ export default function AdminGuard({ children }: AdminGuardProps) {
       }
 
       // Server-side check: is this email in admin_whitelist?
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('admin_whitelist')
         .select('id')
         .eq('email', session.user.email?.toLowerCase() ?? '')
@@ -52,7 +52,7 @@ export default function AdminGuard({ children }: AdminGuardProps) {
         return;
       }
 
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('admin_whitelist')
         .select('id')
         .eq('email', session.user.email?.toLowerCase() ?? '')
