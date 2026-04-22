@@ -562,7 +562,7 @@ async function syncOnePendingResult(item: PendingResultItem) {
       student_id: studentServerId,
       client_result_id: item.clientResultId,
       ...(item.result as Record<string, unknown>),
-    }, { onConflict: 'client_result_id' })
+    } as never, { onConflict: 'client_result_id' })
     .select('id')
     .single();
 
