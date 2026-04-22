@@ -8,6 +8,7 @@ import {
   getStuckQueueItemCount,
   getDashboardStats,
   getRecentSessions,
+  getRecentScreenings,
   getMonthlyTrend,
   retryFailedPendingResultsNow,
 } from '@/lib/database';
@@ -35,6 +36,8 @@ import {
 import { BarChart3, Users, School, AlertOctagon, LogIn, Download, Loader2, LogOut, ArrowLeft, RefreshCw, Trash2, FileDown } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
+const ADMIN_EMAIL = 'vikash07052008@gmail.com';
+
 interface Stats {
   totalSchools: number;
   totalStudents: number;
@@ -56,6 +59,18 @@ interface TrendRow {
   refer: number;
 }
 
+interface ScreeningRow {
+  id: string;
+  overall_result: string;
+  created_at: string;
+  students: { name: string; age: number; gender: string } | null;
+  test_sessions: {
+    session_date: string;
+    schools: { name: string; district: string } | null;
+    teachers: { name: string } | null;
+  } | null;
+}
+
 export default function DashboardPage() {
   const navigate = useNavigate();
   const { lang } = useSession();
@@ -67,6 +82,7 @@ export default function DashboardPage() {
   const [stats, setStats] = useState<Stats>({ totalSchools: 0, totalStudents: 0, totalReferrals: 0, totalSessions: 0 });
   const [sessions, setSessions] = useState<SessionRow[]>([]);
   const [trend, setTrend] = useState<TrendRow[]>([]);
+  const [screenings, setScreenings] = useState<ScreeningRow[]>([]);
   const [dataLoading, setDataLoading] = useState(false);
   const [filterDistrict, setFilterDistrict] = useState('all');
   const [exporting, setExporting] = useState(false);
@@ -79,15 +95,18 @@ export default function DashboardPage() {
   useEffect(() => {
     const checkAuth = async () => {
       const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
+      if (session && session.user.email?.toLowerCase() === ADMIN_EMAIL) {
         setIsLoggedIn(true);
         loadData();
+      } else if (session) {
+        // Wrong account signed in — sign them out
+        await supabase.auth.signOut();
       }
       setAuthLoading(false);
     };
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (session) {
+      if (session && session.user.email?.toLowerCase() === ADMIN_EMAIL) {
         setIsLoggedIn(true);
         loadData();
       } else {
@@ -109,14 +128,16 @@ export default function DashboardPage() {
   const loadData = async () => {
     setDataLoading(true);
     try {
-      const [s, sess, t] = await Promise.all([
+      const [s, sess, t, scr] = await Promise.all([
         getDashboardStats(),
         getRecentSessions(),
         getMonthlyTrend(),
+        getRecentScreenings(50),
       ]);
       setStats(s);
       setSessions(sess);
       setTrend(t);
+      setScreenings(scr as ScreeningRow[]);
     } catch (e) {
       console.error('Dashboard load error:', e);
     } finally {
@@ -127,8 +148,38 @@ export default function DashboardPage() {
   const handleLogin = async () => {
     setLoginLoading(true);
     try {
+      if (email.trim().toLowerCase() !== ADMIN_EMAIL) {
+        toast({
+          title: 'Access denied',
+          description: 'This dashboard is restricted to the HearWise administrator.',
+          variant: 'destructive',
+        });
+        setLoginLoading(false);
+        return;
+      }
       const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) throw error;
+      if (error) {
+        // First-time setup: if admin account doesn't exist, create it.
+        if (error.message?.toLowerCase().includes('invalid')) {
+          const { error: signUpError } = await supabase.auth.signUp({
+            email,
+            password,
+            options: { emailRedirectTo: `${window.location.origin}/dashboard` },
+          });
+          if (signUpError) throw signUpError;
+          // Try sign-in again (works if auto-confirm is enabled)
+          const { error: retryError } = await supabase.auth.signInWithPassword({ email, password });
+          if (retryError) {
+            toast({
+              title: 'Admin account created',
+              description: 'Check your email to confirm, then sign in again.',
+            });
+            return;
+          }
+        } else {
+          throw error;
+        }
+      }
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : t('unexpectedAuthError', lang);
       toast({ title: t('loginFailed', lang), description: message, variant: 'destructive' });
@@ -469,6 +520,52 @@ export default function DashboardPage() {
 
           {/* Export */}
           <div className="mt-6 flex flex-col gap-3">
+            {/* Detailed Screenings */}
+            <Card className="rounded-2xl">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm">Recent Screenings ({screenings.length})</CardTitle>
+                <p className="text-xs text-muted-foreground">Teachers, students &amp; outcomes</p>
+              </CardHeader>
+              <CardContent className="flex flex-col gap-2 max-h-96 overflow-y-auto">
+                {screenings.length === 0 ? (
+                  <p className="py-4 text-center text-xs text-muted-foreground">No screenings yet.</p>
+                ) : (
+                  screenings.map((r) => {
+                    const colorClass =
+                      r.overall_result === 'normal' ? 'bg-success/10 text-success' :
+                      r.overall_result === 'mild' ? 'bg-warning/10 text-warning' :
+                      'bg-destructive/10 text-destructive';
+                    return (
+                      <div key={r.id} className="rounded-xl border border-border p-3">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-semibold truncate">
+                              {r.students?.name ?? 'Unknown student'}
+                              <span className="ml-1 text-xs font-normal text-muted-foreground">
+                                ({r.students?.age}y, {r.students?.gender})
+                              </span>
+                            </p>
+                            <p className="text-xs text-muted-foreground truncate">
+                              Teacher: {r.test_sessions?.teachers?.name ?? '—'}
+                            </p>
+                            <p className="text-xs text-muted-foreground truncate">
+                              {r.test_sessions?.schools?.name ?? '—'} • {r.test_sessions?.schools?.district ?? '—'}
+                            </p>
+                            <p className="mt-1 text-[10px] text-muted-foreground">
+                              {new Date(r.created_at).toLocaleString()}
+                            </p>
+                          </div>
+                          <span className={`shrink-0 rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase ${colorClass}`}>
+                            {r.overall_result}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </CardContent>
+            </Card>
+
             <Button variant="outline" className="h-12 gap-2 rounded-xl" onClick={handleExportCSV} disabled={exporting}>
               {exporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download size={16} />}
               {t('exportDataCsv', lang)}
