@@ -158,7 +158,28 @@ export default function DashboardPage() {
         return;
       }
       const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) throw error;
+      if (error) {
+        // First-time setup: if admin account doesn't exist, create it.
+        if (error.message?.toLowerCase().includes('invalid')) {
+          const { error: signUpError } = await supabase.auth.signUp({
+            email,
+            password,
+            options: { emailRedirectTo: `${window.location.origin}/dashboard` },
+          });
+          if (signUpError) throw signUpError;
+          // Try sign-in again (works if auto-confirm is enabled)
+          const { error: retryError } = await supabase.auth.signInWithPassword({ email, password });
+          if (retryError) {
+            toast({
+              title: 'Admin account created',
+              description: 'Check your email to confirm, then sign in again.',
+            });
+            return;
+          }
+        } else {
+          throw error;
+        }
+      }
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : t('unexpectedAuthError', lang);
       toast({ title: t('loginFailed', lang), description: message, variant: 'destructive' });
