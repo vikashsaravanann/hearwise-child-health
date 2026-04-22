@@ -28,6 +28,51 @@ interface DateRangeResultRow {
   };
 }
 
+export interface DetailedStudentResult {
+  id: string;
+  studentName: string;
+  studentAge: number | null;
+  studentGender: string;
+  rollNumber: string;
+  teacherName: string;
+  schoolName: string;
+  district: string;
+  sessionDate: string;
+  overallResult: 'normal' | 'mild' | 'refer';
+  leftEar500: boolean;
+  leftEar1000: boolean;
+  leftEar2000: boolean;
+  leftEar4000: boolean;
+  rightEar500: boolean;
+  rightEar1000: boolean;
+  rightEar2000: boolean;
+  rightEar4000: boolean;
+  falsePositiveCount: number;
+  referred: boolean;
+  doctorVisited: boolean;
+}
+
+interface RawDetailedRow {
+  id: string;
+  overall_result: string;
+  left_ear_500hz: boolean;
+  left_ear_1000hz: boolean;
+  left_ear_2000hz: boolean;
+  left_ear_4000hz: boolean;
+  right_ear_500hz: boolean;
+  right_ear_1000hz: boolean;
+  right_ear_2000hz: boolean;
+  right_ear_4000hz: boolean;
+  false_positive_count: number;
+  students?: { name?: string; age?: number; gender?: string; roll_number?: string } | null;
+  test_sessions?: {
+    session_date?: string;
+    schools?: { name?: string; district?: string } | null;
+    teachers?: { name?: string } | null;
+  } | null;
+  referrals?: { id: string; doctor_visited: boolean }[];
+}
+
 interface ExportResultRow {
   students?: {
     name?: string;
@@ -282,6 +327,50 @@ export async function getMonthlyTrend() {
   return Object.entries(months)
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([month, counts]) => ({ month, ...counts }));
+}
+
+export async function getDetailedStudentResults(limit = 100): Promise<DetailedStudentResult[]> {
+  const { data, error } = await supabase
+    .from('test_results')
+    .select(`
+      id,
+      overall_result,
+      left_ear_500hz, left_ear_1000hz, left_ear_2000hz, left_ear_4000hz,
+      right_ear_500hz, right_ear_1000hz, right_ear_2000hz, right_ear_4000hz,
+      false_positive_count,
+      students ( name, age, gender, roll_number ),
+      test_sessions ( session_date, schools ( name, district ), teachers ( name ) ),
+      referrals ( id, doctor_visited )
+    `)
+    .order('id', { ascending: false })
+    .limit(limit);
+
+  if (error) throw error;
+  if (!data) return [];
+
+  return (data as RawDetailedRow[]).map((r) => ({
+    id: r.id,
+    studentName: r.students?.name ?? 'Unknown',
+    studentAge: r.students?.age ?? null,
+    studentGender: r.students?.gender ?? '',
+    rollNumber: r.students?.roll_number ?? '',
+    teacherName: r.test_sessions?.teachers?.name ?? 'Unknown',
+    schoolName: r.test_sessions?.schools?.name ?? 'Unknown',
+    district: r.test_sessions?.schools?.district ?? '',
+    sessionDate: r.test_sessions?.session_date ?? '',
+    overallResult: (r.overall_result as 'normal' | 'mild' | 'refer') ?? 'normal',
+    leftEar500: r.left_ear_500hz,
+    leftEar1000: r.left_ear_1000hz,
+    leftEar2000: r.left_ear_2000hz,
+    leftEar4000: r.left_ear_4000hz,
+    rightEar500: r.right_ear_500hz,
+    rightEar1000: r.right_ear_1000hz,
+    rightEar2000: r.right_ear_2000hz,
+    rightEar4000: r.right_ear_4000hz,
+    falsePositiveCount: r.false_positive_count,
+    referred: Array.isArray(r.referrals) && r.referrals.length > 0,
+    doctorVisited: Array.isArray(r.referrals) && r.referrals.some((ref) => ref.doctor_visited),
+  }));
 }
 
 export async function exportCSV() {
