@@ -37,7 +37,7 @@ import {
 import { BarChart3, Users, School, AlertOctagon, LogIn, Download, Loader2, LogOut, ArrowLeft, RefreshCw, Trash2, FileDown, Activity, CheckCircle2, XCircle, AlertTriangle, UserCheck } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
-const ADMIN_EMAIL = 'vikash07052008@gmail.com';
+const ADMIN_EMAIL = (import.meta.env.VITE_ADMIN_EMAIL as string | undefined)?.toLowerCase() ?? 'vikash07052008@gmail.com';
 
 interface Stats {
   totalSchools: number;
@@ -160,7 +160,7 @@ export default function DashboardPage() {
   };
 
   const handleLogin = async () => {
-    if (email.trim().toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
+    if (email.trim().toLowerCase() !== ADMIN_EMAIL) {
       toast({ title: t('loginFailed', lang), description: t('unauthorizedEmail', lang), variant: 'destructive' });
       return;
     }
