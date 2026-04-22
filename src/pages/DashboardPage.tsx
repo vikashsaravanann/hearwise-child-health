@@ -81,15 +81,18 @@ export default function DashboardPage() {
   useEffect(() => {
     const checkAuth = async () => {
       const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
+      if (session && session.user.email?.toLowerCase() === ADMIN_EMAIL) {
         setIsLoggedIn(true);
         loadData();
+      } else if (session) {
+        // Wrong account signed in — sign them out
+        await supabase.auth.signOut();
       }
       setAuthLoading(false);
     };
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (session) {
+      if (session && session.user.email?.toLowerCase() === ADMIN_EMAIL) {
         setIsLoggedIn(true);
         loadData();
       } else {

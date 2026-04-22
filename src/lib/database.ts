@@ -224,6 +224,23 @@ export async function getRecentSessions(limit = 20) {
   return data || [];
 }
 
+export async function getRecentScreenings(limit = 50) {
+  const { data, error } = await supabase
+    .from('test_results')
+    .select(`
+      id,
+      overall_result,
+      created_at,
+      students ( name, age, gender ),
+      test_sessions ( session_date, schools ( name, district ), teachers ( name ) )
+    `)
+    .order('created_at', { ascending: false })
+    .limit(limit);
+
+  if (error) throw error;
+  return data || [];
+}
+
 export async function getSessionResults(sessionId: string) {
   const { data, error } = await supabase
     .from('test_results')
