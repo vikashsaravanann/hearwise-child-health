@@ -23,6 +23,7 @@ import AdminStudentsPage from "./pages/admin/AdminStudentsPage";
 import AdminSessionsPage from "./pages/admin/AdminSessionsPage";
 import AdminReferralsPage from "./pages/admin/AdminReferralsPage";
 import AdminLoginsPage from "./pages/admin/AdminLoginsPage";
+import AdminAnalyticsPage from "./pages/admin/AdminAnalyticsPage";
 import AboutPage from "./pages/AboutPage";
 import NotFound from "./pages/NotFound";
 
@@ -59,6 +60,7 @@ const App = () => (
               }
             >
               <Route path="/admin/dashboard" element={<AdminOverviewPage />} />
+              <Route path="/admin/analytics" element={<AdminAnalyticsPage />} />
               <Route path="/admin/schools" element={<AdminSchoolsPage />} />
               <Route path="/admin/teachers" element={<AdminTeachersPage />} />
               <Route path="/admin/students" element={<AdminStudentsPage />} />

@@ -75,6 +75,19 @@ AS $$
   );
 $$;
 
+-- Compatibility RPC used by frontend auth checks
+CREATE OR REPLACE FUNCTION is_admin_whitelisted(check_email text)
+RETURNS boolean
+LANGUAGE sql
+SECURITY DEFINER
+STABLE
+AS $$
+  SELECT EXISTS (
+    SELECT 1 FROM admin_whitelist
+    WHERE email = lower(check_email)
+  );
+$$;
+
 -- 4. Allow admins to update referrals (doctor_visited, follow_up_date, notes)
 DROP POLICY IF EXISTS "referrals_update_admin" ON referrals;
 CREATE POLICY "referrals_update_admin"

@@ -28,11 +28,9 @@ export default function AdminGuard({ children }: AdminGuardProps) {
       }
 
       // Server-side check: is this email in admin_whitelist?
-      const { data, error } = await (supabase as any)
-        .from('admin_whitelist')
-        .select('id')
-        .eq('email', session.user.email?.toLowerCase() ?? '')
-        .maybeSingle();
+      const { data, error } = await supabase.rpc('is_admin_whitelisted', {
+        check_email: session.user.email?.toLowerCase() ?? '',
+      });
 
       if (error || !data) {
         await supabase.auth.signOut();
@@ -52,11 +50,9 @@ export default function AdminGuard({ children }: AdminGuardProps) {
         return;
       }
 
-      const { data, error } = await (supabase as any)
-        .from('admin_whitelist')
-        .select('id')
-        .eq('email', session.user.email?.toLowerCase() ?? '')
-        .maybeSingle();
+      const { data, error } = await supabase.rpc('is_admin_whitelisted', {
+        check_email: session.user.email?.toLowerCase() ?? '',
+      });
 
       if (error || !data) {
         setAuthState('denied');

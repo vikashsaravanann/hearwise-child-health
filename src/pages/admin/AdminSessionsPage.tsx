@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import AdminDataTable from '@/components/AdminDataTable';
+import { useAdminTimeFilter } from '@/contexts/AdminTimeFilterContext';
 
 interface SessionRow {
   id: string;
@@ -16,6 +17,7 @@ interface SessionRow {
 }
 
 export default function AdminSessionsPage() {
+  const { range } = useAdminTimeFilter();
   const [data, setData] = useState<SessionRow[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -24,6 +26,8 @@ export default function AdminSessionsPage() {
       const { data: sessions } = await supabase
         .from('test_sessions')
         .select('*, teachers ( name ), schools ( name )')
+        .gte('created_at', range.from.toISOString())
+        .lte('created_at', range.to.toISOString())
         .order('created_at', { ascending: false });
 
       if (!sessions) { setLoading(false); return; }
@@ -62,7 +66,7 @@ export default function AdminSessionsPage() {
       setLoading(false);
     };
     load();
-  }, []);
+  }, [range.from, range.to]);
 
   const columns = [
     { key: 'id', label: 'Session ID', render: (r: SessionRow) => <span className="font-mono text-xs text-gray-500">{r.id.slice(0, 8)}…</span> },

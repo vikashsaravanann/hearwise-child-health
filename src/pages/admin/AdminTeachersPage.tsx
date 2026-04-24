@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import AdminDataTable from '@/components/AdminDataTable';
+import { useAdminTimeFilter } from '@/contexts/AdminTimeFilterContext';
 
 interface TeacherRow {
   id: string;
@@ -14,6 +15,7 @@ interface TeacherRow {
 }
 
 export default function AdminTeachersPage() {
+  const { range } = useAdminTimeFilter();
   const [data, setData] = useState<TeacherRow[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -39,7 +41,9 @@ export default function AdminTeachersPage() {
             const { count } = await supabase
               .from('test_results')
               .select('id', { count: 'exact', head: true })
-              .in('session_id', sessionIds);
+              .in('session_id', sessionIds)
+              .gte('created_at', range.from.toISOString())
+              .lte('created_at', range.to.toISOString());
             studentCount = count || 0;
           }
 
@@ -56,7 +60,7 @@ export default function AdminTeachersPage() {
       setLoading(false);
     };
     load();
-  }, []);
+  }, [range.from, range.to]);
 
   const columns = [
     { key: 'name', label: 'Teacher Name' },

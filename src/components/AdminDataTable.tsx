@@ -65,21 +65,21 @@ export default function AdminDataTable<T extends Record<string, unknown>>({
     <div>
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-xl font-bold text-white">{title}</h2>
-          {description && <p className="mt-1 text-sm text-gray-500">{description}</p>}
+          <h2 className="text-xl font-bold text-[var(--hw-text)]">{title}</h2>
+          {description && <p className="mt-1 text-sm text-[var(--hw-text-2)]">{description}</p>}
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={handleExportCSV}
             disabled={exporting || filtered.length === 0}
-            className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-xs font-medium text-gray-300 transition-colors hover:bg-white/10 disabled:opacity-40"
+            className="flex items-center gap-2 rounded-xl border border-slate-200 bg-[var(--hw-surface)] px-4 py-2 text-xs font-medium text-[var(--hw-text-2)] transition-colors hover:bg-slate-50 disabled:opacity-40"
           >
             {exporting ? <Loader2 size={14} className="animate-spin" /> : <Download size={14} />}
             CSV
           </button>
           <button
             disabled
-            className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-xs font-medium text-gray-300 opacity-40"
+            className="flex items-center gap-2 rounded-xl border border-slate-200 bg-[var(--hw-surface)] px-4 py-2 text-xs font-medium text-[var(--hw-text-2)] opacity-40"
             title="PDF export coming soon"
           >
             <FileText size={14} />
@@ -98,7 +98,7 @@ export default function AdminDataTable<T extends Record<string, unknown>>({
               placeholder={searchPlaceholder || 'Search...'}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="h-10 w-full rounded-xl border border-white/10 bg-white/5 pl-9 pr-4 text-sm text-white placeholder-gray-600 outline-none focus:border-[#2F80ED]/40"
+              className="h-10 w-full rounded-xl border border-slate-200 bg-[var(--hw-surface)] pl-9 pr-4 text-sm text-[var(--hw-text)] placeholder-gray-400 outline-none focus:border-[#2F80ED]/40"
             />
           </div>
         )}
@@ -106,7 +106,7 @@ export default function AdminDataTable<T extends Record<string, unknown>>({
       </div>
 
       {/* Table */}
-      <div className="mt-4 overflow-x-auto rounded-2xl border border-white/5 bg-white/[0.02]">
+      <div className="mt-4 overflow-x-auto rounded-2xl border border-slate-200 bg-[var(--hw-surface)]">
         {loading ? (
           <div className="flex h-40 items-center justify-center">
             <Loader2 className="h-6 w-6 animate-spin text-[#2F80ED]" />
@@ -122,7 +122,7 @@ export default function AdminDataTable<T extends Record<string, unknown>>({
                 {columns.map((col) => (
                   <th
                     key={col.key}
-                    className="sticky top-0 bg-[#0f1729] px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500"
+                  className="sticky top-0 bg-slate-50 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-[var(--hw-text-2)]"
                   >
                     {col.label}
                   </th>
@@ -133,10 +133,10 @@ export default function AdminDataTable<T extends Record<string, unknown>>({
               {filtered.map((row, i) => (
                 <tr
                   key={i}
-                  className={`border-b border-white/[0.03] transition-colors hover:bg-white/[0.03] ${i % 2 === 0 ? 'bg-transparent' : 'bg-white/[0.01]'}`}
+                  className={`border-b border-slate-100 transition-colors hover:bg-slate-50 ${i % 2 === 0 ? 'bg-transparent' : 'bg-slate-50/40'}`}
                 >
                   {columns.map((col) => (
-                    <td key={col.key} className="px-4 py-3 text-sm text-gray-300">
+                    <td key={col.key} className="px-4 py-3 text-sm text-[var(--hw-text-2)]">
                       {col.render ? col.render(row) : String(row[col.key] ?? '—')}
                     </td>
                   ))}
@@ -147,7 +147,7 @@ export default function AdminDataTable<T extends Record<string, unknown>>({
         )}
       </div>
 
-      <p className="mt-2 text-xs text-gray-600">
+      <p className="mt-2 text-xs text-[var(--hw-text-2)]">
         Showing {filtered.length} of {data.length} records
       </p>
     </div>

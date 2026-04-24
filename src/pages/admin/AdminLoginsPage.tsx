@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import AdminDataTable from '@/components/AdminDataTable';
+import { useAdminTimeFilter } from '@/contexts/AdminTimeFilterContext';
 
 interface LoginLogRow {
   id: string;
@@ -15,6 +16,7 @@ interface LoginLogRow {
 }
 
 export default function AdminLoginsPage() {
+  const { range } = useAdminTimeFilter();
   const [data, setData] = useState<LoginLogRow[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -23,13 +25,15 @@ export default function AdminLoginsPage() {
       const { data: logs } = await supabase
         .from('login_logs')
         .select('*')
+        .gte('login_time', range.from.toISOString())
+        .lte('login_time', range.to.toISOString())
         .order('login_time', { ascending: false });
 
       setData(logs || []);
       setLoading(false);
     };
     load();
-  }, []);
+  }, [range.from, range.to]);
 
   const columns = [
     { key: 'user_email', label: 'User Email' },

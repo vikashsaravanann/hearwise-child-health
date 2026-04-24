@@ -80,12 +80,9 @@ export default function AdminLoginPage() {
         return;
       }
 
-      // Server-side whitelist check — use 'as any' to bypass generated types
-      const { data: wl, error: wlError } = await (supabase as any)
-        .from('admin_whitelist')
-        .select('id')
-        .eq('email', authData.user.email?.toLowerCase() ?? '')
-        .maybeSingle();
+      const { data: wl, error: wlError } = await supabase.rpc('is_admin_whitelisted', {
+        check_email: authData.user.email?.toLowerCase() ?? '',
+      });
 
       console.log('Whitelist check:', { wl, wlError });
 

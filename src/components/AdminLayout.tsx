@@ -1,11 +1,10 @@
-/**
- * AdminLayout — Dark sidebar navigation shell for all /admin/* pages.
- */
 import { useState, useEffect } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import { useSupabaseHealth } from '@/hooks/useSupabaseHealth';
 import {
   LayoutDashboard,
+  BarChart3,
   School,
   GraduationCap,
   Users,
@@ -16,10 +15,15 @@ import {
   Menu,
   X,
   Headphones,
+  Moon,
+  Sun,
 } from 'lucide-react';
+import { format } from 'date-fns';
+import { AdminTimeFilterProvider, useAdminTimeFilter } from '@/contexts/AdminTimeFilterContext';
 
 const NAV_ITEMS = [
   { label: 'Overview', path: '/admin/dashboard', icon: LayoutDashboard },
+  { label: 'Analytics', path: '/admin/analytics', icon: BarChart3 },
   { label: 'Schools', path: '/admin/schools', icon: School },
   { label: 'Teachers', path: '/admin/teachers', icon: GraduationCap },
   { label: 'Students', path: '/admin/students', icon: Users },
@@ -28,12 +32,71 @@ const NAV_ITEMS = [
   { label: 'Login History', path: '/admin/logins', icon: History },
 ];
 
-export default function AdminLayout() {
+function TimeFilterBar() {
+  const { preset, setPreset, setCustom, range } = useAdminTimeFilter();
+  const [showCustom, setShowCustom] = useState(false);
+  const [from, setFrom] = useState(format(range.from, 'yyyy-MM-dd'));
+  const [to, setTo] = useState(format(range.to, 'yyyy-MM-dd'));
+
+  useEffect(() => {
+    setFrom(format(range.from, 'yyyy-MM-dd'));
+    setTo(format(range.to, 'yyyy-MM-dd'));
+  }, [range.from, range.to]);
+
+  return (
+    <div className="border-b border-black/10 bg-[var(--hw-surface)] px-4 py-2">
+      <div className="flex flex-wrap items-center gap-2 text-[11px]">
+        {[
+          ['today', 'Today'],
+          ['week', 'This Week'],
+          ['month', 'This Month'],
+          ['year', '2024-25'],
+        ].map(([value, label]) => (
+          <button
+            key={value}
+            type="button"
+            onClick={() => setPreset(value as 'today' | 'week' | 'month' | 'year')}
+            className={`rounded-full border px-3 py-1 ${preset === value ? 'border-[#2F80ED] bg-[#2F80ED] text-white' : 'border-slate-200 text-slate-500'}`}
+          >
+            {label}
+          </button>
+        ))}
+        <button
+          type="button"
+          onClick={() => setShowCustom((v) => !v)}
+          className={`rounded-full border px-3 py-1 ${preset === 'custom' ? 'border-[#2F80ED] bg-[#2F80ED] text-white' : 'border-slate-200 text-slate-500'}`}
+        >
+          Custom
+        </button>
+        {showCustom && (
+          <div className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white p-2">
+            <input type="date" value={from} onChange={(e) => setFrom(e.target.value)} className="rounded border border-slate-200 px-2 py-1" />
+            <input type="date" value={to} onChange={(e) => setTo(e.target.value)} className="rounded border border-slate-200 px-2 py-1" />
+            <button
+              type="button"
+              onClick={() => {
+                setCustom(new Date(`${from}T00:00:00`), new Date(`${to}T23:59:59`));
+                setShowCustom(false);
+              }}
+              className="rounded bg-[#2F80ED] px-2 py-1 text-white"
+            >
+              Apply
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function AdminLayoutInner() {
   const location = useLocation();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [userEmail, setUserEmail] = useState('');
   const [isLive, setIsLive] = useState(true);
+  const [darkMode, setDarkMode] = useState(() => localStorage.getItem('hw_admin_dark') === 'true');
+  const supabaseStatus = useSupabaseHealth();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -47,13 +110,18 @@ export default function AdminLayout() {
     return () => clearInterval(iv);
   }, []);
 
+  useEffect(() => {
+    document.body.classList.toggle('dark', darkMode);
+    localStorage.setItem('hw_admin_dark', String(darkMode));
+  }, [darkMode]);
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
     navigate('/admin/login', { replace: true });
   };
 
   return (
-    <div className="flex min-h-screen bg-[#0f1729]">
+    <div className="flex min-h-screen bg-[var(--hw-bg)] text-[var(--hw-text)]">
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
@@ -130,7 +198,7 @@ export default function AdminLayout() {
       {/* Main content */}
       <div className="flex flex-1 flex-col min-w-0">
         {/* Top bar */}
-        <header className="flex h-14 items-center justify-between border-b border-white/5 px-4 lg:px-6">
+        <header className="sticky top-0 z-30 flex h-[52px] items-center justify-between border-b border-black/10 bg-[var(--hw-surface)] px-4 lg:px-6">
           <button
             className="lg:hidden text-gray-400 hover:text-white"
             onClick={() => setSidebarOpen(true)}
@@ -141,13 +209,45 @@ export default function AdminLayout() {
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
               <span
+                className={`h-2 w-2 rounded-full ${
+                  supabaseStatus === 'connected'
+                    ? 'bg-emerald-400'
+                    : supabaseStatus === 'error'
+                      ? 'bg-red-400'
+                      : 'bg-gray-400'
+                }`}
+              />
+              <span className={`text-xs font-medium ${
+                supabaseStatus === 'connected'
+                  ? 'text-emerald-400'
+                  : supabaseStatus === 'error'
+                    ? 'text-red-400'
+                    : 'text-gray-400'
+              }`}>
+                {supabaseStatus === 'connected'
+                  ? 'Supabase Connected'
+                  : supabaseStatus === 'error'
+                    ? 'Database Error'
+                    : 'Checking...'}
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setDarkMode((v) => !v)}
+              className="rounded-md border border-slate-300 p-1.5 text-slate-500 hover:text-slate-800"
+            >
+              {darkMode ? <Sun size={14} /> : <Moon size={14} />}
+            </button>
+            <div className="flex items-center gap-2">
+              <span
                 className={`h-2 w-2 rounded-full transition-opacity duration-300 ${isLive ? 'bg-emerald-400 opacity-100' : 'bg-emerald-400 opacity-30'}`}
               />
               <span className="text-xs font-medium text-emerald-400">Live</span>
             </div>
-            <span className="hidden sm:block text-xs text-gray-500 truncate max-w-48">{userEmail}</span>
+            <span className="hidden sm:block text-xs text-gray-500 truncate max-w-48">{format(new Date(), 'dd MMM yyyy, h:mm a')}</span>
           </div>
         </header>
+        <TimeFilterBar />
 
         {/* Page content */}
         <main className="flex-1 overflow-y-auto p-4 lg:p-6">
@@ -155,5 +255,13 @@ export default function AdminLayout() {
         </main>
       </div>
     </div>
+  );
+}
+
+export default function AdminLayout() {
+  return (
+    <AdminTimeFilterProvider>
+      <AdminLayoutInner />
+    </AdminTimeFilterProvider>
   );
 }
