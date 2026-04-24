@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import AdminDataTable from '@/components/AdminDataTable';
+import { useAdminFilter } from '@/contexts/AdminFilterContext';
 
 interface StudentRow {
   id: string;
@@ -40,6 +41,7 @@ function getFailedFreqs(r: Record<string, boolean>): string {
 }
 
 export default function AdminStudentsPage() {
+  const { range } = useAdminFilter();
   const [data, setData] = useState<StudentRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [schoolFilter, setSchoolFilter] = useState('all');
@@ -55,6 +57,8 @@ export default function AdminStudentsPage() {
           students ( name, age, gender, roll_number, schools ( name ) ),
           test_sessions ( session_date, device_info, teachers ( name ), schools ( name ) )
         `)
+        .gte('created_at', range.from)
+        .lte('created_at', `${range.to}T23:59:59`)
         .order('created_at', { ascending: false });
 
       if (!results) { setLoading(false); return; }
@@ -98,7 +102,7 @@ export default function AdminStudentsPage() {
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'test_results' }, () => load())
       .subscribe();
     return () => { supabase.removeChannel(channel); };
-  }, []);
+  }, [range.from, range.to]);
 
   const filtered = data.filter((r) => {
     if (schoolFilter !== 'all' && r.schoolName !== schoolFilter) return false;
@@ -111,7 +115,7 @@ export default function AdminStudentsPage() {
       result === 'normal' ? 'bg-emerald-500/15 text-emerald-400' :
       result === 'mild' ? 'bg-amber-500/15 text-amber-400' :
       'bg-red-500/15 text-red-400';
-    return <span className={`rounded-full px-2 py-0.5 text-xs font-semibold uppercase ${cls}`}>{result}</span>;
+    return <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium uppercase ${cls}`}>{result}</span>;
   };
 
   const columns = [

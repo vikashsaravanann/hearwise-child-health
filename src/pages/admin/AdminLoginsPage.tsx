@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import AdminDataTable from '@/components/AdminDataTable';
+import { Monitor, Smartphone } from 'lucide-react';
+import { useAdminFilter } from '@/contexts/AdminFilterContext';
 
 interface LoginLogRow {
   id: string;
@@ -15,6 +17,7 @@ interface LoginLogRow {
 }
 
 export default function AdminLoginsPage() {
+  const { range } = useAdminFilter();
   const [data, setData] = useState<LoginLogRow[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -23,13 +26,15 @@ export default function AdminLoginsPage() {
       const { data: logs } = await supabase
         .from('login_logs')
         .select('*')
+        .gte('login_time', range.from)
+        .lte('login_time', `${range.to}T23:59:59`)
         .order('login_time', { ascending: false });
 
       setData(logs || []);
       setLoading(false);
     };
     load();
-  }, []);
+  }, [range.from, range.to]);
 
   const columns = [
     { key: 'user_email', label: 'User Email' },
@@ -40,7 +45,7 @@ export default function AdminLoginsPage() {
         const cls = r.device_type === 'Mobile' ? 'bg-blue-500/15 text-blue-400' :
                     r.device_type === 'Tablet' ? 'bg-purple-500/15 text-purple-400' :
                     'bg-gray-500/15 text-gray-400';
-        return <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${cls}`}>{r.device_type || '—'}</span>;
+        return <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${cls}`}>{r.device_type === 'Mobile' ? <Smartphone size={11} /> : <Monitor size={11} />}{r.device_type || '—'}</span>;
       },
     },
     { key: 'browser', label: 'Browser' },

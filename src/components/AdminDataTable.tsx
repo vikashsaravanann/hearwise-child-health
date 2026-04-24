@@ -2,7 +2,7 @@
  * Shared admin data table component with CSV/PDF export and filters.
  */
 import { useState } from 'react';
-import { Download, FileText, Loader2, Search } from 'lucide-react';
+import { Download, FileText, Search, DatabaseZap, RotateCcw } from 'lucide-react';
 
 interface Column<T> {
   key: string;
@@ -20,6 +20,8 @@ interface AdminDataTableProps<T> {
   searchPlaceholder?: string;
   searchField?: (row: T) => string;
   filters?: React.ReactNode;
+  error?: string;
+  onRetry?: () => void;
 }
 
 function escapeCsv(val: unknown): string {
@@ -30,6 +32,7 @@ function escapeCsv(val: unknown): string {
 
 export default function AdminDataTable<T extends Record<string, unknown>>({
   title, description, columns, data, loading, searchPlaceholder, searchField, filters,
+  error, onRetry,
 }: AdminDataTableProps<T>) {
   const [search, setSearch] = useState('');
   const [exporting, setExporting] = useState(false);
@@ -145,23 +148,38 @@ export default function AdminDataTable<T extends Record<string, unknown>>({
       </div>
 
       {/* Table */}
-      <div className="mt-4 overflow-x-auto rounded-2xl border border-white/5 bg-white/[0.02]">
+      {error && (
+        <div className="mt-4 flex items-center justify-between rounded-lg border border-[#EB5757]/30 bg-[#FDEDEC] px-3 py-2 text-[11px] text-[#922B21]">
+          <span>Failed to load data. Retrying...</span>
+          {onRetry && (
+            <button type="button" onClick={onRetry} className="inline-flex items-center gap-1 rounded-md border border-[#EB5757]/30 px-2 py-1">
+              <RotateCcw size={12} />
+              Retry
+            </button>
+          )}
+        </div>
+      )}
+      <div className="mt-4 overflow-x-auto rounded-xl border border-black/10 bg-white">
         {loading ? (
-          <div className="flex h-40 items-center justify-center">
-            <Loader2 className="h-6 w-6 animate-spin text-[#2F80ED]" />
+          <div className="space-y-2 p-4">
+            {Array.from({ length: 8 }).map((_, idx) => (
+              <div key={idx} className="h-9 animate-pulse rounded-md bg-slate-100" />
+            ))}
           </div>
         ) : filtered.length === 0 ? (
-          <div className="flex h-40 items-center justify-center text-sm text-gray-500">
-            No data found
+          <div className="flex h-44 flex-col items-center justify-center gap-2 text-slate-400">
+            <DatabaseZap size={20} />
+            <p className="text-sm text-slate-600">No {title.toLowerCase()} yet</p>
+            <p className="text-xs">Data will appear here once testing begins</p>
           </div>
         ) : (
           <table className="w-full min-w-[600px]">
             <thead>
-              <tr className="border-b border-white/5">
+              <tr className="border-b border-black/10 bg-[#F8FAFF]">
                 {columns.map((col) => (
                   <th
                     key={col.key}
-                    className="sticky top-0 bg-[#0f1729] px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500"
+                    className="sticky top-0 bg-[#F3F7FF] px-4 py-3 text-left text-[11px] font-medium uppercase tracking-[0.5px] text-slate-500"
                   >
                     {col.label}
                   </th>
@@ -172,10 +190,14 @@ export default function AdminDataTable<T extends Record<string, unknown>>({
               {filtered.map((row, i) => (
                 <tr
                   key={i}
-                  className={`border-b border-white/[0.03] transition-colors hover:bg-white/[0.03] ${i % 2 === 0 ? 'bg-transparent' : 'bg-white/[0.01]'}`}
+                  className={`h-12 border-b border-black/[0.05] text-[12px] transition-colors duration-150 ease-in-out hover:bg-[#F8FAFF] ${i % 2 === 0 ? 'bg-white' : 'bg-[#FAFBFC]'}`}
                 >
-                  {columns.map((col) => (
-                    <td key={col.key} className="px-4 py-3 text-sm text-gray-300">
+                  {columns.map((col, colIdx) => (
+                    <td
+                      key={col.key}
+                      className="px-4 py-3 text-[12px] text-slate-600"
+                      style={{ animation: `fadeIn 150ms ease ${Math.min(i * 20 + colIdx * 10, 300)}ms both` }}
+                    >
                       {col.render ? col.render(row) : String(row[col.key] ?? '—')}
                     </td>
                   ))}

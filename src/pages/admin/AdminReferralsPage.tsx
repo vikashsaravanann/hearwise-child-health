@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import AdminDataTable from '@/components/AdminDataTable';
 import { Check, X } from 'lucide-react';
+import { useAdminFilter } from '@/contexts/AdminFilterContext';
 
 interface ReferralRow {
   id: string;
@@ -17,6 +18,7 @@ interface ReferralRow {
 }
 
 export default function AdminReferralsPage() {
+  const { range } = useAdminFilter();
   const [data, setData] = useState<ReferralRow[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -31,6 +33,8 @@ export default function AdminReferralsPage() {
           right_ear_500hz, right_ear_1000hz, right_ear_2000hz, right_ear_4000hz
         )
       `)
+      .gte('created_at', range.from)
+      .lte('created_at', `${range.to}T23:59:59`)
       .order('created_at', { ascending: false });
 
     if (!referrals) { setLoading(false); return; }
@@ -64,7 +68,7 @@ export default function AdminReferralsPage() {
     setLoading(false);
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); }, [range.from, range.to]);
 
   const toggleDoctor = async (id: string, current: boolean) => {
     await supabase.from('referrals').update({ doctor_visited: !current }).eq('id', id);

@@ -9,6 +9,7 @@ import { type ReactNode, useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Loader2 } from 'lucide-react';
+import { checkAdminAccess } from '@/lib/adminAuth';
 
 type AuthState = 'loading' | 'allowed' | 'denied';
 
@@ -16,34 +17,14 @@ interface AdminGuardProps {
   children: ReactNode;
 }
 
-const adminQueryClient = supabase as unknown as {
-  from: (table: string) => ReturnType<typeof supabase.from>;
-};
-
-async function fetchAdminWhitelistMatch(email: string) {
-  return adminQueryClient
-    .from('admin_whitelist')
-    .select('id')
-    .eq('email', email.toLowerCase())
-    .maybeSingle();
-}
-
 export default function AdminGuard({ children }: AdminGuardProps) {
   const [authState, setAuthState] = useState<AuthState>('loading');
 
   useEffect(() => {
     const check = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        setAuthState('denied');
-        return;
-      }
-
-      // Server-side check: is this email in admin_whitelist?
-      const { data, error } = await fetchAdminWhitelistMatch(session.user.email ?? '');
-
-      if (error || !data) {
-        await supabase.auth.signOut();
+      const { allowed } = await checkAdminAccess();
+      if (!allowed) {
+        await supabase.auth.signOut().catch(() => undefined);
         setAuthState('denied');
         return;
       }
@@ -60,9 +41,8 @@ export default function AdminGuard({ children }: AdminGuardProps) {
         return;
       }
 
-      const { data, error } = await fetchAdminWhitelistMatch(session.user.email ?? '');
-
-      if (error || !data) {
+      const { allowed } = await checkAdminAccess();
+      if (!allowed) {
         setAuthState('denied');
       } else {
         setAuthState('allowed');

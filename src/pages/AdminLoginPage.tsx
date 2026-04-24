@@ -7,39 +7,31 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Headphones, LogIn, Loader2, ShieldAlert } from 'lucide-react';
+import { checkAdminAccess } from '@/lib/adminAuth';
 
 function getDeviceInfo() {
   const ua = navigator.userAgent;
-  const isMobile = /Mobi|Android/i.test(ua);
-  const isTablet = /Tablet|iPad/i.test(ua);
-  const deviceType = isTablet ? 'Tablet' : isMobile ? 'Mobile' : 'Desktop';
-
-  let browser = 'Unknown';
-  if (ua.includes('Chrome') && !ua.includes('Edg')) browser = 'Chrome';
-  else if (ua.includes('Safari') && !ua.includes('Chrome')) browser = 'Safari';
-  else if (ua.includes('Firefox')) browser = 'Firefox';
-  else if (ua.includes('Edg')) browser = 'Edge';
-
-  let os = 'Unknown';
-  if (ua.includes('Windows')) os = 'Windows';
-  else if (ua.includes('Mac')) os = 'macOS';
-  else if (ua.includes('Linux')) os = 'Linux';
-  else if (ua.includes('Android')) os = 'Android';
-  else if (ua.includes('iPhone') || ua.includes('iPad')) os = 'iOS';
+  const deviceType = /Mobile|Android|iPhone/i.test(ua)
+    ? 'Mobile'
+    : /Tablet|iPad/i.test(ua)
+      ? 'Tablet'
+      : 'Desktop';
+  const browser = /Chrome/i.test(ua)
+    ? 'Chrome'
+    : /Safari/i.test(ua)
+      ? 'Safari'
+      : /Firefox/i.test(ua)
+        ? 'Firefox'
+        : 'Unknown';
+  const os = /iPhone|iPad|Mac/i.test(ua)
+    ? 'Apple'
+    : /Android/i.test(ua)
+      ? 'Android'
+      : /Windows/i.test(ua)
+        ? 'Windows'
+        : 'Unknown';
 
   return { deviceType, browser, os };
-}
-
-const adminQueryClient = supabase as unknown as {
-  from: (table: string) => ReturnType<typeof supabase.from>;
-};
-
-async function fetchAdminWhitelistMatch(email: string) {
-  return adminQueryClient
-    .from('admin_whitelist')
-    .select('id')
-    .eq('email', email.toLowerCase())
-    .maybeSingle();
 }
 
 export default function AdminLoginPage() {
@@ -58,13 +50,8 @@ export default function AdminLoginPage() {
     const check = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
-        const { data } = await supabase
-          .from('admin_whitelist')
-          .select('id')
-          .eq('email', session.user.email?.toLowerCase() ?? '')
-          .maybeSingle();
-
-        if (data) {
+        const { allowed } = await checkAdminAccess();
+        if (allowed) {
           navigate('/admin/dashboard', { replace: true });
           return;
         }
@@ -92,9 +79,8 @@ export default function AdminLoginPage() {
         return;
       }
 
-      const { data: wl, error: wlError } = await fetchAdminWhitelistMatch(authData.user.email ?? '');
-
-      if (wlError || !wl) {
+      const { allowed } = await checkAdminAccess();
+      if (!allowed) {
         await supabase.auth.signOut();
         setError('Access Denied. You are not authorized.');
         setLoading(false);

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import AdminDataTable from '@/components/AdminDataTable';
+import { Phone } from 'lucide-react';
 
 interface TeacherRow {
   id: string;
@@ -59,9 +60,9 @@ export default function AdminTeachersPage() {
   }, []);
 
   const columns = [
-    { key: 'name', label: 'Teacher Name' },
+    { key: 'name', label: 'Teacher Name', render: (r: TeacherRow) => <span className="text-[13px] font-medium text-[#0F172A]">{r.name}</span> },
     { key: 'schoolName', label: 'School' },
-    { key: 'phone', label: 'Phone', render: (r: TeacherRow) => r.phone || '—' },
+    { key: 'phone', label: 'Phone', render: (r: TeacherRow) => <span className="inline-flex items-center gap-1"><Phone size={12} />{r.phone || '—'}</span> },
     { key: 'sessionCount', label: 'Sessions' },
     { key: 'studentCount', label: 'Students Tested' },
     { key: 'created_at', label: 'Registered', render: (r: TeacherRow) => new Date(r.created_at).toLocaleDateString() },
