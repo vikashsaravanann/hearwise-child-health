@@ -2,10 +2,11 @@
  * AdminOverviewPage — Main dashboard with stat cards + real-time updates.
  */
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import {
   School, GraduationCap, Users, Activity,
-  CheckCircle2, AlertTriangle, XCircle, Loader2
+  CheckCircle2, AlertTriangle, XCircle, Loader2, ArrowRight
 } from 'lucide-react';
 
 interface Stats {
@@ -20,6 +21,7 @@ interface Stats {
 }
 
 export default function AdminOverviewPage() {
+  const navigate = useNavigate();
   const [stats, setStats] = useState<Stats>({
     totalSchools: 0, totalTeachers: 0, totalStudents: 0,
     totalTestsToday: 0, normalCount: 0, mildCount: 0,
@@ -98,6 +100,15 @@ export default function AdminOverviewPage() {
     { label: 'Sessions Today', value: stats.activeSessionsToday, icon: Activity, color: 'from-teal-500/20 to-teal-600/5', iconColor: 'text-teal-400' },
   ];
 
+  const quickActions = [
+    { label: 'Manage Schools', href: '/admin/schools' },
+    { label: 'Manage Teachers', href: '/admin/teachers' },
+    { label: 'Student Results', href: '/admin/students' },
+    { label: 'Session Records', href: '/admin/sessions' },
+    { label: 'Referral Tracking', href: '/admin/referrals' },
+    { label: 'Login History', href: '/admin/logins' },
+  ];
+
   return (
     <div>
       <h2 className="text-xl font-bold text-white">Dashboard Overview</h2>
@@ -116,6 +127,24 @@ export default function AdminOverviewPage() {
             <p className="mt-0.5 text-xs text-gray-400">{card.label}</p>
           </div>
         ))}
+      </div>
+
+      <div className="mt-8 rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+        <h3 className="text-sm font-semibold text-white">Quick Actions</h3>
+        <p className="mt-1 text-xs text-gray-400">Open any admin section in one click.</p>
+        <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+          {quickActions.map((item) => (
+            <button
+              key={item.href}
+              type="button"
+              onClick={() => navigate(item.href)}
+              className="flex items-center justify-between rounded-xl border border-white/10 bg-white/5 px-3 py-3 text-sm text-gray-200 transition-colors hover:border-[#2F80ED]/40 hover:bg-[#2F80ED]/10"
+            >
+              <span>{item.label}</span>
+              <ArrowRight size={15} className="text-[#2F80ED]" />
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );

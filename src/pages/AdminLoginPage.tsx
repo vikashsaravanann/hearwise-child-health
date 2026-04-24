@@ -30,6 +30,18 @@ function getDeviceInfo() {
   return { deviceType, browser, os };
 }
 
+const adminQueryClient = supabase as unknown as {
+  from: (table: string) => ReturnType<typeof supabase.from>;
+};
+
+async function fetchAdminWhitelistMatch(email: string) {
+  return adminQueryClient
+    .from('admin_whitelist')
+    .select('id')
+    .eq('email', email.toLowerCase())
+    .maybeSingle();
+}
+
 export default function AdminLoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -80,14 +92,7 @@ export default function AdminLoginPage() {
         return;
       }
 
-      // Server-side whitelist check — use 'as any' to bypass generated types
-      const { data: wl, error: wlError } = await (supabase as any)
-        .from('admin_whitelist')
-        .select('id')
-        .eq('email', authData.user.email?.toLowerCase() ?? '')
-        .maybeSingle();
-
-      console.log('Whitelist check:', { wl, wlError });
+      const { data: wl, error: wlError } = await fetchAdminWhitelistMatch(authData.user.email ?? '');
 
       if (wlError || !wl) {
         await supabase.auth.signOut();

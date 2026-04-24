@@ -16,6 +16,8 @@ import {
   Menu,
   X,
   Headphones,
+  PhoneCall,
+  Mail,
 } from 'lucide-react';
 
 const NAV_ITEMS = [
@@ -152,6 +154,25 @@ export default function AdminLayout() {
         {/* Page content */}
         <main className="flex-1 overflow-y-auto p-4 lg:p-6">
           <Outlet />
+          <div className="mt-6 rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+            <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">Admin Support</p>
+            <div className="mt-3 flex flex-col gap-2 text-sm text-gray-300 sm:flex-row sm:items-center sm:gap-6">
+              <a
+                href="tel:9342877474"
+                className="inline-flex items-center gap-2 rounded-lg px-2 py-1 transition-colors hover:bg-white/5 hover:text-white"
+              >
+                <PhoneCall size={14} className="text-[#2F80ED]" />
+                9342877474
+              </a>
+              <a
+                href="mailto:vikash752008@icloud.com"
+                className="inline-flex items-center gap-2 rounded-lg px-2 py-1 transition-colors hover:bg-white/5 hover:text-white"
+              >
+                <Mail size={14} className="text-[#2F80ED]" />
+                vikash752008@icloud.com
+              </a>
+            </div>
+          </div>
         </main>
       </div>
     </div>

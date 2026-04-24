@@ -61,6 +61,43 @@ export default function AdminDataTable<T extends Record<string, unknown>>({
     }
   };
 
+  const handleExportPDF = () => {
+    const reportWindow = window.open('', '_blank', 'noopener,noreferrer,width=1200,height=800');
+    if (!reportWindow) return;
+
+    const printableRows = filtered.map((row) => {
+      const cells = columns.map((col) => {
+        const rawValue = col.render ? row[col.key] : row[col.key];
+        return `<td style="border:1px solid #d4d4d8;padding:8px;font-size:12px;">${escapeCsv(rawValue ?? '—')}</td>`;
+      }).join('');
+      return `<tr>${cells}</tr>`;
+    }).join('');
+
+    const headerCells = columns
+      .map((col) => `<th style="border:1px solid #d4d4d8;padding:8px;background:#f4f4f5;text-align:left;font-size:12px;">${col.label}</th>`)
+      .join('');
+
+    reportWindow.document.write(`
+      <!doctype html>
+      <html>
+        <head>
+          <title>${title} Report</title>
+        </head>
+        <body style="font-family:Arial,sans-serif;padding:20px;color:#111827;">
+          <h2 style="margin:0 0 6px;">${title}</h2>
+          <p style="margin:0 0 16px;font-size:12px;color:#6b7280;">Generated on ${new Date().toLocaleString()}</p>
+          <table style="width:100%;border-collapse:collapse;">
+            <thead><tr>${headerCells}</tr></thead>
+            <tbody>${printableRows}</tbody>
+          </table>
+        </body>
+      </html>
+    `);
+    reportWindow.document.close();
+    reportWindow.focus();
+    reportWindow.print();
+  };
+
   return (
     <div>
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -78,9 +115,11 @@ export default function AdminDataTable<T extends Record<string, unknown>>({
             CSV
           </button>
           <button
-            disabled
-            className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-xs font-medium text-gray-300 opacity-40"
-            title="PDF export coming soon"
+            type="button"
+            onClick={handleExportPDF}
+            disabled={filtered.length === 0}
+            className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-xs font-medium text-gray-300 transition-colors hover:bg-white/10 disabled:opacity-40"
+            title="Export table as printable PDF"
           >
             <FileText size={14} />
             PDF
