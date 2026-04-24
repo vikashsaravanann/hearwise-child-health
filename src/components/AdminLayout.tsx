@@ -17,11 +17,17 @@ import {
   Headphones,
   Moon,
   Sun,
+  UserCircle2,
+  ExternalLink,
+  Github,
+  Instagram,
+  Linkedin,
+  Mail,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { AdminTimeFilterProvider, useAdminTimeFilter } from '@/contexts/AdminTimeFilterContext';
 
-const NAV_ITEMS = [
+const DATA_NAV_ITEMS = [
   { label: 'Overview', path: '/admin/dashboard', icon: LayoutDashboard },
   { label: 'Analytics', path: '/admin/analytics', icon: BarChart3 },
   { label: 'Schools', path: '/admin/schools', icon: School },
@@ -29,6 +35,11 @@ const NAV_ITEMS = [
   { label: 'Students', path: '/admin/students', icon: Users },
   { label: 'Sessions', path: '/admin/sessions', icon: ClipboardList },
   { label: 'Referrals', path: '/admin/referrals', icon: AlertTriangle },
+  { label: 'About Developer', path: '/admin/about', icon: UserCircle2 },
+  { label: 'Build in Public', href: 'https://instagram.com/startupwithvikash', icon: ExternalLink, external: true },
+];
+
+const SYSTEM_NAV_ITEMS = [
   { label: 'Login History', path: '/admin/logins', icon: History },
 ];
 
@@ -93,16 +104,9 @@ function AdminLayoutInner() {
   const location = useLocation();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [userEmail, setUserEmail] = useState('');
   const [isLive, setIsLive] = useState(true);
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem('hw_admin_dark') === 'true');
   const supabaseStatus = useSupabaseHealth();
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUserEmail(session?.user?.email ?? '');
-    });
-  }, []);
 
   // Blink the live indicator
   useEffect(() => {
@@ -158,8 +162,48 @@ function AdminLayoutInner() {
 
         {/* Nav */}
         <nav className="flex-1 overflow-y-auto px-3 py-4">
-          <ul className="space-y-1">
-            {NAV_ITEMS.map(({ label, path, icon: Icon }) => {
+          <p className="px-3 text-[10px] font-semibold uppercase tracking-[1px] text-gray-500">Data</p>
+          <ul className="mt-2 space-y-1">
+            {DATA_NAV_ITEMS.map(({ label, path, href, icon: Icon, external }) => {
+              const active = !!path && location.pathname === path;
+              const itemClasses = `
+                flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200
+                ${active ? 'bg-[#2F80ED]/15 text-[#2F80ED]' : 'text-gray-400 hover:bg-white/5 hover:text-white'}
+              `;
+
+              if (external && href) {
+                return (
+                  <li key={label}>
+                    <a
+                      href={href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={itemClasses}
+                    >
+                      <Icon size={18} />
+                      <span className="inline-flex items-center gap-1">
+                        {label}
+                        <span>↗</span>
+                      </span>
+                    </a>
+                  </li>
+                );
+              }
+
+              return (
+                <li key={path}>
+                  <Link to={path!} onClick={() => setSidebarOpen(false)} className={itemClasses}>
+                    <Icon size={18} />
+                    {label}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+
+          <p className="mt-5 px-3 text-[10px] font-semibold uppercase tracking-[1px] text-gray-500">System</p>
+          <ul className="mt-2 space-y-1">
+            {SYSTEM_NAV_ITEMS.map(({ label, path, icon: Icon }) => {
               const active = location.pathname === path;
               return (
                 <li key={path}>
@@ -167,10 +211,8 @@ function AdminLayoutInner() {
                     to={path}
                     onClick={() => setSidebarOpen(false)}
                     className={`
-                      flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all
-                      ${active
-                        ? 'bg-[#2F80ED]/15 text-[#2F80ED]'
-                        : 'text-gray-400 hover:bg-white/5 hover:text-white'}
+                      flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200
+                      ${active ? 'bg-[#2F80ED]/15 text-[#2F80ED]' : 'text-gray-400 hover:bg-white/5 hover:text-white'}
                     `}
                   >
                     <Icon size={18} />
@@ -184,7 +226,27 @@ function AdminLayoutInner() {
 
         {/* Footer */}
         <div className="border-t border-white/5 px-4 py-4">
-          <p className="truncate text-xs text-gray-500">{userEmail}</p>
+          <p className="text-sm font-medium text-white">Vikash S.</p>
+          <p className="text-xs text-gray-500">Super Admin</p>
+          <div className="mt-2 flex items-center gap-[10px]">
+            {[
+              { icon: Github, href: 'https://github.com/vikashsaravanann', label: 'GitHub' },
+              { icon: Instagram, href: 'https://instagram.com/startupwithvikash', label: 'Instagram' },
+              { icon: Linkedin, href: 'https://www.linkedin.com/in/vikash-saravanan-j7528/', label: 'LinkedIn' },
+              { icon: Mail, href: 'mailto:vikash752008@icloud.com', label: 'Email' },
+            ].map(({ icon: Icon, href, label }) => (
+              <a
+                key={label}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={label}
+                className="text-[rgba(255,255,255,0.3)] transition-all duration-200 hover:text-[rgba(255,255,255,0.8)]"
+              >
+                <Icon size={16} />
+              </a>
+            ))}
+          </div>
           <button
             onClick={handleLogout}
             className="mt-2 flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm text-gray-400 hover:bg-red-500/10 hover:text-red-400 transition-colors"

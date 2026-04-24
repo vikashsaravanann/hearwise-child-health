@@ -6,6 +6,8 @@ import {
   CheckCircle2, AlertTriangle, XCircle, Loader2, RefreshCcw
 } from 'lucide-react';
 import { useAdminTimeFilter } from '@/contexts/AdminTimeFilterContext';
+import FounderGreeting from '@/components/admin/FounderGreeting';
+import MissionBanner from '@/components/admin/MissionBanner';
 
 interface Stats {
   totalSchools: number;
@@ -44,7 +46,6 @@ export default function AdminOverviewPage() {
   const [insights, setInsights] = useState<Insight[]>([]);
   const [dismissUrgency, setDismissUrgency] = useState(false);
   const [urgency, setUrgency] = useState({ count: 0, days: 0 });
-  const [animated, setAnimated] = useState({ children: 0, schools: 0, issues: 0 });
   const feedRef = useRef<HTMLDivElement | null>(null);
 
   const loadStats = async () => {
@@ -108,24 +109,6 @@ export default function AdminOverviewPage() {
 
     return () => { supabase.removeChannel(channel); };
   }, [range.from, range.to]);
-
-  useEffect(() => {
-    const target = { children: stats.totalTestsToday, schools: stats.totalSchools, issues: stats.referCount };
-    const start = performance.now();
-    const duration = 800;
-    let raf = 0;
-    const step = (now: number) => {
-      const p = Math.min((now - start) / duration, 1);
-      setAnimated({
-        children: Math.round(target.children * p),
-        schools: Math.round(target.schools * p),
-        issues: Math.round(target.issues * p),
-      });
-      if (p < 1) raf = requestAnimationFrame(step);
-    };
-    raf = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(raf);
-  }, [stats.totalTestsToday, stats.totalSchools, stats.referCount]);
 
   useEffect(() => {
     const loadFeed = async () => {
@@ -221,9 +204,8 @@ export default function AdminOverviewPage() {
 
   return (
     <div className="space-y-4 text-[var(--hw-text)]">
-      <div className="rounded-lg bg-[#2F80ED] px-6 py-3 text-sm text-white">
-        HearWise has screened <strong>{animated.children.toLocaleString()}</strong> children across <strong>{animated.schools.toLocaleString()}</strong> schools in Tamil Nadu — detecting <strong>{animated.issues.toLocaleString()}</strong> hearing issues early.
-      </div>
+      <FounderGreeting />
+      <MissionBanner />
 
       {!dismissUrgency && urgency.count > 0 && (
         <div className="flex items-center justify-between rounded-lg border border-red-300 bg-red-100 px-4 py-2 text-sm text-red-700">

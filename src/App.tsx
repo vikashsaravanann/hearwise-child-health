@@ -24,6 +24,7 @@ import AdminSessionsPage from "./pages/admin/AdminSessionsPage";
 import AdminReferralsPage from "./pages/admin/AdminReferralsPage";
 import AdminLoginsPage from "./pages/admin/AdminLoginsPage";
 import AdminAnalyticsPage from "./pages/admin/AdminAnalyticsPage";
+import AboutDeveloperPage from "./pages/admin/AboutDeveloperPage";
 import AboutPage from "./pages/AboutPage";
 import NotFound from "./pages/NotFound";
 
@@ -67,6 +68,7 @@ const App = () => (
               <Route path="/admin/sessions" element={<AdminSessionsPage />} />
               <Route path="/admin/referrals" element={<AdminReferralsPage />} />
               <Route path="/admin/logins" element={<AdminLoginsPage />} />
+              <Route path="/admin/about" element={<AboutDeveloperPage />} />
             </Route>
 
             {/* Legacy route redirect */}
