@@ -392,12 +392,12 @@ export default function AboutPage() {
 
                   <div className="mt-6 flex flex-wrap gap-3">
                     <Button asChild className="h-12 rounded-2xl px-5 font-semibold">
-                      <a href="mailto:hello@hearwise.in">
+                      <a href="mailto:vikash752008@icloud.com">
                         <Mail className="mr-2 h-4 w-4" /> Email Us
                       </a>
                     </Button>
                     <Button asChild variant="outline" className="h-12 rounded-2xl px-5 font-semibold">
-                      <a href="tel:+919999999999">
+                      <a href="tel:9342877474">
                         <Phone className="mr-2 h-4 w-4" /> Call Founder
                       </a>
                     </Button>
@@ -409,15 +409,14 @@ export default function AboutPage() {
                     <Mail className="mt-0.5 h-5 w-5 text-primary" />
                     <div>
                       <p className="text-xs font-semibold text-muted-foreground">Email</p>
-                      <p className="text-sm font-medium">hello@hearwise.in</p>
-                      <p className="text-xs text-muted-foreground">partners@hearwise.in · gov@hearwise.in</p>
+                      <p className="text-sm font-medium">vikash752008@icloud.com</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
                     <Phone className="mt-0.5 h-5 w-5 text-primary" />
                     <div>
                       <p className="text-xs font-semibold text-muted-foreground">Phone</p>
-                      <p className="text-sm font-medium">+91 99999 99999</p>
+                      <p className="text-sm font-medium">+91 9342877474</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
