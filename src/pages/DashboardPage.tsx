@@ -1,7 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import { getDashboardStats, getRecentSessions, getMonthlyTrend, exportCSV } from '@/lib/database';
+import {
+  exportCSV,
+  getDashboardStats,
+  getRecentSessions,
+  getMonthlyTrend,
+  getDetailedStudentResults,
+  type DetailedStudentResult,
+} from '@/lib/database';
 import { TAMIL_NADU_DISTRICTS } from '@/lib/districts';
 import { useSession } from '@/contexts/SessionContext';
 import { t } from '@/lib/i18n';
@@ -10,8 +17,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { BarChart3, Users, School, AlertOctagon, LogIn, Download, Loader2, LogOut, ArrowLeft } from 'lucide-react';
+import { School, AlertOctagon, LogIn, Download, Loader2, LogOut, ArrowLeft, Activity, CheckCircle2, XCircle, AlertTriangle, UserCheck } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+
+const ADMIN_EMAIL = (import.meta.env.VITE_ADMIN_EMAIL as string | undefined)?.toLowerCase() ?? 'vikash07052008@gmail.com';
 
 interface Stats {
   totalSchools: number;
@@ -34,6 +43,34 @@ interface TrendRow {
   refer: number;
 }
 
+function buildHearingProblemDescription(row: DetailedStudentResult, lang: 'en' | 'ta'): string {
+  if (row.overallResult === 'normal') return t('noIssue', lang);
+
+  const leftFailed: string[] = [];
+  if (!row.leftEar500) leftFailed.push('500Hz');
+  if (!row.leftEar1000) leftFailed.push('1kHz');
+  if (!row.leftEar2000) leftFailed.push('2kHz');
+  if (!row.leftEar4000) leftFailed.push('4kHz');
+
+  const rightFailed: string[] = [];
+  if (!row.rightEar500) rightFailed.push('500Hz');
+  if (!row.rightEar1000) rightFailed.push('1kHz');
+  if (!row.rightEar2000) rightFailed.push('2kHz');
+  if (!row.rightEar4000) rightFailed.push('4kHz');
+
+  const parts: string[] = [];
+  if (leftFailed.length > 0) parts.push(`${t('leftEarShort', lang)}: ${leftFailed.join(', ')}`);
+  if (rightFailed.length > 0) parts.push(`${t('rightEarShort', lang)}: ${rightFailed.join(', ')}`);
+
+  if (parts.length === 0) {
+    return row.overallResult === 'refer'
+      ? (lang === 'ta' ? 'அதிக பொய் நேர்மறை – மருத்துவர் பரிந்துரை' : 'High false positives – refer to doctor')
+      : (lang === 'ta' ? 'சில அலைவரிசைகள் பலவீனமாக உள்ளன' : 'Some frequencies weak');
+  }
+
+  return parts.join(' | ');
+}
+
 export default function DashboardPage() {
   const navigate = useNavigate();
   const { lang } = useSession();
@@ -45,6 +82,7 @@ export default function DashboardPage() {
   const [stats, setStats] = useState<Stats>({ totalSchools: 0, totalStudents: 0, totalReferrals: 0, totalSessions: 0 });
   const [sessions, setSessions] = useState<SessionRow[]>([]);
   const [trend, setTrend] = useState<TrendRow[]>([]);
+  const [studentResults, setStudentResults] = useState<DetailedStudentResult[]>([]);
   const [dataLoading, setDataLoading] = useState(false);
   const [filterDistrict, setFilterDistrict] = useState('all');
   const [exporting, setExporting] = useState(false);
@@ -76,14 +114,16 @@ export default function DashboardPage() {
   const loadData = async () => {
     setDataLoading(true);
     try {
-      const [s, sess, t] = await Promise.all([
+      const [s, sess, tr, sr] = await Promise.all([
         getDashboardStats(),
         getRecentSessions(),
         getMonthlyTrend(),
+        getDetailedStudentResults(200),
       ]);
       setStats(s);
       setSessions(sess);
-      setTrend(t);
+      setTrend(tr);
+      setStudentResults(sr);
     } catch (e) {
       console.error('Dashboard load error:', e);
     } finally {
@@ -92,9 +132,13 @@ export default function DashboardPage() {
   };
 
   const handleLogin = async () => {
+    if (email.trim().toLowerCase() !== ADMIN_EMAIL) {
+      toast({ title: t('loginFailed', lang), description: t('unauthorizedEmail', lang), variant: 'destructive' });
+      return;
+    }
     setLoginLoading(true);
     try {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
       if (error) throw error;
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : t('unexpectedAuthError', lang);
@@ -150,7 +194,7 @@ export default function DashboardPage() {
           <CardContent className="flex flex-col gap-4">
             <div>
               <Label>{t('email', lang)}</Label>
-              <Input className="mt-1.5 h-12 rounded-xl" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="admin@hearwise.in" />
+              <Input className="mt-1.5 h-12 rounded-xl" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder={ADMIN_EMAIL} />
             </div>
             <div>
               <Label>{t('password', lang)}</Label>
@@ -173,6 +217,10 @@ export default function DashboardPage() {
     ? sessions
     : sessions.filter((s) => s.schools?.district === filterDistrict);
 
+  const filteredStudentResults = filterDistrict === 'all'
+    ? studentResults
+    : studentResults.filter((r) => r.district === filterDistrict);
+
   // Simple bar chart via divs
   const maxTrendVal = Math.max(1, ...trend.map(t => t.normal + t.mild + t.refer));
 
@@ -190,7 +238,7 @@ export default function DashboardPage() {
       ) : (
         <>
           {/* Stats */}
-          <div className="mt-6 grid grid-cols-2 gap-3">
+          <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
             <Card className="rounded-2xl">
               <CardContent className="flex flex-col items-center p-4">
                 <School className="text-primary" size={24} />
@@ -200,9 +248,9 @@ export default function DashboardPage() {
             </Card>
             <Card className="rounded-2xl">
               <CardContent className="flex flex-col items-center p-4">
-                <Users className="text-primary" size={24} />
+                <UserCheck className="text-primary" size={24} />
                 <span className="mt-1 text-2xl font-bold">{stats.totalStudents}</span>
-                <span className="text-[11px] text-muted-foreground">{t('studentsTested', lang)}</span>
+                <span className="text-[11px] text-muted-foreground">{t('studentsChecked', lang)}</span>
               </CardContent>
             </Card>
             <Card className="rounded-2xl border-destructive/20">
@@ -214,9 +262,9 @@ export default function DashboardPage() {
             </Card>
             <Card className="rounded-2xl">
               <CardContent className="flex flex-col items-center p-4">
-                <BarChart3 className="text-secondary" size={24} />
+                <Activity className="text-secondary" size={24} />
                 <span className="mt-1 text-2xl font-bold">{stats.totalSessions}</span>
-                <span className="text-[11px] text-muted-foreground">{t('sessions', lang)}</span>
+                <span className="text-[11px] text-muted-foreground">{t('appUsageCount', lang)}</span>
               </CardContent>
             </Card>
           </div>
@@ -252,10 +300,13 @@ export default function DashboardPage() {
             </Card>
           )}
 
-          {/* Filter & Sessions */}
+          {/* Student Hearing Results */}
           <div className="mt-6">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-semibold">{t('recentSessions', lang)}</h3>
+              <div>
+                <h3 className="text-sm font-semibold">{t('studentResults', lang)}</h3>
+                <p className="text-[11px] text-muted-foreground">{t('studentResultsDesc', lang)}</p>
+              </div>
               <Select value={filterDistrict} onValueChange={setFilterDistrict}>
                 <SelectTrigger className="h-8 w-36 text-xs rounded-lg"><SelectValue /></SelectTrigger>
                 <SelectContent>
@@ -264,6 +315,79 @@ export default function DashboardPage() {
                 </SelectContent>
               </Select>
             </div>
+            <div className="mt-3 flex flex-col gap-2">
+              {filteredStudentResults.length === 0 ? (
+                <p className="py-8 text-center text-sm text-muted-foreground">{t('noStudentResults', lang)}</p>
+              ) : (
+                filteredStudentResults.map((sr) => {
+                  const isRefer = sr.overallResult === 'refer';
+                  const isMild = sr.overallResult === 'mild';
+                  const resultColor = isRefer
+                    ? 'border-destructive/30 bg-destructive/5'
+                    : isMild
+                      ? 'border-warning/30 bg-warning/5'
+                      : 'border-success/30 bg-success/5';
+                  const resultIcon = isRefer
+                    ? <XCircle className="h-4 w-4 text-destructive shrink-0" />
+                    : isMild
+                      ? <AlertTriangle className="h-4 w-4 text-warning shrink-0" />
+                      : <CheckCircle2 className="h-4 w-4 text-success shrink-0" />;
+                  const resultLabel = isRefer
+                    ? t('refer', lang)
+                    : isMild
+                      ? t('mild', lang)
+                      : t('normal', lang);
+                  const problemDesc = buildHearingProblemDescription(sr, lang);
+
+                  return (
+                    <Card key={sr.id} className={`rounded-xl border ${resultColor}`}>
+                      <CardContent className="p-3">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2">
+                              {resultIcon}
+                              <p className="text-sm font-semibold truncate">{sr.studentName}</p>
+                              {sr.studentAge !== null && (
+                                <span className="text-xs text-muted-foreground shrink-0">({sr.studentAge}y)</span>
+                              )}
+                            </div>
+                            <p className="mt-0.5 text-xs text-muted-foreground">
+                              {t('teacherName', lang)}: <span className="font-medium text-foreground">{sr.teacherName}</span>
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {sr.schoolName}{sr.district ? ` • ${sr.district}` : ''}
+                            </p>
+                            {!isRefer && !isMild ? null : (
+                              <p className="mt-1 text-xs font-medium text-foreground">
+                                {t('problemDescription', lang)}: {problemDesc}
+                              </p>
+                            )}
+                          </div>
+                          <div className="flex flex-col items-end gap-1 shrink-0">
+                            <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${isRefer ? 'bg-destructive/15 text-destructive' : isMild ? 'bg-warning/20 text-warning-foreground' : 'bg-success/15 text-success'}`}>
+                              {resultLabel}
+                            </span>
+                            {sr.referred && (
+                              <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
+                                {sr.doctorVisited ? t('doctorVisited', lang) : t('referred', lang)}
+                              </span>
+                            )}
+                            {sr.sessionDate && (
+                              <span className="text-[10px] text-muted-foreground">{sr.sessionDate}</span>
+                            )}
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })
+              )}
+            </div>
+          </div>
+
+          {/* Filter & Sessions */}
+          <div className="mt-6">
+            <h3 className="text-sm font-semibold">{t('recentSessions', lang)}</h3>
             <div className="mt-3 flex flex-col gap-2">
               {filteredSessions.length === 0 ? (
                 <p className="py-8 text-center text-sm text-muted-foreground">{t('noSessionsFound', lang)}</p>

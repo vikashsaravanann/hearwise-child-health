@@ -100,6 +100,19 @@ const translations: Record<string, Record<Language, string>> = {
   saveQueuedForSync: { en: 'Result saved locally. It will sync automatically.', ta: 'முடிவு உள்ளூரில் சேமிக்கப்பட்டது. இணையம் வந்ததும் தானாக ஒத்திசையும்.' },
   syncFailures: { en: 'sync retries', ta: 'ஒத்திசைவு மீண்டும் முயற்சிகள்' },
   allSynced: { en: 'All synced', ta: 'அனைத்தும் ஒத்திசைந்தது' },
+  studentResults: { en: 'Student Hearing Results', ta: 'மாணவர் கேள்வித்திறன் முடிவுகள்' },
+  studentResultsDesc: { en: 'Detailed hearing check results per student', ta: 'ஒவ்வொரு மாணவரின் கேள்வித்திறன் சோதனை முடிவுகள்' },
+  problemDescription: { en: 'Hearing Issue', ta: 'கேள்வி பிரச்சனை' },
+  noIssue: { en: 'No issue detected', ta: 'பிரச்சனை இல்லை' },
+  leftEarShort: { en: 'Left', ta: 'இடது' },
+  rightEarShort: { en: 'Right', ta: 'வலது' },
+  referred: { en: 'Referred', ta: 'பரிந்துரைக்கப்பட்டது' },
+  doctorVisited: { en: 'Doctor Visited', ta: 'மருத்துவர் சந்தித்தனர்' },
+  notReferred: { en: 'Not referred', ta: 'பரிந்துரை இல்லை' },
+  unauthorizedEmail: { en: 'Access denied. Only the admin account may log in.', ta: 'அணுகல் மறுக்கப்பட்டது. நிர்வாக கணக்கு மட்டுமே உள்நுழைய முடியும்.' },
+  noStudentResults: { en: 'No student results yet', ta: 'இன்னும் மாணவர் முடிவுகள் இல்லை' },
+  appUsageCount: { en: 'Times App Used', ta: 'செயலி பயன்படுத்திய எண்ணிக்கை' },
+  studentsChecked: { en: 'Students Checked', ta: 'சரிபார்க்கப்பட்ட மாணவர்கள்' },
 };
 
 export function t(key: string, lang: Language): string {
