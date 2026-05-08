@@ -14,6 +14,12 @@ import OceanTestPage from "./pages/OceanTestPage";
 import LevelResultPage from "./pages/LevelResultPage";
 import SessionSummaryPage from "./pages/SessionSummaryPage";
 import AnimatedDashboardPage from "./pages/AnimatedDashboardPage";
+import GamesPage from "./pages/Games";
+import TrophiesPage from "./pages/Trophies";
+import EarCarePage from "./pages/EarCare";
+import EducationPage from "./pages/Education";
+import LearnPage from "./pages/Learn";
+import SoundExplorerPage from "./pages/SoundExplorer";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -36,6 +42,12 @@ const App = () => (
             <Route path="/level-result/:level" element={<LevelResultPage />} />
             <Route path="/session-summary" element={<SessionSummaryPage />} />
             <Route path="/dashboard" element={<AnimatedDashboardPage />} />
+            <Route path="/games" element={<GamesPage />} />
+            <Route path="/trophies" element={<TrophiesPage />} />
+            <Route path="/ear-care" element={<EarCarePage />} />
+            <Route path="/education" element={<EducationPage />} />
+            <Route path="/learn" element={<LearnPage />} />
+            <Route path="/sound-explorer" element={<SoundExplorerPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
