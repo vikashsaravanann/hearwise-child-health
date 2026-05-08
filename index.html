@@ -21,6 +21,20 @@
 
   <body>
     <div id="root"></div>
+    <script>
+      (function () {
+        var params = new URLSearchParams(window.location.search);
+        var redirect = params.get("__ghpages_redirect__");
+        if (!redirect) return;
+        params.delete("__ghpages_redirect__");
+        var newSearch = params.toString();
+        var newUrl =
+          window.location.pathname +
+          (newSearch ? "?" + newSearch : "") +
+          decodeURIComponent(redirect);
+        window.history.replaceState(null, "", newUrl);
+      })();
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

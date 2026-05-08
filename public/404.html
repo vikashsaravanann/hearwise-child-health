@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Redirecting...</title>
+    <script>
+      // GitHub Pages serves this file for unknown routes. We rewrite the URL
+      // into a query param and let the SPA restore it on load.
+      (function () {
+        var l = window.location;
+        var repoBase = "/hearwise-child-health";
+        var fullPath = l.pathname + l.search + l.hash;
+        l.replace(
+          l.protocol +
+            "//" +
+            l.host +
+            repoBase +
+            "/?__ghpages_redirect__=" +
+            encodeURIComponent(fullPath)
+        );
+      })();
+    </script>
+  </head>
+  <body></body>
+</html>
