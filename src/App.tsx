@@ -20,6 +20,13 @@ import EarCarePage from "./pages/EarCare";
 import EducationPage from "./pages/Education";
 import LearnPage from "./pages/Learn";
 import SoundExplorerPage from "./pages/SoundExplorer";
+import MyReportPage from "./pages/MyReport";
+import HeadphoneSafetyPage from "./pages/HeadphoneSafety";
+import NoiseAwarenessPage from "./pages/NoiseAwareness";
+import SelfCheckPage from "./pages/SelfCheck";
+import BookAppointmentPage from "./pages/BookAppointment";
+import LeaderboardPage from "./pages/Leaderboard";
+import HelpPage from "./pages/Help";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -48,6 +55,13 @@ const App = () => (
             <Route path="/education" element={<EducationPage />} />
             <Route path="/learn" element={<LearnPage />} />
             <Route path="/sound-explorer" element={<SoundExplorerPage />} />
+            <Route path="/my-report" element={<MyReportPage />} />
+            <Route path="/headphone-safety" element={<HeadphoneSafetyPage />} />
+            <Route path="/noise-awareness" element={<NoiseAwarenessPage />} />
+            <Route path="/self-check" element={<SelfCheckPage />} />
+            <Route path="/book-appointment" element={<BookAppointmentPage />} />
+            <Route path="/leaderboard" element={<LeaderboardPage />} />
+            <Route path="/help" element={<HelpPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
