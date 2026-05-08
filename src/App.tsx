@@ -9,11 +9,11 @@ import LandingPage from "./pages/LandingPage";
 import SessionSetupPage from "./pages/SessionSetupPage";
 import StudentEntryPage from "./pages/StudentEntryPage";
 import HeadphoneCheckPage from "./pages/HeadphoneCheckPage";
-import PracticeRoundPage from "./pages/PracticeRoundPage";
-import ActiveTestPage from "./pages/ActiveTestPage";
-import ResultsPage from "./pages/ResultsPage";
+import OceanLevelSelectPage from "./pages/OceanLevelSelectPage";
+import OceanTestPage from "./pages/OceanTestPage";
+import LevelResultPage from "./pages/LevelResultPage";
 import SessionSummaryPage from "./pages/SessionSummaryPage";
-import DashboardPage from "./pages/DashboardPage";
+import AnimatedDashboardPage from "./pages/AnimatedDashboardPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -31,11 +31,11 @@ const App = () => (
             <Route path="/setup" element={<SessionSetupPage />} />
             <Route path="/student-entry" element={<StudentEntryPage />} />
             <Route path="/headphone-check" element={<HeadphoneCheckPage />} />
-            <Route path="/practice" element={<PracticeRoundPage />} />
-            <Route path="/test" element={<ActiveTestPage />} />
-            <Route path="/results" element={<ResultsPage />} />
+            <Route path="/ocean-levels" element={<OceanLevelSelectPage />} />
+            <Route path="/ocean-test/:level" element={<OceanTestPage />} />
+            <Route path="/level-result/:level" element={<LevelResultPage />} />
             <Route path="/session-summary" element={<SessionSummaryPage />} />
-            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/dashboard" element={<AnimatedDashboardPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
