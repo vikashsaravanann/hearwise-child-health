@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,38 +6,49 @@
 
 @layer base {
   :root {
-    --background: 220 60% 98%;
-    --foreground: 220 30% 15%;
+    /* Ocean Theme Colors */
+    --ocean-deep: 200 100% 20%;
+    --ocean-light: 200 100% 50%;
+    --ocean-lighter: 200 100% 70%;
+    --sand: 43 87% 63%;
+    --coral: 4 74% 63%;
+    --seaweed: 145 56% 41%;
+    --bubble: 200 100% 85%;
+    --treasure: 43 87% 70%;
+
+    /* Standard Colors */
+    --background: 200 100% 97%;
+    --foreground: 200 30% 15%;
     --card: 0 0% 100%;
-    --card-foreground: 220 30% 15%;
+    --card-foreground: 200 30% 15%;
     --popover: 0 0% 100%;
-    --popover-foreground: 220 30% 15%;
-    --primary: 214 84% 56%;
+    --popover-foreground: 200 30% 15%;
+    --primary: 200 100% 50%;
     --primary-foreground: 0 0% 100%;
     --secondary: 145 56% 41%;
     --secondary-foreground: 0 0% 100%;
-    --muted: 220 30% 94%;
-    --muted-foreground: 220 10% 45%;
+    --muted: 200 30% 94%;
+    --muted-foreground: 200 10% 45%;
     --accent: 43 87% 63%;
-    --accent-foreground: 220 30% 15%;
+    --accent-foreground: 200 30% 15%;
     --destructive: 4 74% 63%;
     --destructive-foreground: 0 0% 100%;
-    --border: 220 20% 90%;
-    --input: 220 20% 90%;
-    --ring: 214 84% 56%;
-    --radius: 0.75rem;
+    --border: 200 20% 90%;
+    --input: 200 20% 90%;
+    --ring: 200 100% 50%;
+    --radius: 1.5rem;
     --success: 145 56% 41%;
     --success-foreground: 0 0% 100%;
     --warning: 43 87% 63%;
-    --warning-foreground: 220 30% 15%;
+    --warning-foreground: 200 30% 15%;
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 214 84% 56%;
+    --sidebar-primary: 200 100% 50%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 30% 94%;
-    --sidebar-accent-foreground: 220 30% 15%;
-    --sidebar-border: 220 20% 90%;
-    --sidebar-ring: 214 84% 56%;
+    --sidebar-accent: 200 30% 94%;
+    --sidebar-accent-foreground: 200 30% 15%;
+    --sidebar-border: 200 20% 90%;
+    --sidebar-ring: 200 100% 50%;
   }
 }
 
@@ -46,9 +57,119 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground font-sans;
-    font-family: 'Inter', sans-serif;
+    @apply bg-gradient-to-b from-[hsl(200,100%,97%)] via-[hsl(200,100%,93%)] to-[hsl(200,100%,85%)] text-foreground;
+    font-family: 'Nunito', 'Inter', sans-serif;
   }
+}
+
+@layer components {
+  .page-shell {
+    @apply relative min-h-screen overflow-hidden px-4 py-6 sm:px-6 sm:py-8;
+    background: linear-gradient(135deg, hsl(200, 100%, 95%) 0%, hsl(200, 100%, 85%) 100%);
+  }
+
+  .ocean-panel {
+    @apply rounded-3xl border-2 border-[hsl(200,100%,70%)] bg-gradient-to-br from-[hsl(200,100%,98%)] to-[hsl(200,100%,92%)] shadow-2xl backdrop-blur-sm;
+  }
+
+  .glass-panel {
+    @apply rounded-3xl border border-border/70 bg-card/90 shadow-xl backdrop-blur-sm;
+  }
+
+  .soft-panel {
+    @apply rounded-2xl border border-border/60 bg-muted/40;
+  }
+
+  .coral-button {
+    @apply px-6 py-3 bg-gradient-to-r from-[hsl(4,74%,63%)] to-[hsl(4,74%,55%)] text-white rounded-full font-bold text-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 active:scale-95;
+  }
+
+  .treasure-button {
+    @apply px-6 py-3 bg-gradient-to-r from-[hsl(43,87%,70%)] to-[hsl(43,87%,60%)] text-[hsl(200,30%,15%)] rounded-full font-bold text-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 active:scale-95;
+  }
+}
+
+/* ==================== OCEAN ANIMATIONS ==================== */
+
+@keyframes bubble-rise {
+  0% { transform: translateY(0) translateX(0) scale(1); opacity: 1; }
+  100% { transform: translateY(-100vh) translateX(var(--tx, 0)) scale(0.5); opacity: 0; }
+}
+
+@keyframes bubble-float {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(20px); }
+}
+
+@keyframes fish-swim {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(110vw); }
+}
+
+@keyframes fish-swim-reverse {
+  0% { transform: translateX(110vw) scaleX(-1); }
+  100% { transform: translateX(-100%) scaleX(-1); }
+}
+
+@keyframes wave-motion {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+@keyframes sway {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(2deg); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(0, 200, 255, 0.4), 0 0 40px rgba(0, 200, 255, 0.2); }
+  50% { box-shadow: 0 0 40px rgba(0, 200, 255, 0.8), 0 0 80px rgba(0, 200, 255, 0.4); }
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes float-up {
+  0% { transform: translateY(0) scale(0.8); opacity: 1; }
+  100% { transform: translateY(-150px) scale(1); opacity: 0; }
+}
+
+@keyframes spin-trophy {
+  0% { transform: rotateY(0deg) rotateZ(0deg); }
+  100% { transform: rotateY(360deg) rotateZ(360deg); }
+}
+
+@keyframes bounce-celebration {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-30px); }
+}
+
+@keyframes star-burst {
+  0% { transform: translate(var(--tx, 0), var(--ty, 0)) scale(1); opacity: 1; }
+  100% { transform: translate(calc(var(--tx, 0) * 2), calc(var(--ty, 0) * 2)) scale(0); opacity: 0; }
+}
+
+@keyframes rotate-slow {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(1); opacity: 0.8; }
+  100% { transform: scale(1.5); opacity: 0; }
+}
+
+@keyframes flip-card {
+  0% { transform: rotateY(0deg); }
+  50% { transform: rotateY(90deg); }
+  100% { transform: rotateY(0deg); }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.5)); }
+  50% { filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.8)); }
 }
 
 @keyframes sound-wave {
@@ -56,63 +177,60 @@
   50% { transform: scaleY(1); }
 }
 
-@keyframes float-up {
-  0% { transform: translateY(0) scale(1); opacity: 1; }
-  100% { transform: translateY(-200px) scale(1.5); opacity: 0; }
-}
-
-@keyframes pulse-ring {
-  0% { transform: scale(1); opacity: 0.6; }
-  100% { transform: scale(1.8); opacity: 0; }
-}
-
 @keyframes blue-glow {
   0%, 100% { opacity: 0.2; transform: scale(0.98); }
   50% { opacity: 0.42; transform: scale(1.04); }
 }
 
-@keyframes star-burst {
-  0% { transform: translateY(0) scale(0.7); opacity: 0; }
-  25% { opacity: 1; }
-  100% { transform: translateY(-24px) scale(1.05); opacity: 0; }
-}
+/* Animation Classes */
+.animate-bubble-rise { animation: bubble-rise 3s ease-in forwards; }
+.animate-bubble-float { animation: bubble-float 3s ease-in-out infinite; }
+.animate-fish-swim { animation: fish-swim 8s linear infinite; }
+.animate-fish-swim-reverse { animation: fish-swim-reverse 8s linear infinite; }
+.animate-wave-motion { animation: wave-motion 3s ease-in-out infinite; }
+.animate-sway { animation: sway 2s ease-in-out infinite; }
+.animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+.animate-shimmer { animation: shimmer 2s infinite; }
+.animate-float-up { animation: float-up 1.5s ease-out forwards; }
+.animate-spin-trophy { animation: spin-trophy 2s ease-in-out infinite; }
+.animate-bounce-celebration { animation: bounce-celebration 0.6s ease-in-out; }
+.animate-star-burst { animation: star-burst 1s ease-out forwards; }
+.animate-rotate-slow { animation: rotate-slow 8s linear infinite; }
+.animate-pulse-ring { animation: pulse-ring 1.5s ease-out infinite; }
+.animate-flip-card { animation: flip-card 1.2s ease-in-out; }
+.animate-glow-pulse { animation: glow-pulse 1.5s ease-in-out infinite; }
+.animate-sound-wave { animation: sound-wave 0.6s ease-in-out infinite; }
+.animate-blue-glow { animation: blue-glow 1.4s ease-in-out infinite; }
 
-.animate-sound-wave {
-  animation: sound-wave 1.2s ease-in-out infinite;
-}
+/* Stagger animations */
+.stagger-1 { animation-delay: 0s; }
+.stagger-2 { animation-delay: 0.1s; }
+.stagger-3 { animation-delay: 0.2s; }
+.stagger-4 { animation-delay: 0.3s; }
+.stagger-5 { animation-delay: 0.4s; }
 
-.animate-float-up {
-  animation: float-up 1.5s ease-out forwards;
-}
-
-.animate-pulse-ring {
-  animation: pulse-ring 1.5s ease-out infinite;
-}
-
-.animate-blue-glow {
-  animation: blue-glow 1.4s ease-in-out infinite;
-}
-
-.animate-star-burst {
-  animation: star-burst 600ms ease-out forwards;
-}
-
-.animate-star-burst-delay-1 {
-  animation: star-burst 650ms ease-out 60ms forwards;
-  opacity: 0;
-}
-
-.animate-star-burst-delay-2 {
-  animation: star-burst 650ms ease-out 120ms forwards;
-  opacity: 0;
-}
+.animate-star-burst-delay-1 { animation: star-burst 650ms ease-out 60ms forwards; opacity: 0; }
+.animate-star-burst-delay-2 { animation: star-burst 650ms ease-out 120ms forwards; opacity: 0; }
 
 @media (prefers-reduced-motion: reduce) {
-  .animate-sound-wave,
+  .animate-bubble-rise,
+  .animate-bubble-float,
+  .animate-fish-swim,
+  .animate-fish-swim-reverse,
+  .animate-wave-motion,
+  .animate-sway,
+  .animate-pulse-glow,
+  .animate-shimmer,
   .animate-float-up,
-  .animate-pulse-ring,
-  .animate-blue-glow,
+  .animate-spin-trophy,
+  .animate-bounce-celebration,
   .animate-star-burst,
+  .animate-rotate-slow,
+  .animate-pulse-ring,
+  .animate-flip-card,
+  .animate-glow-pulse,
+  .animate-sound-wave,
+  .animate-blue-glow,
   .animate-star-burst-delay-1,
   .animate-star-burst-delay-2 {
     animation: none !important;

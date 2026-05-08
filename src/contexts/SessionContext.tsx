@@ -89,7 +89,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       setOnline(true);
       refreshPendingCount();
       try {
-        const { synced } = await syncPendingResults();
+        const { synced } = await syncPendingResults('online_event');
         refreshPendingCount();
         if (synced > 0) {
           toast({ title: `${synced} results synced` });
@@ -107,7 +107,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     window.addEventListener(queueEvent, refreshPendingCount);
 
     // Run sync pass on every app load.
-    syncPendingResults()
+    syncPendingResults('app_load')
       .then(({ synced }) => {
         refreshPendingCount();
         if (synced > 0) {
@@ -118,7 +118,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
 
     const interval = window.setInterval(() => {
       if (!navigator.onLine) return;
-      syncPendingResults().then(refreshPendingCount).catch(refreshPendingCount);
+      syncPendingResults('interval').then(refreshPendingCount).catch(refreshPendingCount);
     }, 15000);
 
     return () => {
