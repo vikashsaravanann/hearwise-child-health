@@ -26,3 +26,10 @@ dist-ssr
 .env
 .vercel
 .env*.local
+
+# macOS Word temp/autosave files
+*.sb-*
+
+# Redundant lockfiles
+bun.lockb
+package-lock.json
