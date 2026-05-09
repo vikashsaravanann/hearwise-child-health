@@ -1,0 +1,149 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --hw-bg: #F8FAFF;
+    --hw-surface: #FFFFFF;
+    --hw-text: #0F172A;
+    --hw-text-2: #64748B;
+    --background: 220 60% 98%;
+    --foreground: 220 30% 15%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 30% 15%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 30% 15%;
+    --primary: 214 84% 56%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 145 56% 41%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 220 30% 94%;
+    --muted-foreground: 220 10% 45%;
+    --accent: 43 87% 63%;
+    --accent-foreground: 220 30% 15%;
+    --destructive: 4 74% 63%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 20% 90%;
+    --input: 220 20% 90%;
+    --ring: 214 84% 56%;
+    --radius: 0.75rem;
+    --success: 145 56% 41%;
+    --success-foreground: 0 0% 100%;
+    --warning: 43 87% 63%;
+    --warning-foreground: 220 30% 15%;
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 214 84% 56%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 30% 94%;
+    --sidebar-accent-foreground: 220 30% 15%;
+    --sidebar-border: 220 20% 90%;
+    --sidebar-ring: 214 84% 56%;
+  }
+  body.dark {
+    --hw-bg: #0F172A;
+    --hw-surface: #1E293B;
+    --hw-text: #F8FAFF;
+    --hw-text-2: #CBD5E1;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-sans;
+    font-family: 'Inter', sans-serif;
+  }
+}
+
+@layer components {
+  .page-shell {
+    @apply relative min-h-screen bg-gradient-to-b from-background via-background to-muted/40 px-4 py-6 sm:px-6 sm:py-8;
+  }
+
+  .glass-panel {
+    @apply rounded-3xl border border-border/70 bg-card/90 shadow-xl backdrop-blur-sm;
+  }
+
+  .soft-panel {
+    @apply rounded-2xl border border-border/60 bg-muted/40;
+  }
+}
+
+@keyframes sound-wave {
+  0%, 100% { transform: scaleY(0.3); }
+  50% { transform: scaleY(1); }
+}
+
+@keyframes float-up {
+  0% { transform: translateY(0) scale(1); opacity: 1; }
+  100% { transform: translateY(-200px) scale(1.5); opacity: 0; }
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+
+@keyframes blue-glow {
+  0%, 100% { opacity: 0.2; transform: scale(0.98); }
+  50% { opacity: 0.42; transform: scale(1.04); }
+}
+
+@keyframes star-burst {
+  0% { transform: translateY(0) scale(0.7); opacity: 0; }
+  25% { opacity: 1; }
+  100% { transform: translateY(-24px) scale(1.05); opacity: 0; }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-sound-wave {
+  animation: sound-wave 1.2s ease-in-out infinite;
+}
+
+.animate-float-up {
+  animation: float-up 1.5s ease-out forwards;
+}
+
+.animate-pulse-ring {
+  animation: pulse-ring 1.5s ease-out infinite;
+}
+
+.animate-blue-glow {
+  animation: blue-glow 1.4s ease-in-out infinite;
+}
+
+.animate-star-burst {
+  animation: star-burst 600ms ease-out forwards;
+}
+
+.animate-star-burst-delay-1 {
+  animation: star-burst 650ms ease-out 60ms forwards;
+  opacity: 0;
+}
+
+.animate-star-burst-delay-2 {
+  animation: star-burst 650ms ease-out 120ms forwards;
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-sound-wave,
+  .animate-float-up,
+  .animate-pulse-ring,
+  .animate-blue-glow,
+  .animate-star-burst,
+  .animate-star-burst-delay-1,
+  .animate-star-burst-delay-2 {
+    animation: none !important;
+  }
+}
