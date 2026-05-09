@@ -1,11 +1,13 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSession } from '@/contexts/SessionContext';
 import { t } from '@/lib/i18n';
 import SoundWaveBackground from '@/components/SoundWaveBackground';
 import LanguageToggle from '@/components/LanguageToggle';
 import { Button } from '@/components/ui/button';
-import { BadgeCheck, ChartNoAxesCombined, ShieldCheck, Sparkles } from 'lucide-react';
+import { BadgeCheck, ChartNoAxesCombined, ShieldCheck, Sparkles, Info } from 'lucide-react';
 import owlMascot from '@/assets/owl-mascot.png';
+import AboutHearWiseModal from '@/components/AboutHearWiseModal';
 
 function ErrorButton() {
   return (
@@ -23,6 +25,7 @@ function ErrorButton() {
 
 export default function LandingPage() {
   const navigate = useNavigate();
+  const [showAbout, setShowAbout] = useState(false);
   const { lang } = useSession();
   const highlights = [
     t('landingFeatureFast', lang),
@@ -91,9 +94,12 @@ export default function LandingPage() {
               </Button>
             </div>
 
-            <Button variant="ghost" className="mt-3 h-10 w-full rounded-xl text-sm font-medium" onClick={() => navigate('/about')}>
-              About HearWise · Mission · Team →
-            </Button>
+            <button
+              onClick={() => setShowAbout(true)}
+              className="mt-3 flex h-12 w-full items-center justify-center gap-2 rounded-2xl border-2 border-blue-500 bg-transparent text-base font-semibold text-blue-600 transition-all duration-300 hover:bg-gradient-to-r hover:from-blue-500 hover:to-cyan-500 hover:text-white shadow-[0_0_15px_rgba(59,130,246,0.5)] animate-pulse hover:animate-none"
+            >
+              <Info className="h-5 w-5" /> About HearWise
+            </button>
 
             {import.meta.env.DEV && <ErrorButton />}
 
@@ -161,6 +167,10 @@ export default function LandingPage() {
           </div>
         </section>
       </div>
+      
+      {showAbout && (
+        <AboutHearWiseModal onClose={() => setShowAbout(false)} />
+      )}
     </div>
   );
 }
