@@ -109,63 +109,6 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <div className="grid gap-4">
-            <div className="rounded-3xl border border-border/70 bg-card/90 p-5 shadow-xl backdrop-blur-sm">
-              <h3 className="text-sm font-semibold text-foreground">Why HearWise Works</h3>
-              <div className="mt-3 space-y-3 text-sm text-muted-foreground">
-                <div className="flex items-start gap-2">
-                  <ShieldCheck className="mt-0.5 h-4 w-4 text-secondary" />
-                  <p>Reliable and standardized hearing checks designed for school environments.</p>
-                </div>
-                <div className="flex items-start gap-2">
-                  <ChartNoAxesCombined className="mt-0.5 h-4 w-4 text-primary" />
-                  <p>Actionable reports that help teachers and health workers prioritize follow-ups.</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="rounded-3xl border border-border/70 bg-gradient-to-br from-primary/8 to-accent/8 p-5 shadow-xl">
-              <h3 className="text-sm font-semibold text-foreground">Mission Snapshot</h3>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                Detect childhood hearing loss early through an accessible, affordable and scalable mobile-first screening workflow.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        <section className="rounded-3xl border border-border/70 bg-card/90 p-5 shadow-xl backdrop-blur-sm sm:p-6">
-          <h2 className="text-xl font-bold text-foreground sm:text-2xl">HearWise Technologies Pvt. Ltd.</h2>
-          <p className="mt-1 text-sm text-muted-foreground">HearWise - School Hearing Screening Platform</p>
-
-          <div className="mt-4 grid gap-3 md:grid-cols-2">
-            <div className="rounded-2xl border border-border/60 bg-muted/40 p-4">
-              <h3 className="text-sm font-semibold text-foreground">Mission</h3>
-              <p className="mt-1 text-sm text-muted-foreground">
-                To eliminate undetected childhood hearing loss in India through accessible, affordable, and scalable mobile-based audiometry screening.
-              </p>
-            </div>
-            <div className="rounded-2xl border border-border/60 bg-muted/40 p-4">
-              <h3 className="text-sm font-semibold text-foreground">Vision</h3>
-              <p className="mt-1 text-sm text-muted-foreground">Every child in India screened for hearing loss before age 10.</p>
-            </div>
-          </div>
-
-          <div className="mt-3 rounded-2xl border border-border/60 bg-muted/40 p-4">
-            <h3 className="text-sm font-semibold text-foreground">Problem Statement</h3>
-            <p className="mt-1 text-sm text-muted-foreground">
-              63 million Indians suffer from significant hearing loss. Over 50% of cases begin in childhood and go undetected until age 7-10, causing irreversible speech, language, and learning damage. No scalable, affordable screening solution exists for Indian government schools today.
-            </p>
-          </div>
-
-          <div className="mt-3 rounded-2xl border border-border/60 bg-muted/40 p-4">
-            <h3 className="text-sm font-semibold text-foreground">Market</h3>
-            <ul className="mt-1 list-disc space-y-1 pl-5 text-sm text-muted-foreground">
-              <li>1.5 million government schools in India.</li>
-              <li>Tamil Nadu alone has 37,000+ government schools.</li>
-              <li>Zero are using digital hearing screening tools.</li>
-            </ul>
-          </div>
-        </section>
       </div>
       
       {showAbout && (
