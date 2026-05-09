@@ -91,6 +91,10 @@ export default function LandingPage() {
               </Button>
             </div>
 
+            <Button variant="ghost" className="mt-3 h-10 w-full rounded-xl text-sm font-medium" onClick={() => navigate('/about')}>
+              About HearWise · Mission · Team →
+            </Button>
+
             {import.meta.env.DEV && <ErrorButton />}
 
             <div className="mt-6 border-t border-border/60 pt-4 text-center sm:text-left">

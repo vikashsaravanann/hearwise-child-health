@@ -27,6 +27,7 @@ import SelfCheckPage from "./pages/SelfCheck";
 import BookAppointmentPage from "./pages/BookAppointment";
 import LeaderboardPage from "./pages/Leaderboard";
 import HelpPage from "./pages/Help";
+import AboutPage from "./pages/AboutPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -38,7 +39,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <OfflineBadge />
-        <BrowserRouter>
+        <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '')}>
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/setup" element={<SessionSetupPage />} />
@@ -62,6 +63,7 @@ const App = () => (
             <Route path="/book-appointment" element={<BookAppointmentPage />} />
             <Route path="/leaderboard" element={<LeaderboardPage />} />
             <Route path="/help" element={<HelpPage />} />
+            <Route path="/about" element={<AboutPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

@@ -3,20 +3,33 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- TODO: Set the document title to the name of your application -->
-    <title>Lovable App</title>
-    <meta name="description" content="Lovable Generated Project" />
-    <meta name="author" content="Lovable" />
+    <title>HearWise - School Hearing Screening Platform</title>
+    <meta name="description" content="HearWise is India's first mobile-based school hearing screening platform. Screen 50 children per hour with just a smartphone and headphones." />
+    <meta name="author" content="HearWise Technologies Pvt. Ltd." />
+    <link rel="icon" type="image/png" href="/hearwise-child-health/owl-mascot.png" />
 
-    <!-- TODO: Update og:title to match your application name -->
-    <meta property="og:title" content="Lovable App" />
-    <meta property="og:description" content="Lovable Generated Project" />
+    <meta property="og:title" content="HearWise - School Hearing Screening Platform" />
+    <meta property="og:description" content="Detect childhood hearing loss early through accessible, affordable and scalable mobile-first screening." />
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    <meta property="og:url" content="https://vikashsaravanann.github.io/hearwise-child-health" />
 
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@Lovable" />
-    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="HearWise - School Hearing Screening Platform" />
+    <meta name="twitter:description" content="India's first mobile-based school hearing screening platform for children." />
+
+    <!-- SPA redirect handler for GitHub Pages -->
+    <script type="text/javascript">
+      (function(l) {
+        if (l.search[1] === '/' ) {
+          var decoded = l.search.slice(1).split('&').map(function(s) {
+            return s.replace(/~and~/g, '&')
+          }).join('?');
+          window.history.replaceState(null, null,
+              l.pathname.slice(0, -1) + decoded + l.hash
+          );
+        }
+      }(window.location))
+    </script>
   </head>
 
   <body>
