@@ -37,7 +37,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <OfflineBadge />
-        <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '')}>
+        <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, "") || "/"}>
           <Routes>
             {/* Public screening routes */}
             <Route path="/" element={<LandingPage />} />
