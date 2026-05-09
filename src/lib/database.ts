@@ -17,6 +17,8 @@ import {
   setServerId,
 } from './offlineSync';
 import type { TestResult } from './testEngine';
+import { addObservabilityBreadcrumb, captureError, captureEvent } from './observability';
+import { getSyncHealthRuns, getSyncHealthSummary, recordSyncRun, type SyncSource } from './syncHealth';
 
 interface DateRangeResultRow {
   test_sessions?: {
@@ -24,51 +26,6 @@ interface DateRangeResultRow {
       district?: string;
     };
   };
-}
-
-export interface DetailedStudentResult {
-  id: string;
-  studentName: string;
-  studentAge: number | null;
-  studentGender: string;
-  rollNumber: string;
-  teacherName: string;
-  schoolName: string;
-  district: string;
-  sessionDate: string;
-  overallResult: 'normal' | 'mild' | 'refer';
-  leftEar500: boolean;
-  leftEar1000: boolean;
-  leftEar2000: boolean;
-  leftEar4000: boolean;
-  rightEar500: boolean;
-  rightEar1000: boolean;
-  rightEar2000: boolean;
-  rightEar4000: boolean;
-  falsePositiveCount: number;
-  referred: boolean;
-  doctorVisited: boolean;
-}
-
-interface RawDetailedRow {
-  id: string;
-  overall_result: string;
-  left_ear_500hz: boolean;
-  left_ear_1000hz: boolean;
-  left_ear_2000hz: boolean;
-  left_ear_4000hz: boolean;
-  right_ear_500hz: boolean;
-  right_ear_1000hz: boolean;
-  right_ear_2000hz: boolean;
-  right_ear_4000hz: boolean;
-  false_positive_count: number;
-  students?: { name?: string; age?: number; gender?: string; roll_number?: string } | null;
-  test_sessions?: {
-    session_date?: string;
-    schools?: { name?: string; district?: string } | null;
-    teachers?: { name?: string } | null;
-  } | null;
-  referrals?: { id: string; doctor_visited: boolean }[];
 }
 
 interface ExportResultRow {
@@ -267,6 +224,23 @@ export async function getRecentSessions(limit = 20) {
   return data || [];
 }
 
+export async function getRecentScreenings(limit = 50) {
+  const { data, error } = await supabase
+    .from('test_results')
+    .select(`
+      id,
+      overall_result,
+      created_at,
+      students ( name, age, gender ),
+      test_sessions ( session_date, schools ( name, district ), teachers ( name ) )
+    `)
+    .order('created_at', { ascending: false })
+    .limit(limit);
+
+  if (error) throw error;
+  return data || [];
+}
+
 export async function getSessionResults(sessionId: string) {
   const { data, error } = await supabase
     .from('test_results')
@@ -327,50 +301,6 @@ export async function getMonthlyTrend() {
     .map(([month, counts]) => ({ month, ...counts }));
 }
 
-export async function getDetailedStudentResults(limit = 100): Promise<DetailedStudentResult[]> {
-  const { data, error } = await supabase
-    .from('test_results')
-    .select(`
-      id,
-      overall_result,
-      left_ear_500hz, left_ear_1000hz, left_ear_2000hz, left_ear_4000hz,
-      right_ear_500hz, right_ear_1000hz, right_ear_2000hz, right_ear_4000hz,
-      false_positive_count,
-      students ( name, age, gender, roll_number ),
-      test_sessions ( session_date, schools ( name, district ), teachers ( name ) ),
-      referrals ( id, doctor_visited )
-    `)
-    .order('id', { ascending: false })
-    .limit(limit);
-
-  if (error) throw error;
-  if (!data) return [];
-
-  return (data as RawDetailedRow[]).map((r) => ({
-    id: r.id,
-    studentName: r.students?.name ?? 'Unknown',
-    studentAge: r.students?.age ?? null,
-    studentGender: r.students?.gender ?? '',
-    rollNumber: r.students?.roll_number ?? '',
-    teacherName: r.test_sessions?.teachers?.name ?? 'Unknown',
-    schoolName: r.test_sessions?.schools?.name ?? 'Unknown',
-    district: r.test_sessions?.schools?.district ?? '',
-    sessionDate: r.test_sessions?.session_date ?? '',
-    overallResult: (r.overall_result as 'normal' | 'mild' | 'refer') ?? 'normal',
-    leftEar500: r.left_ear_500hz,
-    leftEar1000: r.left_ear_1000hz,
-    leftEar2000: r.left_ear_2000hz,
-    leftEar4000: r.left_ear_4000hz,
-    rightEar500: r.right_ear_500hz,
-    rightEar1000: r.right_ear_1000hz,
-    rightEar2000: r.right_ear_2000hz,
-    rightEar4000: r.right_ear_4000hz,
-    falsePositiveCount: r.false_positive_count,
-    referred: Array.isArray(r.referrals) && r.referrals.length > 0,
-    doctorVisited: Array.isArray(r.referrals) && r.referrals.some((ref) => ref.doctor_visited),
-  }));
-}
-
 export async function exportCSV() {
   const { data, error } = await supabase
     .from('test_results')
@@ -414,11 +344,28 @@ export async function exportCSV() {
 }
 
 // Offline sync
-export async function syncPendingResults(): Promise<{ synced: number }> {
+export async function syncPendingResults(
+  source: SyncSource = 'manual'
+): Promise<{ synced: number }> {
   const queue = getPendingResults();
   if (queue.length === 0 || !isOnline()) return { synced: 0 };
 
+  const runStartedAt = Date.now();
+  const unsyncedItems = queue.filter((item) => !item.synced);
+  const eligibleItems = unsyncedItems.filter((item) => isItemEligibleForRetry(item));
+  captureEvent('sync_attempted', {
+    source,
+    queue_depth: unsyncedItems.length,
+    eligible_count: eligibleItems.length,
+  });
+  addObservabilityBreadcrumb('Sync pass started', 'sync.lifecycle', {
+    source,
+    queue_depth: unsyncedItems.length,
+    eligible_count: eligibleItems.length,
+  });
+
   let synced = 0;
+  let failed = 0;
   const updatedQueue = [...queue];
 
   for (let i = 0; i < updatedQueue.length; i += 1) {
@@ -431,6 +378,7 @@ export async function syncPendingResults(): Promise<{ synced: number }> {
       if (itemSynced) synced += 1;
     } catch (error) {
       console.error('Result sync failed:', error);
+      failed += 1;
       item.status = 'failed';
       item.lastError = error instanceof Error ? error.message : 'Unknown sync error';
       item.nextRetryAt = Date.now() + getRetryDelayMs((item.attempts || 0) + 1);
@@ -438,7 +386,137 @@ export async function syncPendingResults(): Promise<{ synced: number }> {
   }
 
   setPendingResults(updatedQueue);
+  recordSyncRun({
+    at: Date.now(),
+    source,
+    queueDepth: unsyncedItems.length,
+    eligibleCount: eligibleItems.length,
+    syncedCount: synced,
+    failedCount: failed,
+    durationMs: Date.now() - runStartedAt,
+  });
+  captureEvent('sync_completed', {
+    source,
+    queue_depth: unsyncedItems.length,
+    eligible_count: eligibleItems.length,
+    synced_count: synced,
+    failed_count: failed,
+    duration_ms: Date.now() - runStartedAt,
+  });
+  if (failed > 0) {
+    captureEvent('sync_failed', {
+      source,
+      failed_count: failed,
+      synced_count: synced,
+      duration_ms: Date.now() - runStartedAt,
+    });
+  }
+  addObservabilityBreadcrumb('Sync pass completed', 'sync.lifecycle', {
+    source,
+    synced_count: synced,
+    failed_count: failed,
+    duration_ms: Date.now() - runStartedAt,
+  });
   return { synced };
+}
+
+export async function retryFailedPendingResultsNow(): Promise<{ synced: number; retried: number }> {
+  const queue = getPendingResults();
+  let retried = 0;
+  const updatedQueue = queue.map((item) => {
+    if (item.synced || item.status !== 'failed') return item;
+    retried += 1;
+    return {
+      ...item,
+      status: 'queued' as const,
+      nextRetryAt: Date.now(),
+      lastError: undefined,
+    };
+  });
+  setPendingResults(updatedQueue);
+  const { synced } = await syncPendingResults('manual');
+  return { synced, retried };
+}
+
+export function clearStuckQueueItems(maxAgeDays = 7): { removed: number; remaining: number } {
+  const thresholdMs = maxAgeDays * 24 * 60 * 60 * 1000;
+  const now = Date.now();
+  const queue = getPendingResults();
+  const keep: PendingResultItem[] = [];
+  let removed = 0;
+
+  for (const item of queue) {
+    if (item.synced) {
+      keep.push(item);
+      continue;
+    }
+    const referenceTs = item.lastAttemptAt || item.timestamp || now;
+    const isStale = now - referenceTs >= thresholdMs;
+    const isStuck = item.status === 'failed' || item.status === 'syncing';
+    if (isStale && isStuck) {
+      removed += 1;
+      continue;
+    }
+    keep.push(item);
+  }
+
+  setPendingResults(keep);
+  captureEvent('sync_queue_cleared_stale', {
+    removed_count: removed,
+    remaining_count: keep.filter((item) => !item.synced).length,
+    max_age_days: maxAgeDays,
+  });
+  return { removed, remaining: keep.filter((item) => !item.synced).length };
+}
+
+export function getStuckQueueItemCount(maxAgeDays = 7): number {
+  const thresholdMs = maxAgeDays * 24 * 60 * 60 * 1000;
+  const now = Date.now();
+  const queue = getPendingResults();
+  let count = 0;
+
+  for (const item of queue) {
+    if (item.synced) continue;
+    const referenceTs = item.lastAttemptAt || item.timestamp || now;
+    const isStale = now - referenceTs >= thresholdMs;
+    const isStuck = item.status === 'failed' || item.status === 'syncing';
+    if (isStale && isStuck) count += 1;
+  }
+
+  return count;
+}
+
+export function exportSyncDiagnostics() {
+  const queue = getPendingResults();
+  const unsynced = queue.filter((item) => !item.synced);
+  const diagnostics = {
+    exportedAt: new Date().toISOString(),
+    online: isOnline(),
+    queue: {
+      total: queue.length,
+      unsynced: unsynced.length,
+      failed: unsynced.filter((item) => item.status === 'failed').length,
+      syncing: unsynced.filter((item) => item.status === 'syncing').length,
+      queued: unsynced.filter((item) => item.status === 'queued').length,
+      items: unsynced.map((item) => ({
+        localId: item.localId,
+        clientResultId: item.clientResultId,
+        sessionLocalId: item.sessionLocalId,
+        studentLocalId: item.studentLocalId,
+        status: item.status,
+        attempts: item.attempts || 0,
+        lastAttemptAt: item.lastAttemptAt || null,
+        nextRetryAt: item.nextRetryAt || null,
+        lastError: item.lastError || null,
+      })),
+    },
+    syncHealth: {
+      summary: getSyncHealthSummary(),
+      recentRuns: getSyncHealthRuns(100),
+    },
+  };
+
+  return JSON.stringify(diagnostics, null, 2);
 }
 
 async function syncPendingResultByLocalId(localResultId: string): Promise<{ serverResultId?: string }> {
@@ -455,6 +533,12 @@ async function syncPendingResultByLocalId(localResultId: string): Promise<{ serv
   try {
     result = await syncOnePendingResult(item);
   } catch (error) {
+    captureError(error, { stage: 'sync_pending_result_by_local_id', local_result_id: localResultId }, 'warning');
+    captureEvent('sync_failed', {
+      source: 'manual',
+      failed_count: 1,
+      local_result_id: localResultId,
+    });
     item.status = 'failed';
     item.lastError = error instanceof Error ? error.message : 'Unknown sync error';
     item.nextRetryAt = Date.now() + getRetryDelayMs((item.attempts || 0) + 1);
@@ -478,7 +562,7 @@ async function syncOnePendingResult(item: PendingResultItem) {
       student_id: studentServerId,
       client_result_id: item.clientResultId,
       ...(item.result as Record<string, unknown>),
-    }, { onConflict: 'client_result_id' })
+    } as never, { onConflict: 'client_result_id' })
     .select('id')
     .single();
 

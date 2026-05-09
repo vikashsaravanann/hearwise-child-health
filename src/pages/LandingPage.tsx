@@ -1,13 +1,11 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSession } from '@/contexts/SessionContext';
 import { t } from '@/lib/i18n';
 import SoundWaveBackground from '@/components/SoundWaveBackground';
 import LanguageToggle from '@/components/LanguageToggle';
 import { Button } from '@/components/ui/button';
-import { BadgeCheck, ChartNoAxesCombined, ShieldCheck, Sparkles, Info } from 'lucide-react';
+import { BadgeCheck, ChartNoAxesCombined, ShieldCheck, Sparkles } from 'lucide-react';
 import owlMascot from '@/assets/owl-mascot.png';
-import AboutHearWiseModal from '@/components/AboutHearWiseModal';
 
 function ErrorButton() {
   return (
@@ -25,7 +23,6 @@ function ErrorButton() {
 
 export default function LandingPage() {
   const navigate = useNavigate();
-  const [showAbout, setShowAbout] = useState(false);
   const { lang } = useSession();
   const highlights = [
     t('landingFeatureFast', lang),
@@ -94,12 +91,9 @@ export default function LandingPage() {
               </Button>
             </div>
 
-            <button
-              onClick={() => setShowAbout(true)}
-              className="mt-3 flex h-12 w-full items-center justify-center gap-2 rounded-2xl border-2 border-blue-500 bg-transparent text-base font-semibold text-blue-600 transition-all duration-300 hover:bg-gradient-to-r hover:from-blue-500 hover:to-cyan-500 hover:text-white shadow-[0_0_15px_rgba(59,130,246,0.5)] animate-pulse hover:animate-none"
-            >
-              <Info className="h-5 w-5" /> About HearWise
-            </button>
+            <Button variant="ghost" className="mt-3 h-10 w-full rounded-xl text-sm font-medium" onClick={() => navigate('/about')}>
+              About HearWise · Mission · Team →
+            </Button>
 
             {import.meta.env.DEV && <ErrorButton />}
 
@@ -108,12 +102,65 @@ export default function LandingPage() {
               <p className="mt-1 text-[11px] text-muted-foreground">{t('dataPrivacyNote', lang)}</p>
             </div>
           </div>
+
+          <div className="grid gap-4">
+            <div className="rounded-3xl border border-border/70 bg-card/90 p-5 shadow-xl backdrop-blur-sm">
+              <h3 className="text-sm font-semibold text-foreground">Why HearWise Works</h3>
+              <div className="mt-3 space-y-3 text-sm text-muted-foreground">
+                <div className="flex items-start gap-2">
+                  <ShieldCheck className="mt-0.5 h-4 w-4 text-secondary" />
+                  <p>Reliable and standardized hearing checks designed for school environments.</p>
+                </div>
+                <div className="flex items-start gap-2">
+                  <ChartNoAxesCombined className="mt-0.5 h-4 w-4 text-primary" />
+                  <p>Actionable reports that help teachers and health workers prioritize follow-ups.</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-3xl border border-border/70 bg-gradient-to-br from-primary/8 to-accent/8 p-5 shadow-xl">
+              <h3 className="text-sm font-semibold text-foreground">Mission Snapshot</h3>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                Detect childhood hearing loss early through an accessible, affordable and scalable mobile-first screening workflow.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section className="rounded-3xl border border-border/70 bg-card/90 p-5 shadow-xl backdrop-blur-sm sm:p-6">
+          <h2 className="text-xl font-bold text-foreground sm:text-2xl">HearWise Technologies Pvt. Ltd.</h2>
+          <p className="mt-1 text-sm text-muted-foreground">HearWise - School Hearing Screening Platform</p>
+
+          <div className="mt-4 grid gap-3 md:grid-cols-2">
+            <div className="rounded-2xl border border-border/60 bg-muted/40 p-4">
+              <h3 className="text-sm font-semibold text-foreground">Mission</h3>
+              <p className="mt-1 text-sm text-muted-foreground">
+                To eliminate undetected childhood hearing loss in India through accessible, affordable, and scalable mobile-based audiometry screening.
+              </p>
+            </div>
+            <div className="rounded-2xl border border-border/60 bg-muted/40 p-4">
+              <h3 className="text-sm font-semibold text-foreground">Vision</h3>
+              <p className="mt-1 text-sm text-muted-foreground">Every child in India screened for hearing loss before age 10.</p>
+            </div>
+          </div>
+
+          <div className="mt-3 rounded-2xl border border-border/60 bg-muted/40 p-4">
+            <h3 className="text-sm font-semibold text-foreground">Problem Statement</h3>
+            <p className="mt-1 text-sm text-muted-foreground">
+              63 million Indians suffer from significant hearing loss. Over 50% of cases begin in childhood and go undetected until age 7-10, causing irreversible speech, language, and learning damage. No scalable, affordable screening solution exists for Indian government schools today.
+            </p>
+          </div>
+
+          <div className="mt-3 rounded-2xl border border-border/60 bg-muted/40 p-4">
+            <h3 className="text-sm font-semibold text-foreground">Market</h3>
+            <ul className="mt-1 list-disc space-y-1 pl-5 text-sm text-muted-foreground">
+              <li>1.5 million government schools in India.</li>
+              <li>Tamil Nadu alone has 37,000+ government schools.</li>
+              <li>Zero are using digital hearing screening tools.</li>
+            </ul>
+          </div>
         </section>
       </div>
-      
-      {showAbout && (
-        <AboutHearWiseModal onClose={() => setShowAbout(false)} />
-      )}
     </div>
   );
 }

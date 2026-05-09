@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -7,28 +7,26 @@ import { SessionProvider } from "@/contexts/SessionContext";
 import OfflineBadge from "@/components/OfflineBadge";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
+import AdminGuard from "@/components/AdminGuard";
+import AdminLayout from "@/components/AdminLayout";
 import LandingPage from "./pages/LandingPage";
 import SessionSetupPage from "./pages/SessionSetupPage";
 import StudentEntryPage from "./pages/StudentEntryPage";
 import HeadphoneCheckPage from "./pages/HeadphoneCheckPage";
-import OceanLevelSelectPage from "./pages/OceanLevelSelectPage";
-import OceanTestPage from "./pages/OceanTestPage";
-import LevelResultPage from "./pages/LevelResultPage";
+import PracticeRoundPage from "./pages/PracticeRoundPage";
+import ActiveTestPage from "./pages/ActiveTestPage";
+import ResultsPage from "./pages/ResultsPage";
 import SessionSummaryPage from "./pages/SessionSummaryPage";
-import AnimatedDashboardPage from "./pages/AnimatedDashboardPage";
-import GamesPage from "./pages/Games";
-import TrophiesPage from "./pages/Trophies";
-import EarCarePage from "./pages/EarCare";
-import EducationPage from "./pages/Education";
-import LearnPage from "./pages/Learn";
-import SoundExplorerPage from "./pages/SoundExplorer";
-import MyReportPage from "./pages/MyReport";
-import HeadphoneSafetyPage from "./pages/HeadphoneSafety";
-import NoiseAwarenessPage from "./pages/NoiseAwareness";
-import SelfCheckPage from "./pages/SelfCheck";
-import BookAppointmentPage from "./pages/BookAppointment";
-import LeaderboardPage from "./pages/Leaderboard";
-import HelpPage from "./pages/Help";
+import AdminLoginPage from "./pages/AdminLoginPage";
+import AdminOverviewPage from "./pages/admin/AdminOverviewPage";
+import AdminSchoolsPage from "./pages/admin/AdminSchoolsPage";
+import AdminTeachersPage from "./pages/admin/AdminTeachersPage";
+import AdminStudentsPage from "./pages/admin/AdminStudentsPage";
+import AdminSessionsPage from "./pages/admin/AdminSessionsPage";
+import AdminReferralsPage from "./pages/admin/AdminReferralsPage";
+import AdminLoginsPage from "./pages/admin/AdminLoginsPage";
+import AdminAnalyticsPage from "./pages/admin/AdminAnalyticsPage";
+import AboutDeveloperPage from "./pages/admin/AboutDeveloperPage";
 import AboutPage from "./pages/AboutPage";
 import NotFound from "./pages/NotFound";
 
@@ -43,31 +41,43 @@ const App = () => (
         <OfflineBadge />
         <Analytics />
         <SpeedInsights />
-        <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '')}>
+        <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, "") || "/"}>
           <Routes>
+            {/* Public screening routes */}
             <Route path="/" element={<LandingPage />} />
             <Route path="/setup" element={<SessionSetupPage />} />
             <Route path="/student-entry" element={<StudentEntryPage />} />
             <Route path="/headphone-check" element={<HeadphoneCheckPage />} />
-            <Route path="/ocean-levels" element={<OceanLevelSelectPage />} />
-            <Route path="/ocean-test/:level" element={<OceanTestPage />} />
-            <Route path="/level-result/:level" element={<LevelResultPage />} />
+            <Route path="/practice" element={<PracticeRoundPage />} />
+            <Route path="/test" element={<ActiveTestPage />} />
+            <Route path="/results" element={<ResultsPage />} />
             <Route path="/session-summary" element={<SessionSummaryPage />} />
-            <Route path="/dashboard" element={<AnimatedDashboardPage />} />
-            <Route path="/games" element={<GamesPage />} />
-            <Route path="/trophies" element={<TrophiesPage />} />
-            <Route path="/ear-care" element={<EarCarePage />} />
-            <Route path="/education" element={<EducationPage />} />
-            <Route path="/learn" element={<LearnPage />} />
-            <Route path="/sound-explorer" element={<SoundExplorerPage />} />
-            <Route path="/my-report" element={<MyReportPage />} />
-            <Route path="/headphone-safety" element={<HeadphoneSafetyPage />} />
-            <Route path="/noise-awareness" element={<NoiseAwarenessPage />} />
-            <Route path="/self-check" element={<SelfCheckPage />} />
-            <Route path="/book-appointment" element={<BookAppointmentPage />} />
-            <Route path="/leaderboard" element={<LeaderboardPage />} />
-            <Route path="/help" element={<HelpPage />} />
             <Route path="/about" element={<AboutPage />} />
+
+            {/* Admin routes */}
+            <Route path="/admin" element={<Navigate to="/admin/login" replace />} />
+            <Route path="/admin/login" element={<AdminLoginPage />} />
+            <Route
+              element={
+                <AdminGuard>
+                  <AdminLayout />
+                </AdminGuard>
+              }
+            >
+              <Route path="/admin/dashboard" element={<AdminOverviewPage />} />
+              <Route path="/admin/analytics" element={<AdminAnalyticsPage />} />
+              <Route path="/admin/schools" element={<AdminSchoolsPage />} />
+              <Route path="/admin/teachers" element={<AdminTeachersPage />} />
+              <Route path="/admin/students" element={<AdminStudentsPage />} />
+              <Route path="/admin/sessions" element={<AdminSessionsPage />} />
+              <Route path="/admin/referrals" element={<AdminReferralsPage />} />
+              <Route path="/admin/logins" element={<AdminLoginsPage />} />
+              <Route path="/admin/about" element={<AboutDeveloperPage />} />
+            </Route>
+
+            {/* Legacy route redirect */}
+            <Route path="/dashboard" element={<Navigate to="/admin/dashboard" replace />} />
+
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

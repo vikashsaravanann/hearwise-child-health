@@ -73,7 +73,7 @@ export default function SessionSummaryPage() {
       ];
     });
 
-    const tableResult = autoTable(doc, {
+    autoTable(doc, {
       startY: 48,
       head: [[t('studentName', lang), t('result', lang)]],
       body: tableRows,
@@ -93,7 +93,8 @@ export default function SessionSummaryPage() {
       },
     });
 
-    const totalStartY = tableResult.finalY + 12;
+    const finalY = (doc as unknown as { lastAutoTable?: { finalY: number } }).lastAutoTable?.finalY ?? 48;
+    const totalStartY = finalY + 12;
     doc.setFontSize(11);
     doc.setTextColor(20, 20, 20);
     doc.text(`${t('totalTestedLabel', lang)}: ${total}`, 14, totalStartY);

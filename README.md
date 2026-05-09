@@ -1,95 +1,43 @@
-# HearWise Child Health
+# HearWise — Smart Hearing Care for Every Child
 
-Mobile-first school hearing screening app for India, built by HearWise Technologies Pvt. Ltd.
+A mobile-first school hearing screening platform built for 
+children in India.
 
-## Product context
+## Mission
+Detect early childhood hearing loss across Indian schools 
+using only a smartphone and headphones.
 
-- Product: HearWise - School Hearing Screening Platform
-- Mission: Eliminate undetected childhood hearing loss in India
-- Vision: Every child in India screened before age 10
-- Priority settings: Government schools, low-connectivity classrooms, Tamil-first UX
+## Features
+- Pure tone audiometry test (500, 1000, 2000, 4000 Hz)
+- Left and right ear testing with stereo audio
+- Tamil and English language support
+- Offline-capable with auto-sync
+- WhatsApp result sharing for parents
+- Secure admin dashboard
+- Supabase backend with full RLS security
 
-## Current implementation status
+## Tech Stack
+- React + TypeScript + Vite
+- Tailwind CSS + Shadcn UI
+- Supabase (Auth + Database + RLS)
+- Deployed on GitHub Pages
 
-### Phase 1 complete: Clinical-safe screening flow
+## Built by
+HearWise Technologies — Coimbatore, Tamil Nadu, India
 
-- Bilingual child-friendly flow with readiness gating.
-- Mandatory pre-test checks:
-  - headphone checklist complete
-  - sample tone played
-  - practice round completed
-- Stricter student validation (age bounds, required fields).
-- Parent-friendly result guidance in English and Tamil.
-- Clinical audit metadata stored per test result:
-  - screening version
-  - readiness checklist
-  - per-ear false positives
-  - bilingual parent summary
+"Smart Hearing Care for Every Child"
 
-### Phase 2 complete: Offline-first reliability baseline
+## Database Setup
 
-- Queue-first result saving (no silent data loss).
-- Idempotent sync key per result: `client_result_id`.
-- Automatic retry with exponential backoff + jitter.
-- Periodic heartbeat sync (every 15s when online).
-- Failure visibility in UI badge (`sync retries`).
+1. Open your Supabase project dashboard.
+2. Go to `SQL Editor`.
+3. Create a new query.
+4. Copy all SQL from `supabase/migrations/001_initial_schema.sql`.
+5. Paste it into the SQL editor and click `Run`.
+6. Confirm tables are created and RLS policies are applied.
 
-## Data model updates
-
-- Migration: `supabase/migrations/20260414170000_phase1_clinical_safety.sql`
-- Migration: `supabase/migrations/20260414183000_phase2_offline_idempotency.sql`
-
-## Development
-
-- `npm install`
-- `npm run dev:8080`
-- Open `http://localhost:8080`
-
-## Quality gates
-
-- `npm run lint`
-- `npm run test`
-- `npm run build`
-
-## Deploy
-
-### Option A: Vercel (recommended)
-
-1. Ensure Vercel account and project access.
-2. Run `npm run deploy:vercel`
-3. Follow CLI prompts once (project/link).
-
-### Option B: Netlify
-
-1. Ensure Netlify account and site access.
-2. Run `npm run deploy:netlify`
-3. Follow CLI prompts once.
-
-SPA routing configs:
-
-- `vercel.json`
-- `netlify.toml`
-
-## Pre-release acceptance checklist
-
-1. Switch language EN/TA in all teacher and test screens.
-2. Complete setup -> student entry -> headphone check -> practice -> test.
-3. Verify readiness guard blocks test when pre-checks are incomplete.
-4. Verify results page shows parent guidance (EN/TA).
-5. Run offline scenario:
-   - disable internet
-   - complete a full student test
-   - confirm queued save message
-   - re-enable internet
-   - confirm auto-sync and badge update
-6. Verify CSV export and dashboard load.
-
-## Remediation log (updated)
-
-- Fixed: risk of incomplete pre-test execution by adding hard readiness gates.
-- Fixed: weak input validation for student demographics.
-- Fixed: non-idempotent offline sync risk by introducing `client_result_id`.
-- Fixed: invisible sync retry failures by surfacing retry state in badge.
-- Open next remediation:
-  - tighten Supabase RLS from public policies to role-scoped policies
-  - add server-side sync endpoint for payload validation and signed ingestion
+This sets up:
+- Core tables (`schools`, `teachers`, `students`, `test_sessions`, `test_results`, `referrals`)
+- Admin tables (`admin_whitelist`, `login_logs`)
+- Seeded admin email: `vikash07052008@gmail.com`
+- RLS policies for authenticated access
