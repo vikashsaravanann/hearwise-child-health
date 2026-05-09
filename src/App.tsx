@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { SessionProvider } from "@/contexts/SessionContext";
 import OfflineBadge from "@/components/OfflineBadge";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 import LandingPage from "./pages/LandingPage";
 import SessionSetupPage from "./pages/SessionSetupPage";
 import StudentEntryPage from "./pages/StudentEntryPage";
@@ -67,6 +68,7 @@ const App = () => (
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
+        <SpeedInsights />
       </SessionProvider>
     </TooltipProvider>
   </QueryClientProvider>
