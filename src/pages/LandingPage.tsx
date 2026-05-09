@@ -108,7 +108,7 @@ export default function LandingPage() {
               <p className="mt-1 text-[11px] text-muted-foreground">{t('dataPrivacyNote', lang)}</p>
             </div>
           </div>
-
+        </section>
       </div>
       
       {showAbout && (
