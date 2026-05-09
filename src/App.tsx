@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { SessionProvider } from "@/contexts/SessionContext";
 import OfflineBadge from "@/components/OfflineBadge";
 import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 import LandingPage from "./pages/LandingPage";
 import SessionSetupPage from "./pages/SessionSetupPage";
 import StudentEntryPage from "./pages/StudentEntryPage";
@@ -41,6 +42,7 @@ const App = () => (
         <Sonner />
         <OfflineBadge />
         <Analytics />
+        <SpeedInsights />
         <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '')}>
           <Routes>
             <Route path="/" element={<LandingPage />} />
