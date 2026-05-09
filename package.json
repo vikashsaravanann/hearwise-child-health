@@ -4,15 +4,14 @@
   "version": "0.0.0",
   "homepage": "https://vikashsaravanann.github.io/hearwise-child-health",
   "type": "module",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "dev": "vite",
-    "dev:8080": "vite --host 0.0.0.0 --port 8080",
     "build": "vite build",
-    "build:dev": "vite build --mode development",
-    "lint": "eslint .",
     "preview": "vite preview",
-    "test": "vitest run",
-    "test:watch": "vitest"
+    "lint": "eslint ."
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
