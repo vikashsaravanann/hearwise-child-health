@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { X, BarChart, Ear, School, CheckCircle, Telescope, Globe2, Gamepad2, Target, Settings, Headphones, Waves, ClipboardList, Rocket, Heart, Code, Stethoscope, GraduationCap, Mail } from 'lucide-react';
+import { X, BarChart, Ear, School, CheckCircle, Telescope, Globe2, Gamepad2, Target, Settings, Headphones, Waves, ClipboardList, Rocket, Heart, Code, Stethoscope, GraduationCap, Mail, Users } from 'lucide-react';
 import owlMascot from '@/assets/owl-mascot.png';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
