@@ -122,8 +122,8 @@ function Section({ group, index }: { group: typeof GROUPS[0], index: number }) {
             `}
             style={{
               backgroundColor: item.bg,
-              border: \`2px solid \${item.border}\`,
-              transitionDelay: isVisible ? \`\${i * 60}ms\` : '0ms'
+              border: `2px solid ${item.border}`,
+              transitionDelay: isVisible ? `${i * 60}ms` : '0ms'
             }}
           >
             <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent pointer-events-none" />
@@ -162,12 +162,12 @@ export default function ExplorePage() {
         />
       </div>
 
-      <style>{\`
+      <style>{`
         @keyframes waveMove {
           0% { background-position: 0% 0%; }
           100% { background-position: 100% 100%; }
         }
-      \`}</style>
+      `}</style>
 
       {/* Main Content */}
       <div className="relative z-10 max-w-[1100px] mx-auto px-4 py-8 pb-24">
@@ -179,7 +179,7 @@ export default function ExplorePage() {
             
             {/* DB Status Badge */}
             <div className="absolute -bottom-1 -right-2 bg-white rounded-full px-2 py-0.5 shadow-sm border border-slate-100 flex items-center gap-1.5">
-              <div className={\`w-2 h-2 rounded-full \${dbStatus === 'connected' ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}\`} />
+              <div className={`w-2 h-2 rounded-full ${dbStatus === 'connected' ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
               <span className="text-[10px] font-bold text-slate-600 uppercase tracking-wider">
                 {dbStatus === 'connected' ? 'Live' : 'Connecting'}
               </span>
