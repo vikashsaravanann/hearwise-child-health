@@ -15,6 +15,10 @@
       "dest": "/assets/$1"
     },
     {
+      "src": "/directory.html",
+      "dest": "/directory.html"
+    },
+    {
       "src": "/(.*)",
       "dest": "/index.html"
     }
