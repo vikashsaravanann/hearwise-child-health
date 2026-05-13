@@ -376,6 +376,8 @@ export default function LandingPage() {
                 Get Assistance
                 <HelpCircle className="ml-3 w-6 h-6" />
               </Button>
+            </motion.div>
+
             {/* Expanded Educational Awareness Section */}
             <div className="grid md:grid-cols-3 gap-8 mt-20">
               <motion.div 
