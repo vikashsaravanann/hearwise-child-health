@@ -532,32 +532,41 @@ export default function LandingPage() {
                   <Shield className="w-10 h-10 text-cyan-400" />
                 </div>
                 <h2 className="text-4xl font-black mb-8">Clinical Grade Accuracy <br/> <span className="text-cyan-400">in Your Pocket</span></h2>
-                <div className="space-y-6">
-                  <div className="flex gap-4">
-                    <div className="mt-1 w-6 h-6 rounded-full bg-cyan-500/20 flex items-center justify-center shrink-0">
-                      <CheckCircle2 className="w-4 h-4 text-cyan-400" />
+                <div className="space-y-8">
+                  <div className="flex gap-6">
+                    <div className="mt-1 w-8 h-8 rounded-xl bg-cyan-500/20 flex items-center justify-center shrink-0 border border-cyan-500/30">
+                      <CheckCircle2 className="w-5 h-5 text-cyan-400" />
                     </div>
                     <div>
-                      <h4 className="font-bold text-white text-lg">Calibrated Frequencies</h4>
-                      <p className="text-white/50 text-sm">We use ISO-standard frequencies (250Hz, 500Hz, 1kHz, 2kHz, 4kHz, 8kHz) to ensure comprehensive diagnostic coverage.</p>
+                      <h4 className="font-bold text-white text-xl mb-2">Clinical PTA Protocols</h4>
+                      <p className="text-white/50 text-sm leading-relaxed">We utilize Pure Tone Audiometry (PTA) protocols recognized by global audiology bodies, covering frequencies from 250Hz to 8000Hz with 5dB step accuracy.</p>
                     </div>
                   </div>
-                  <div className="flex gap-4">
-                    <div className="mt-1 w-6 h-6 rounded-full bg-cyan-500/20 flex items-center justify-center shrink-0">
-                      <CheckCircle2 className="w-4 h-4 text-cyan-400" />
+                  <div className="flex gap-6">
+                    <div className="mt-1 w-8 h-8 rounded-xl bg-cyan-500/20 flex items-center justify-center shrink-0 border border-cyan-500/30">
+                      <CheckCircle2 className="w-5 h-5 text-cyan-400" />
                     </div>
                     <div>
-                      <h4 className="font-bold text-white text-lg">Ambient Noise Monitoring</h4>
-                      <p className="text-white/50 text-sm">Our AI monitors background noise levels during the test to ensure valid screening conditions in school environments.</p>
+                      <h4 className="font-bold text-white text-xl mb-2">Intelligent Noise Monitoring</h4>
+                      <p className="text-white/50 text-sm leading-relaxed">Our real-time AI analyzes the ambient noise floor. If the environment becomes too loud for a valid clinical test, the system automatically alerts the educator to pause.</p>
                     </div>
                   </div>
-                  <div className="flex gap-4">
-                    <div className="mt-1 w-6 h-6 rounded-full bg-cyan-500/20 flex items-center justify-center shrink-0">
-                      <CheckCircle2 className="w-4 h-4 text-cyan-400" />
+                  <div className="flex gap-6">
+                    <div className="mt-1 w-8 h-8 rounded-xl bg-cyan-500/20 flex items-center justify-center shrink-0 border border-cyan-500/30">
+                      <CheckCircle2 className="w-5 h-5 text-cyan-400" />
                     </div>
                     <div>
-                      <h4 className="font-bold text-white text-lg">Automated Referrals</h4>
-                      <p className="text-white/50 text-sm">Criteria-based logic automatically flags children who need follow-up with a clinical audiologist.</p>
+                      <h4 className="font-bold text-white text-xl mb-2">Automated Diagnostic Logic</h4>
+                      <p className="text-white/50 text-sm leading-relaxed">Advanced algorithms interpret responses in real-time, identifying complex hearing patterns and providing immediate, reliable referral recommendations.</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-6">
+                    <div className="mt-1 w-8 h-8 rounded-xl bg-cyan-500/20 flex items-center justify-center shrink-0 border border-cyan-500/30">
+                      <CheckCircle2 className="w-5 h-5 text-cyan-400" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-white text-xl mb-2">Digital Calibration Engine</h4>
+                      <p className="text-white/50 text-sm leading-relaxed">Our proprietary engine ensures that sound output is perfectly calibrated across different mobile devices, matching the precision of dedicated hardware.</p>
                     </div>
                   </div>
                 </div>
@@ -567,24 +576,24 @@ export default function LandingPage() {
                 initial={{ opacity: 0, scale: 0.9 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
-                className="relative p-8 rounded-[3rem] bg-gradient-to-br from-white/5 to-white/0 border border-white/10 backdrop-blur-md"
+                className="relative"
               >
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="p-6 rounded-2xl bg-white/5 border border-white/10">
-                    <div className="text-4xl font-black text-cyan-400 mb-2">98%</div>
-                    <div className="text-xs font-bold text-white/40 uppercase">Correlation with Clinical PTA</div>
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="p-8 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-sm hover:bg-white/10 transition-all">
+                    <div className="text-5xl font-black text-cyan-400 mb-2">98%</div>
+                    <div className="text-xs font-bold text-white/40 uppercase tracking-widest leading-loose">Correlation with <br/> Clinical PTA</div>
                   </div>
-                  <div className="p-6 rounded-2xl bg-white/5 border border-white/10">
-                    <div className="text-4xl font-black text-pink-400 mb-2">&lt;1 min</div>
-                    <div className="text-xs font-bold text-white/40 uppercase">Average Test Duration</div>
+                  <div className="p-8 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-sm hover:bg-white/10 transition-all">
+                    <div className="text-5xl font-black text-pink-400 mb-2">&lt;1 min</div>
+                    <div className="text-xs font-bold text-white/40 uppercase tracking-widest leading-loose">Average <br/> Test Duration</div>
                   </div>
-                  <div className="p-6 rounded-2xl bg-white/5 border border-white/10">
-                    <div className="text-4xl font-black text-emerald-400 mb-2">1.5M</div>
-                    <div className="text-xs font-bold text-white/40 uppercase">Target Student Population</div>
+                  <div className="p-8 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-sm hover:bg-white/10 transition-all">
+                    <div className="text-5xl font-black text-emerald-400 mb-2">1.5M</div>
+                    <div className="text-xs font-bold text-white/40 uppercase tracking-widest leading-loose">Target Student <br/> Population</div>
                   </div>
-                  <div className="p-6 rounded-2xl bg-white/5 border border-white/10">
-                    <div className="text-4xl font-black text-orange-400 mb-2">38+</div>
-                    <div className="text-xs font-bold text-white/40 uppercase">Districts Covered in TN</div>
+                  <div className="p-8 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-sm hover:bg-white/10 transition-all">
+                    <div className="text-5xl font-black text-orange-400 mb-2">38+</div>
+                    <div className="text-xs font-bold text-white/40 uppercase tracking-widest leading-loose">Districts Covered <br/> in TN Pilot</div>
                   </div>
                 </div>
               </motion.div>
