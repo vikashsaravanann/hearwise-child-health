@@ -26,25 +26,9 @@ import owlMascot from '@/assets/owl-mascot.png';
 import oceanFooter from '@/assets/ocean-footer.png';
 import AboutHearWiseModal from '@/components/AboutHearWiseModal';
 
-// Animated Bubble Component
-const Bubble = ({ size, delay, left }: { size: number, delay: number, left: string }) => (
-  <motion.div
-    className="absolute bottom-[-20px] rounded-full bg-white/10 backdrop-blur-[2px] border border-white/20"
-    style={{ width: size, height: size, left }}
-    initial={{ y: 0, opacity: 0 }}
-    animate={{ 
-      y: -1200, 
-      opacity: [0, 0.4, 0.4, 0],
-      x: [0, 20, -20, 0]
-    }}
-    transition={{ 
-      duration: 15 + Math.random() * 10, 
-      delay, 
-      repeat: Infinity,
-      ease: "linear"
-    }}
-  />
-);
+import OceanBackground from '@/components/OceanBackground';
+
+// We'll use the OceanBackground component for a unified look
 
 export default function LandingPage() {
   const navigate = useNavigate();
@@ -67,20 +51,17 @@ export default function LandingPage() {
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-[#000b1d] text-white font-sans selection:bg-cyan-500/30">
       
-      {/* Background Elements */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#000b1d] via-[#001c3d] to-[#000b1d]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,rgba(0,225,255,0.08),transparent_70%)]" />
+      {/* Global Ocean Background - Fixed to stay during scroll */}
+      <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+        <OceanBackground />
         
-        {/* Bubbles */}
-        {[...Array(20)].map((_, i) => (
-          <Bubble 
-            key={i} 
-            size={10 + Math.random() * 30} 
-            delay={i * 1.5} 
-            left={`${Math.random() * 100}%`} 
-          />
-        ))}
+        {/* Large faint mascot in the background "seen under" as requested */}
+        <div className="absolute bottom-[-10%] right-[-10%] w-[800px] h-[800px] opacity-[0.03] rotate-[-15deg] grayscale">
+          <img src={owlMascot} alt="" className="w-full h-full object-contain" />
+        </div>
+        
+        {/* Additional depth layers */}
+        <div className="absolute inset-0 bg-gradient-to-b from-blue-900/40 via-transparent to-blue-900/60 mix-blend-multiply" />
       </div>
 
       {/* Navigation */}
@@ -395,13 +376,104 @@ export default function LandingPage() {
                 Get Assistance
                 <HelpCircle className="ml-3 w-6 h-6" />
               </Button>
-              <div className="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md max-w-2xl">
-                <p className="text-sm font-medium text-orange-300 uppercase tracking-widest mb-2">Service Detail</p>
-                <p className="text-white/40 text-sm">
-                  Direct links to Appointment Booking, Technical Help Center, and About Us. Ensuring every screening leads to care when needed.
+            {/* Expanded Educational Awareness Section */}
+            <div className="grid md:grid-cols-3 gap-8 mt-20">
+              <motion.div 
+                whileHover={{ y: -10 }}
+                className="p-8 rounded-[2.5rem] bg-white/10 backdrop-blur-md border border-white/20 shadow-2xl"
+              >
+                <div className="w-14 h-14 rounded-2xl bg-cyan-400/20 flex items-center justify-center mb-6">
+                  <Target className="w-8 h-8 text-cyan-400" />
+                </div>
+                <h4 className="text-xl font-bold mb-4">Why It Matters</h4>
+                <p className="text-white/60 text-sm leading-relaxed">
+                  Hearing loss affects nearly 1 in 8 children in India. Undetected, it leads to significant speech delays, social isolation, and academic underperformance. Early detection is the key to a bright future.
                 </p>
+              </motion.div>
+
+              <motion.div 
+                whileHover={{ y: -10 }}
+                className="p-8 rounded-[2.5rem] bg-white/10 backdrop-blur-md border border-white/20 shadow-2xl"
+              >
+                <div className="w-14 h-14 rounded-2xl bg-pink-400/20 flex items-center justify-center mb-6">
+                  <Users className="w-8 h-8 text-pink-400" />
+                </div>
+                <h4 className="text-xl font-bold mb-4">Community Impact</h4>
+                <p className="text-white/60 text-sm leading-relaxed">
+                  Our mission is to democratize hearing health. By empowering teachers and local health workers, we eliminate the need for expensive diagnostic centers for initial screenings.
+                </p>
+              </motion.div>
+
+              <motion.div 
+                whileHover={{ y: -10 }}
+                className="p-8 rounded-[2.5rem] bg-white/10 backdrop-blur-md border border-white/20 shadow-2xl"
+              >
+                <div className="w-14 h-14 rounded-2xl bg-emerald-400/20 flex items-center justify-center mb-6">
+                  <Sparkles className="w-8 h-8 text-emerald-400" />
+                </div>
+                <h4 className="text-xl font-bold mb-4">Global Standards</h4>
+                <p className="text-white/60 text-sm leading-relaxed">
+                  We follow WHO guidelines and ISO 8253 standards for audiometric testing. Every screening is a step toward fulfilling the national mandate for universal hearing health.
+                </p>
+              </motion.div>
+            </div>
+          </section>
+
+          {/* More Details about HearWise Technologies */}
+          <section id="tech-details" className="mt-40 bg-gradient-to-br from-blue-900/40 to-cyan-900/40 p-12 md:p-20 rounded-[4rem] border border-white/10 backdrop-blur-xl">
+            <div className="max-w-4xl mx-auto">
+              <h2 className="text-5xl font-black mb-12 text-center">Inside the Tech</h2>
+              
+              <div className="space-y-16">
+                <div className="flex flex-col md:flex-row gap-10 items-start">
+                  <div className="w-16 h-16 shrink-0 rounded-2xl bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center">
+                    <Zap className="w-8 h-8 text-cyan-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold mb-4">Dynamic Pure Tone Synthesis</h3>
+                    <p className="text-white/60 leading-relaxed mb-4">
+                      Our proprietary engine synthesizes pure tones with clinical precision. We cover the entire critical speech spectrum from 250Hz to 8000Hz, ensuring that no frequency gap goes unnoticed.
+                    </p>
+                    <ul className="grid grid-cols-2 gap-3">
+                      <li className="flex items-center gap-2 text-xs text-white/40 font-bold uppercase"><CheckCircle2 className="w-3 h-3 text-cyan-400" /> Anti-Aliasing</li>
+                      <li className="flex items-center gap-2 text-xs text-white/40 font-bold uppercase"><CheckCircle2 className="w-3 h-3 text-cyan-400" /> Precise Gain Control</li>
+                    </ul>
+                  </div>
+                </div>
+
+                <div className="flex flex-col md:flex-row gap-10 items-start">
+                  <div className="w-16 h-16 shrink-0 rounded-2xl bg-blue-500/20 border border-blue-500/30 flex items-center justify-center">
+                    <Shield className="w-8 h-8 text-blue-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold mb-4">AI-Driven Noise Floor Analysis</h3>
+                    <p className="text-white/60 leading-relaxed mb-4">
+                      The biggest challenge in school screening is ambient noise. HearWise uses real-time microphone analysis to ensure the background noise floor is within acceptable limits for a valid test.
+                    </p>
+                    <ul className="grid grid-cols-2 gap-3">
+                      <li className="flex items-center gap-2 text-xs text-white/40 font-bold uppercase"><CheckCircle2 className="w-3 h-3 text-blue-400" /> Real-time FFT</li>
+                      <li className="flex items-center gap-2 text-xs text-white/40 font-bold uppercase"><CheckCircle2 className="w-3 h-3 text-blue-400" /> Noise Warning System</li>
+                    </ul>
+                  </div>
+                </div>
+
+                <div className="flex flex-col md:flex-row gap-10 items-start">
+                  <div className="w-16 h-16 shrink-0 rounded-2xl bg-purple-500/20 border border-purple-500/30 flex items-center justify-center">
+                    <LayoutDashboard className="w-8 h-8 text-purple-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold mb-4">Cloud-Synchronized Analytics</h3>
+                    <p className="text-white/60 leading-relaxed mb-4">
+                      Data is processed instantly, generating comprehensive reports and school-wide dashboards. We use industry-standard encryption to ensure that every student's medical data remains private and secure.
+                    </p>
+                    <ul className="grid grid-cols-2 gap-3">
+                      <li className="flex items-center gap-2 text-xs text-white/40 font-bold uppercase"><CheckCircle2 className="w-3 h-3 text-purple-400" /> End-to-End Encryption</li>
+                      <li className="flex items-center gap-2 text-xs text-white/40 font-bold uppercase"><CheckCircle2 className="w-3 h-3 text-purple-400" /> Multi-School Management</li>
+                    </ul>
+                  </div>
+                </div>
               </div>
-            </motion.div>
+            </div>
           </section>
 
 

@@ -45,7 +45,7 @@ export default function OceanBackground() {
   }, []);
 
   return (
-    <div className="pointer-events-none absolute inset-0 overflow-hidden">
+    <div className="pointer-events-none fixed inset-0 overflow-hidden z-0">
       {/* Ocean gradient background layers */}
       <div className="absolute inset-0 bg-gradient-to-b from-[hsl(200,100%,90%)] via-[hsl(200,100%,75%)] to-[hsl(200,100%,50%)]" />
 
