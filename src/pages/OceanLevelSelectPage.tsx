@@ -39,8 +39,10 @@ export default function OceanLevelSelectPage() {
   };
 
   return (
-    <div className="page-shell relative">
-      <OceanBackground />
+    <div className="page-shell relative min-h-screen">
+      <div className="fixed inset-0 pointer-events-none opacity-40 blur-sm">
+        <OceanBackground />
+      </div>
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen">
         <div className="text-center mb-12 mt-8 animate-fade-in">
           <h1 className="text-4xl md:text-5xl font-black mb-2" style={{ fontFamily: 'Fredoka, sans-serif', color: 'hsl(200, 100%, 30%)' }}>
