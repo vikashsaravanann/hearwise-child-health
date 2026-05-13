@@ -47,6 +47,8 @@ import AboutDeveloperPage from "./pages/admin/AboutDeveloperPage";
 import PracticeRoundPage from "./pages/PracticeRoundPage";
 import ActiveTestPage from "./pages/ActiveTestPage";
 import ResultsPage from "./pages/ResultsPage";
+const queryClient = new QueryClient();
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
