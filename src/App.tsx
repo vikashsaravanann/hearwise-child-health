@@ -29,6 +29,7 @@ import LeaderboardPage from "./pages/Leaderboard";
 import HelpPage from "./pages/Help";
 import AboutPage from "./pages/AboutPage";
 import NotFound from "./pages/NotFound";
+import GatewayPage from "./pages/GatewayPage";
 
 const queryClient = new QueryClient();
 
@@ -64,6 +65,7 @@ const App = () => (
             <Route path="/leaderboard" element={<LeaderboardPage />} />
             <Route path="/help" element={<HelpPage />} />
             <Route path="/about" element={<AboutPage />} />
+            <Route path="/gateway" element={<GatewayPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
