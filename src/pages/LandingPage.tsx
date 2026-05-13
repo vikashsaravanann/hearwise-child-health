@@ -28,7 +28,25 @@ import AboutHearWiseModal from '@/components/AboutHearWiseModal';
 
 import OceanBackground from '@/components/OceanBackground';
 
-// We'll use the OceanBackground component for a unified look
+// Animated Bubble Component for the original dark theme
+const Bubble = ({ size, delay, left }: { size: number, delay: number, left: string }) => (
+  <motion.div
+    className="absolute bottom-[-20px] rounded-full bg-white/10 backdrop-blur-[2px] border border-white/20"
+    style={{ width: size, height: size, left }}
+    initial={{ y: 0, opacity: 0 }}
+    animate={{ 
+      y: -1200, 
+      opacity: [0, 0.4, 0.4, 0],
+      x: [0, 20, -20, 0]
+    }}
+    transition={{ 
+      duration: 15 + Math.random() * 10, 
+      delay, 
+      repeat: Infinity,
+      ease: "linear"
+    }}
+  />
+);
 
 export default function LandingPage() {
   const navigate = useNavigate();
@@ -51,17 +69,26 @@ export default function LandingPage() {
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-[#000b1d] text-white font-sans selection:bg-cyan-500/30">
       
-      {/* Global Ocean Background - Fixed to stay during scroll */}
-      <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
-        <OceanBackground />
+      {/* Reverting to the premium dark background as before */}
+      <div className="fixed inset-0 z-0 pointer-events-none">
+        <div className="absolute inset-0 bg-[#000b1d]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#000b1d] via-[#001c3d] to-[#000b1d]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,rgba(0,225,255,0.1),transparent_70%)]" />
         
-        {/* Large faint mascot in the background "seen under" as requested */}
-        <div className="absolute bottom-[-10%] right-[-10%] w-[800px] h-[800px] opacity-[0.03] rotate-[-15deg] grayscale">
-          <img src={owlMascot} alt="" className="w-full h-full object-contain" />
+        {/* Animated Bubbles (Moving Bubbles) */}
+        {[...Array(25)].map((_, i) => (
+          <Bubble 
+            key={i} 
+            size={10 + Math.random() * 30} 
+            delay={i * 1.2} 
+            left={`${Math.random() * 100}%`} 
+          />
+        ))}
+
+        {/* Large faint mascot "dragon" under everything */}
+        <div className="absolute bottom-[-10%] right-[-10%] w-[800px] h-[800px] opacity-[0.05] rotate-[-15deg]">
+          <img src={owlMascot} alt="" className="w-full h-full object-contain brightness-0 invert" />
         </div>
-        
-        {/* Additional depth layers */}
-        <div className="absolute inset-0 bg-gradient-to-b from-blue-900/40 via-transparent to-blue-900/60 mix-blend-multiply" />
       </div>
 
       {/* Navigation */}
@@ -276,7 +303,7 @@ export default function LandingPage() {
               </div>
               <h3 className="text-4xl font-black mb-6 text-white">Smart School Screening</h3>
               <p className="text-lg text-white/60 mb-8 leading-relaxed">
-                Perform clinical-grade hearing tests in minutes. Our platform handles everything from student entry to final results, ensuring no child is left behind.
+                Our platform brings clinical-grade audiometry to the classroom. Using Digital Pure Tone Audiometry (PTA) principles, we screen students across the critical speech frequencies (250Hz - 8kHz). The system automatically adjusts to ambient noise levels and provides a 'pass/refer' result instantly, ensuring that hearing loss is caught early when intervention is most effective.
               </p>
               <Button 
                 size="lg" 
@@ -286,11 +313,13 @@ export default function LandingPage() {
                 Start Screening Session
                 <ArrowRight className="ml-3 w-6 h-6" />
               </Button>
-              <div className="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md max-w-2xl">
-                <p className="text-sm font-medium text-cyan-300 uppercase tracking-widest mb-2">Technical Detail</p>
-                <p className="text-white/40 text-sm">
-                  Includes Headphone Check, Student Detail Entry, Practice Rounds, and the "Ocean World" Game. Fully compliant with school health standards.
-                </p>
+              <div className="p-8 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md max-w-2xl">
+                <p className="text-sm font-black text-cyan-300 uppercase tracking-widest mb-4">Technical Detail & Compliance</p>
+                <div className="text-white/50 text-sm space-y-3 text-left">
+                  <p>• <strong>ISO 8253 Compliant</strong>: Our testing protocols align with international standards for audiometric test methods.</p>
+                  <p>• <strong>Environmental Calibration</strong>: Integrated AI monitors background decibels to ensure testing validity in dynamic school environments.</p>
+                  <p>• <strong>Gamified Interface</strong>: The "Ocean World" module reduces child anxiety, leading to more accurate behavioral responses.</p>
+                </div>
               </div>
             </motion.div>
 
@@ -306,7 +335,7 @@ export default function LandingPage() {
               </div>
               <h3 className="text-4xl font-black mb-6 text-white">Instant Results & Analytics</h3>
               <p className="text-lg text-white/60 mb-8 leading-relaxed">
-                Get real-time insights into your students' hearing health. View detailed reports, manage referrals, and track screening progress across the entire school.
+                Transform screening data into actionable health insights. Administrators get a bird's-eye view of hearing health across entire school districts, while teachers receive immediate individual reports. Our analytics engine flags children for secondary screening and automatically generates clinical referral documents for parents, streamlining the entire care pathway.
               </p>
               <Button 
                 size="lg" 
@@ -316,11 +345,13 @@ export default function LandingPage() {
                 Access Dashboard
                 <LayoutDashboard className="ml-3 w-6 h-6" />
               </Button>
-              <div className="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md max-w-2xl">
-                <p className="text-sm font-medium text-pink-300 uppercase tracking-widest mb-2">Data Transparency</p>
-                <p className="text-white/40 text-sm">
-                  Access individual Student Reports, School Leaderboards, and Global Achievement Trophies. Secure, encrypted, and cloud-synced.
-                </p>
+              <div className="p-8 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md max-w-2xl">
+                <p className="text-sm font-black text-pink-300 uppercase tracking-widest mb-4">Data Transparency & Security</p>
+                <div className="text-white/50 text-sm space-y-3 text-left">
+                  <p>• <strong>Prevalence Mapping</strong>: Visualize hearing health trends by grade, school, or district to allocate resources effectively.</p>
+                  <p>• <strong>HIPAA Aligned</strong>: Student medical data is protected with end-to-end encryption and strict access controls.</p>
+                  <p>• <strong>Longitudinal Tracking</strong>: Compare screening results year-over-year to monitor progressive hearing health changes.</p>
+                </div>
               </div>
             </motion.div>
 
@@ -336,7 +367,7 @@ export default function LandingPage() {
               </div>
               <h3 className="text-4xl font-black mb-6 text-white">Education & Awareness</h3>
               <p className="text-lg text-white/60 mb-8 leading-relaxed">
-                Empower your school with knowledge. Our learning hub provides resources for teachers, parents, and students to protect their hearing for life.
+                Hearing care starts with knowledge. Our learning hub offers curriculum-aligned modules that teach students about ear anatomy, the physics of sound, and the dangers of high-decibel environments. Through interactive games and the 'Sonic Safety' curriculum, we empower the next generation to protect their hearing through healthy habits like the 60/60 rule.
               </p>
               <Button 
                 size="lg" 
@@ -346,11 +377,13 @@ export default function LandingPage() {
                 Open Learning Hub
                 <BookOpen className="ml-3 w-6 h-6" />
               </Button>
-              <div className="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md max-w-2xl">
-                <p className="text-sm font-medium text-emerald-300 uppercase tracking-widest mb-2">Resource Detail</p>
-                <p className="text-white/40 text-sm">
-                  Covers Ear Care, Noise Awareness, Headphone Safety, and Sound Exploration modules. Curriculum-aligned for primary and secondary students.
-                </p>
+              <div className="p-8 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md max-w-2xl">
+                <p className="text-sm font-black text-emerald-300 uppercase tracking-widest mb-4">Resource Detail & Learning Path</p>
+                <div className="text-white/50 text-sm space-y-3 text-left">
+                  <p>• <strong>Interactive Anatomy</strong>: 3D modules exploring the outer, middle, and inner ear functions.</p>
+                  <p>• <strong>Noise Pollution Guide</strong>: Practical tips for identifying and mitigating dangerous sound levels in everyday life.</p>
+                  <p>• <strong>Teacher Training</strong>: Certified resources to help educators integrate hearing health into their health and science lessons.</p>
+                </div>
               </div>
             </motion.div>
 
@@ -366,7 +399,7 @@ export default function LandingPage() {
               </div>
               <h3 className="text-4xl font-black mb-6 text-white">Clinical Support & Help</h3>
               <p className="text-lg text-white/60 mb-8 leading-relaxed">
-                Need more help? Connect with clinical audiologists, book appointments for follow-ups, or get technical support directly through our help center.
+                We bridge the gap between screening and clinical care. If a child is flagged, our platform provides direct links to book follow-up appointments with certified audiologists. Integrated tele-support allows school health workers to consult with experts in real-time, ensuring that every student receives the clinical attention they deserve.
               </p>
               <Button 
                 size="lg" 
@@ -376,6 +409,14 @@ export default function LandingPage() {
                 Get Assistance
                 <HelpCircle className="ml-3 w-6 h-6" />
               </Button>
+              <div className="p-8 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md max-w-2xl">
+                <p className="text-sm font-black text-orange-300 uppercase tracking-widest mb-4">Service Detail & Referral Support</p>
+                <div className="text-white/50 text-sm space-y-3 text-left">
+                  <p>• <strong>Direct Appointment Booking</strong>: Seamless integration with local audiometric clinics and government hospitals.</p>
+                  <p>• <strong>Tele-Audiology</strong>: Virtual consultation pathways for rural schools with limited access to specialists.</p>
+                  <p>• <strong>Knowledge Base</strong>: Comprehensive technical documentation and troubleshooting for all screening hardware.</p>
+                </div>
+              </div>
             </motion.div>
 
             {/* Expanded Educational Awareness Section */}
