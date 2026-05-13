@@ -95,9 +95,9 @@ export default function LandingPage() {
             <Button 
               variant="ghost" 
               className="hidden sm:flex text-white/70 hover:text-white hover:bg-white/10"
-              onClick={() => navigate('/gateway')}
+              onClick={() => navigate('/explore')}
             >
-              All Pages
+              Explore
             </Button>
             <Button 
               variant="ghost" 
@@ -158,10 +158,19 @@ export default function LandingPage() {
                 <Button 
                   size="lg" 
                   variant="outline"
-                  className="h-14 px-8 rounded-2xl border-cyan-500/50 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 font-bold text-lg backdrop-blur-sm transition-all"
-                  onClick={() => navigate('/gateway')}
+                  className="h-14 px-8 rounded-2xl border-white/20 bg-white/5 hover:bg-white/10 text-white font-bold text-lg backdrop-blur-sm transition-all"
+                  onClick={() => navigate('/dashboard')}
                 >
-                  Gateway
+                  {t('viewDashboard', lang)}
+                </Button>
+                
+                <Button 
+                  size="lg" 
+                  variant="outline"
+                  className="h-14 px-8 rounded-2xl border-cyan-500/50 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 font-bold text-lg backdrop-blur-sm transition-all"
+                  onClick={() => navigate('/explore')}
+                >
+                  Explore All Pages
                 </Button>
               </div>
 
