@@ -275,10 +275,15 @@ export default function LandingPage() {
                 className="group relative flex flex-col items-center justify-center w-56 h-56 shrink-0"
               >
                 <div className="absolute inset-0 bg-cyan-500/20 rounded-full blur-2xl group-hover:bg-cyan-500/40 transition-all" />
-                <div className="relative w-full h-full rounded-full border-2 border-cyan-500/50 bg-[#000b1d] flex flex-col items-center justify-center gap-2 transition-transform group-hover:scale-105 active:scale-95">
-                  <Info className="w-12 h-12 text-cyan-400" />
-                  <span className="text-sm font-black text-white uppercase tracking-tighter">About Project</span>
-                  <div className="text-[10px] text-white/40 uppercase font-bold">Click to view details</div>
+                <div className="relative w-full h-full rounded-full border-2 border-cyan-500/50 bg-[#000b1d] flex flex-col items-center justify-center gap-2 transition-transform group-hover:scale-105 active:scale-95 overflow-hidden">
+                  <div className="absolute inset-0 opacity-20 group-hover:opacity-30 transition-opacity">
+                    <img src={owlMascot} alt="" className="w-full h-full object-cover" />
+                  </div>
+                  <div className="relative z-10 flex flex-col items-center justify-center gap-2">
+                    <img src={owlMascot} alt="About" className="w-14 h-14 object-contain mb-1 drop-shadow-[0_0_15px_rgba(0,225,255,0.5)]" />
+                    <span className="text-sm font-black text-white uppercase tracking-tighter">About Project</span>
+                    <div className="text-[10px] text-white/40 uppercase font-bold">Click to view details</div>
+                  </div>
                 </div>
               </button>
             </motion.div>
