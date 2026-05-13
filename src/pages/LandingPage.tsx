@@ -271,67 +271,132 @@ export default function LandingPage() {
             </motion.div>
           </section>
 
-          {/* Features Section - Replaces Explore Page Info */}
-          <section id="features" className="mt-40">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-black mb-4">Explore Everything</h2>
-              <p className="text-white/60 max-w-2xl mx-auto">
-                Everything you need to manage hearing health in one place. Gamified tests, comprehensive reports, and educational resources.
+          {/* The Journey Section - Hearing Test Info */}
+          <section id="journey" className="mt-40 space-y-32">
+            <div className="text-center mb-24">
+              <h2 className="text-5xl md:text-6xl font-black mb-6">Complete Hearing Care</h2>
+              <p className="text-cyan-400 font-bold tracking-[0.3em] uppercase text-sm">Everything you need in one place</p>
+            </div>
+
+            {/* Block 1: The Test */}
+            <motion.div 
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="flex flex-col items-center text-center max-w-4xl mx-auto"
+            >
+              <div className="w-20 h-20 rounded-3xl bg-cyan-500/20 flex items-center justify-center mb-8 border border-cyan-500/30">
+                <Headphones className="w-10 h-10 text-cyan-400" />
+              </div>
+              <h3 className="text-4xl font-black mb-6 text-white">Smart School Screening</h3>
+              <p className="text-lg text-white/60 mb-8 leading-relaxed">
+                Perform clinical-grade hearing tests in minutes. Our platform handles everything from student entry to final results, ensuring no child is left behind.
               </p>
-            </div>
-
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {/* Feature Box 1 */}
-              <motion.div 
-                whileHover={{ y: -10 }}
-                className="p-8 rounded-[2rem] bg-white/5 border border-white/10 backdrop-blur-md hover:bg-white/10 transition-all group"
+              <Button 
+                size="lg" 
+                className="h-16 px-10 rounded-2xl bg-cyan-500 hover:bg-cyan-400 text-[#000b1d] font-black text-xl shadow-2xl shadow-cyan-500/30 mb-8 transition-transform hover:scale-105 active:scale-95"
+                onClick={() => navigate('/setup')}
               >
-                <div className="w-14 h-14 rounded-2xl bg-cyan-500/20 flex items-center justify-center mb-6 group-hover:bg-cyan-500 group-hover:text-[#000b1d] transition-all">
-                  <Zap className="w-8 h-8 text-cyan-400 group-hover:text-inherit" />
-                </div>
-                <h3 className="text-2xl font-bold mb-4">Gamified Testing</h3>
-                <p className="text-white/50 text-sm leading-relaxed mb-6">
-                  Our "Ocean World" journey turns clinical testing into an adventure. Children pop bubbles and find treasure while we measure their hearing thresholds across 250Hz to 8000Hz.
+                Start Screening Session
+                <ArrowRight className="ml-3 w-6 h-6" />
+              </Button>
+              <div className="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md max-w-2xl">
+                <p className="text-sm font-medium text-cyan-300 uppercase tracking-widest mb-2">Technical Detail</p>
+                <p className="text-white/40 text-sm">
+                  Includes Headphone Check, Student Detail Entry, Practice Rounds, and the "Ocean World" Game. Fully compliant with school health standards.
                 </p>
-                <Button variant="link" className="p-0 text-cyan-400 font-bold" onClick={() => navigate('/setup')}>
-                  Try a session <ArrowRight className="ml-2 w-4 h-4" />
-                </Button>
-              </motion.div>
+              </div>
+            </motion.div>
 
-              {/* Feature Box 2 */}
-              <motion.div 
-                whileHover={{ y: -10 }}
-                className="p-8 rounded-[2rem] bg-white/5 border border-white/10 backdrop-blur-md hover:bg-white/10 transition-all group"
+            {/* Block 2: Analytics */}
+            <motion.div 
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="flex flex-col items-center text-center max-w-4xl mx-auto"
+            >
+              <div className="w-20 h-20 rounded-3xl bg-pink-500/20 flex items-center justify-center mb-8 border border-pink-500/30">
+                <BarChart className="w-10 h-10 text-pink-400" />
+              </div>
+              <h3 className="text-4xl font-black mb-6 text-white">Instant Results & Analytics</h3>
+              <p className="text-lg text-white/60 mb-8 leading-relaxed">
+                Get real-time insights into your students' hearing health. View detailed reports, manage referrals, and track screening progress across the entire school.
+              </p>
+              <Button 
+                size="lg" 
+                className="h-16 px-10 rounded-2xl bg-pink-500 hover:bg-pink-400 text-[#000b1d] font-black text-xl shadow-2xl shadow-pink-500/30 mb-8 transition-transform hover:scale-105 active:scale-95"
+                onClick={() => navigate('/dashboard')}
               >
-                <div className="w-14 h-14 rounded-2xl bg-pink-500/20 flex items-center justify-center mb-6 group-hover:bg-pink-500 group-hover:text-[#000b1d] transition-all">
-                  <Shield className="w-8 h-8 text-pink-400 group-hover:text-inherit" />
-                </div>
-                <h3 className="text-2xl font-bold mb-4">Smart Reports</h3>
-                <p className="text-white/50 text-sm leading-relaxed mb-6">
-                  Instant audiograms and referral letters generated automatically. Parents receive clear, actionable results with recommended next steps.
+                Access Dashboard
+                <LayoutDashboard className="ml-3 w-6 h-6" />
+              </Button>
+              <div className="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md max-w-2xl">
+                <p className="text-sm font-medium text-pink-300 uppercase tracking-widest mb-2">Data Transparency</p>
+                <p className="text-white/40 text-sm">
+                  Access individual Student Reports, School Leaderboards, and Global Achievement Trophies. Secure, encrypted, and cloud-synced.
                 </p>
-                <Button variant="link" className="p-0 text-pink-400 font-bold" onClick={() => navigate('/dashboard')}>
-                  View Dashboard <ArrowRight className="ml-2 w-4 h-4" />
-                </Button>
-              </motion.div>
+              </div>
+            </motion.div>
 
-              {/* Feature Box 3 */}
-              <motion.div 
-                whileHover={{ y: -10 }}
-                className="p-8 rounded-[2rem] bg-white/5 border border-white/10 backdrop-blur-md hover:bg-white/10 transition-all group"
+            {/* Block 3: Education */}
+            <motion.div 
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="flex flex-col items-center text-center max-w-4xl mx-auto"
+            >
+              <div className="w-20 h-20 rounded-3xl bg-emerald-500/20 flex items-center justify-center mb-8 border border-emerald-500/30">
+                <BookOpen className="w-10 h-10 text-emerald-400" />
+              </div>
+              <h3 className="text-4xl font-black mb-6 text-white">Education & Awareness</h3>
+              <p className="text-lg text-white/60 mb-8 leading-relaxed">
+                Empower your school with knowledge. Our learning hub provides resources for teachers, parents, and students to protect their hearing for life.
+              </p>
+              <Button 
+                size="lg" 
+                className="h-16 px-10 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-[#000b1d] font-black text-xl shadow-2xl shadow-emerald-500/30 mb-8 transition-transform hover:scale-105 active:scale-95"
+                onClick={() => navigate('/education')}
               >
-                <div className="w-14 h-14 rounded-2xl bg-emerald-500/20 flex items-center justify-center mb-6 group-hover:bg-emerald-500 group-hover:text-[#000b1d] transition-all">
-                  <Users className="w-8 h-8 text-emerald-400 group-hover:text-inherit" />
-                </div>
-                <h3 className="text-2xl font-bold mb-4">Education Hub</h3>
-                <p className="text-white/50 text-sm leading-relaxed mb-6">
-                  Access curated content on ear care, headphone safety, and noise awareness. We provide tools for teachers to educate students about hearing protection.
+                Open Learning Hub
+                <BookOpen className="ml-3 w-6 h-6" />
+              </Button>
+              <div className="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md max-w-2xl">
+                <p className="text-sm font-medium text-emerald-300 uppercase tracking-widest mb-2">Resource Detail</p>
+                <p className="text-white/40 text-sm">
+                  Covers Ear Care, Noise Awareness, Headphone Safety, and Sound Exploration modules. Curriculum-aligned for primary and secondary students.
                 </p>
-                <Button variant="link" className="p-0 text-emerald-400 font-bold" onClick={() => navigate('/education')}>
-                  Learn more <ArrowRight className="ml-2 w-4 h-4" />
-                </Button>
-              </motion.div>
-            </div>
+              </div>
+            </motion.div>
+
+            {/* Block 4: Support */}
+            <motion.div 
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="flex flex-col items-center text-center max-w-4xl mx-auto pb-20"
+            >
+              <div className="w-20 h-20 rounded-3xl bg-orange-500/20 flex items-center justify-center mb-8 border border-orange-500/30">
+                <HelpCircle className="w-10 h-10 text-orange-400" />
+              </div>
+              <h3 className="text-4xl font-black mb-6 text-white">Clinical Support & Help</h3>
+              <p className="text-lg text-white/60 mb-8 leading-relaxed">
+                Need more help? Connect with clinical audiologists, book appointments for follow-ups, or get technical support directly through our help center.
+              </p>
+              <Button 
+                size="lg" 
+                className="h-16 px-10 rounded-2xl bg-orange-500 hover:bg-orange-400 text-[#000b1d] font-black text-xl shadow-2xl shadow-orange-500/30 mb-8 transition-transform hover:scale-105 active:scale-95"
+                onClick={() => navigate('/help')}
+              >
+                Get Assistance
+                <HelpCircle className="ml-3 w-6 h-6" />
+              </Button>
+              <div className="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md max-w-2xl">
+                <p className="text-sm font-medium text-orange-300 uppercase tracking-widest mb-2">Service Detail</p>
+                <p className="text-white/40 text-sm">
+                  Direct links to Appointment Booking, Technical Help Center, and About Us. Ensuring every screening leads to care when needed.
+                </p>
+              </div>
+            </motion.div>
           </section>
 
         </div>
