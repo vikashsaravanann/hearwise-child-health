@@ -85,8 +85,8 @@ export default function LandingPage() {
           />
         ))}
 
-        {/* Large faint mascot "dragon" under everything */}
-        <div className="absolute bottom-[-10%] right-[-10%] w-[800px] h-[800px] opacity-[0.05] rotate-[-15deg]">
+        {/* Large faint mascot "dragon" under everything - positioned slightly better for visibility */}
+        <div className="absolute bottom-[5%] right-[-5%] w-[600px] h-[600px] opacity-[0.08] rotate-[-10deg]">
           <img src={owlMascot} alt="" className="w-full h-full object-contain brightness-0 invert" />
         </div>
       </div>
@@ -638,26 +638,18 @@ export default function LandingPage() {
         </div>
       </main>
 
-      {/* Footer Image */}
-      <footer className="relative mt-20 pt-20">
-        <div className="absolute bottom-0 left-0 right-0 w-full overflow-hidden pointer-events-none">
-          <img 
-            src={oceanFooter} 
-            alt="Ocean World Footer" 
-            className="w-full object-cover min-h-[300px] opacity-80"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#000b1d] via-transparent to-transparent" />
-        </div>
-        
-        <div className="relative z-10 max-w-7xl mx-auto px-6 py-12 text-center border-t border-white/5">
-          <div className="flex items-center justify-center gap-3 mb-6 opacity-50 grayscale">
-            <img src={owlMascot} alt="Logo" className="w-6 h-6" />
-            <span className="font-black tracking-tight">HearWise Technologies</span>
+      {/* Footer - Now with the same dark theme */}
+      <footer className="relative mt-40 pb-20 border-t border-white/5">
+        <div className="relative z-10 max-w-7xl mx-auto px-6 py-12 text-center">
+          <div className="flex items-center justify-center gap-3 mb-6 opacity-40 grayscale hover:opacity-100 transition-opacity">
+            <img src={owlMascot} alt="Logo" className="w-8 h-8 object-contain" />
+            <span className="font-black tracking-tight text-xl">HearWise Technologies</span>
           </div>
-          <p className="text-white/30 text-[10px] uppercase tracking-[0.2em] mb-4">
+          <p className="text-white/30 text-[11px] uppercase tracking-[0.3em] mb-4">
             v2.0 Ocean Edition • Smart Hearing Care for Every Child
           </p>
-          <p className="text-white/20 text-[10px]">© 2025 HearWise Technologies Pvt. Ltd. All rights reserved.</p>
+          <div className="w-24 h-1 bg-gradient-to-r from-transparent via-cyan-500/30 to-transparent mx-auto mb-8" />
+          <p className="text-white/20 text-[10px] font-medium">© 2025 HearWise Technologies Pvt. Ltd. All rights reserved.</p>
         </div>
       </footer>
 
