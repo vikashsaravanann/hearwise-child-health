@@ -175,5 +175,6 @@ export default function SessionSetupPage() {
         </Button>
       </div>
     </div>
-  );
+  </div>
+);
 }

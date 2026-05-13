@@ -399,8 +399,6 @@ export default function LandingPage() {
             </motion.div>
           </section>
 
-        </div>
-      </main>
 
           {/* Clinical Accuracy Section */}
           <section id="accuracy" className="mt-40">

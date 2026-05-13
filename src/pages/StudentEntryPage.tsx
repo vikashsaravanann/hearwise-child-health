@@ -168,7 +168,6 @@ export default function StudentEntryPage() {
           </div>
         </div>
       </div>
-
       <div className="mx-auto mt-auto w-full max-w-3xl pt-6">
         <Button className="h-14 w-full rounded-2xl text-base font-semibold shadow-lg shadow-primary/20" disabled={!canProceed || loading} onClick={handleBegin}>
           {loading && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}
@@ -176,5 +175,6 @@ export default function StudentEntryPage() {
         </Button>
       </div>
     </div>
-  );
+  </div>
+);
 }
