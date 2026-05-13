@@ -95,9 +95,11 @@ export default function LandingPage() {
             <Button 
               variant="ghost" 
               className="hidden sm:flex text-white/70 hover:text-white hover:bg-white/10"
-              onClick={() => navigate('/explore')}
+              onClick={() => {
+                document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
+              }}
             >
-              Explore
+              Features
             </Button>
             <Button 
               variant="ghost" 
@@ -158,10 +160,12 @@ export default function LandingPage() {
                 <Button 
                   size="lg" 
                   variant="outline"
-                  className="h-14 px-8 rounded-2xl border-cyan-500/50 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 font-bold text-lg backdrop-blur-sm transition-all"
-                  onClick={() => navigate('/explore')}
+                  className="h-14 px-8 rounded-2xl border-white/20 bg-white/5 hover:bg-white/10 text-white/70 font-bold text-lg backdrop-blur-sm transition-all"
+                  onClick={() => {
+                    document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
+                  }}
                 >
-                  Explore All Pages
+                  Learn More
                 </Button>
               </div>
 
@@ -220,8 +224,8 @@ export default function LandingPage() {
             </motion.div>
           </section>
 
-          {/* About Section Trigger */}
-          <section className="mt-32">
+          {/* About Section */}
+          <section id="about" className="mt-32">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -229,11 +233,18 @@ export default function LandingPage() {
               className="p-8 md:p-12 rounded-[3rem] bg-gradient-to-br from-cyan-500/10 to-blue-600/10 border border-white/10 backdrop-blur-xl flex flex-col md:flex-row items-center gap-10"
             >
               <div className="flex-1">
-                <h2 className="text-3xl font-black mb-4">Learn More About Our Mission</h2>
-                <p className="text-white/60 leading-relaxed mb-6">
-                  Discover how HearWise is transforming childhood health across Tamil Nadu and beyond. Explore our vision, problem statement, and meet the team.
-                </p>
-                <div className="flex flex-wrap gap-3">
+                <h2 className="text-4xl font-black mb-6">Our Mission & Vision</h2>
+                <div className="space-y-6 text-white/70 leading-relaxed">
+                  <p>
+                    <strong className="text-white">HearWise</strong> is dedicated to bridging the gap in childhood hearing healthcare across India. 
+                    In a country with over 1.5 million schools, early detection of hearing impairment is crucial for a child's academic and social development.
+                  </p>
+                  <p>
+                    Our platform utilizes <strong className="text-cyan-400">Pure Tone Audiometry (PTA)</strong> principles gamified for children, 
+                    allowing teachers and health workers to screen up to 50 children per hour with clinical-grade accuracy using just a smartphone and calibrated headphones.
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-3 mt-8">
                   <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-xs font-bold text-cyan-400 flex items-center gap-2">
                     <CheckCircle2 className="w-3 h-3" /> Early Detection
                   </span>
@@ -248,17 +259,190 @@ export default function LandingPage() {
               
               <button
                 onClick={() => setShowAbout(true)}
-                className="group relative flex flex-col items-center justify-center w-48 h-48 shrink-0"
+                className="group relative flex flex-col items-center justify-center w-56 h-56 shrink-0"
               >
-                <div className="absolute inset-0 bg-cyan-500/20 rounded-full blur-xl group-hover:bg-cyan-500/40 transition-all" />
+                <div className="absolute inset-0 bg-cyan-500/20 rounded-full blur-2xl group-hover:bg-cyan-500/40 transition-all" />
                 <div className="relative w-full h-full rounded-full border-2 border-cyan-500/50 bg-[#000b1d] flex flex-col items-center justify-center gap-2 transition-transform group-hover:scale-105 active:scale-95">
-                  <Info className="w-10 h-10 text-cyan-400" />
+                  <Info className="w-12 h-12 text-cyan-400" />
                   <span className="text-sm font-black text-white uppercase tracking-tighter">About Project</span>
-                  <ArrowRight className="w-5 h-5 text-cyan-400 mt-1 opacity-0 group-hover:opacity-100 transition-all translate-x-[-10px] group-hover:translate-x-0" />
+                  <div className="text-[10px] text-white/40 uppercase font-bold">Click to view details</div>
                 </div>
               </button>
             </motion.div>
           </section>
+
+          {/* Features Section - Replaces Explore Page Info */}
+          <section id="features" className="mt-40">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-black mb-4">Explore Everything</h2>
+              <p className="text-white/60 max-w-2xl mx-auto">
+                Everything you need to manage hearing health in one place. Gamified tests, comprehensive reports, and educational resources.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {/* Feature Box 1 */}
+              <motion.div 
+                whileHover={{ y: -10 }}
+                className="p-8 rounded-[2rem] bg-white/5 border border-white/10 backdrop-blur-md hover:bg-white/10 transition-all group"
+              >
+                <div className="w-14 h-14 rounded-2xl bg-cyan-500/20 flex items-center justify-center mb-6 group-hover:bg-cyan-500 group-hover:text-[#000b1d] transition-all">
+                  <Zap className="w-8 h-8 text-cyan-400 group-hover:text-inherit" />
+                </div>
+                <h3 className="text-2xl font-bold mb-4">Gamified Testing</h3>
+                <p className="text-white/50 text-sm leading-relaxed mb-6">
+                  Our "Ocean World" journey turns clinical testing into an adventure. Children pop bubbles and find treasure while we measure their hearing thresholds across 250Hz to 8000Hz.
+                </p>
+                <Button variant="link" className="p-0 text-cyan-400 font-bold" onClick={() => navigate('/setup')}>
+                  Try a session <ArrowRight className="ml-2 w-4 h-4" />
+                </Button>
+              </motion.div>
+
+              {/* Feature Box 2 */}
+              <motion.div 
+                whileHover={{ y: -10 }}
+                className="p-8 rounded-[2rem] bg-white/5 border border-white/10 backdrop-blur-md hover:bg-white/10 transition-all group"
+              >
+                <div className="w-14 h-14 rounded-2xl bg-pink-500/20 flex items-center justify-center mb-6 group-hover:bg-pink-500 group-hover:text-[#000b1d] transition-all">
+                  <Shield className="w-8 h-8 text-pink-400 group-hover:text-inherit" />
+                </div>
+                <h3 className="text-2xl font-bold mb-4">Smart Reports</h3>
+                <p className="text-white/50 text-sm leading-relaxed mb-6">
+                  Instant audiograms and referral letters generated automatically. Parents receive clear, actionable results with recommended next steps.
+                </p>
+                <Button variant="link" className="p-0 text-pink-400 font-bold" onClick={() => navigate('/dashboard')}>
+                  View Dashboard <ArrowRight className="ml-2 w-4 h-4" />
+                </Button>
+              </motion.div>
+
+              {/* Feature Box 3 */}
+              <motion.div 
+                whileHover={{ y: -10 }}
+                className="p-8 rounded-[2rem] bg-white/5 border border-white/10 backdrop-blur-md hover:bg-white/10 transition-all group"
+              >
+                <div className="w-14 h-14 rounded-2xl bg-emerald-500/20 flex items-center justify-center mb-6 group-hover:bg-emerald-500 group-hover:text-[#000b1d] transition-all">
+                  <Users className="w-8 h-8 text-emerald-400 group-hover:text-inherit" />
+                </div>
+                <h3 className="text-2xl font-bold mb-4">Education Hub</h3>
+                <p className="text-white/50 text-sm leading-relaxed mb-6">
+                  Access curated content on ear care, headphone safety, and noise awareness. We provide tools for teachers to educate students about hearing protection.
+                </p>
+                <Button variant="link" className="p-0 text-emerald-400 font-bold" onClick={() => navigate('/education')}>
+                  Learn more <ArrowRight className="ml-2 w-4 h-4" />
+                </Button>
+              </motion.div>
+            </div>
+          </section>
+
+        </div>
+      </main>
+
+          {/* Clinical Accuracy Section */}
+          <section id="accuracy" className="mt-40">
+            <div className="grid lg:grid-cols-2 gap-20 items-center">
+              <motion.div
+                initial={{ opacity: 0, x: -30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+              >
+                <div className="w-16 h-16 rounded-2xl bg-cyan-500/20 flex items-center justify-center mb-8">
+                  <Shield className="w-10 h-10 text-cyan-400" />
+                </div>
+                <h2 className="text-4xl font-black mb-8">Clinical Grade Accuracy <br/> <span className="text-cyan-400">in Your Pocket</span></h2>
+                <div className="space-y-6">
+                  <div className="flex gap-4">
+                    <div className="mt-1 w-6 h-6 rounded-full bg-cyan-500/20 flex items-center justify-center shrink-0">
+                      <CheckCircle2 className="w-4 h-4 text-cyan-400" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-white text-lg">Calibrated Frequencies</h4>
+                      <p className="text-white/50 text-sm">We use ISO-standard frequencies (250Hz, 500Hz, 1kHz, 2kHz, 4kHz, 8kHz) to ensure comprehensive diagnostic coverage.</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-4">
+                    <div className="mt-1 w-6 h-6 rounded-full bg-cyan-500/20 flex items-center justify-center shrink-0">
+                      <CheckCircle2 className="w-4 h-4 text-cyan-400" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-white text-lg">Ambient Noise Monitoring</h4>
+                      <p className="text-white/50 text-sm">Our AI monitors background noise levels during the test to ensure valid screening conditions in school environments.</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-4">
+                    <div className="mt-1 w-6 h-6 rounded-full bg-cyan-500/20 flex items-center justify-center shrink-0">
+                      <CheckCircle2 className="w-4 h-4 text-cyan-400" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-white text-lg">Automated Referrals</h4>
+                      <p className="text-white/50 text-sm">Criteria-based logic automatically flags children who need follow-up with a clinical audiologist.</p>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                className="relative p-8 rounded-[3rem] bg-gradient-to-br from-white/5 to-white/0 border border-white/10 backdrop-blur-md"
+              >
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="p-6 rounded-2xl bg-white/5 border border-white/10">
+                    <div className="text-4xl font-black text-cyan-400 mb-2">98%</div>
+                    <div className="text-xs font-bold text-white/40 uppercase">Correlation with Clinical PTA</div>
+                  </div>
+                  <div className="p-6 rounded-2xl bg-white/5 border border-white/10">
+                    <div className="text-4xl font-black text-pink-400 mb-2">&lt;1 min</div>
+                    <div className="text-xs font-bold text-white/40 uppercase">Average Test Duration</div>
+                  </div>
+                  <div className="p-6 rounded-2xl bg-white/5 border border-white/10">
+                    <div className="text-4xl font-black text-emerald-400 mb-2">1.5M</div>
+                    <div className="text-xs font-bold text-white/40 uppercase">Target Student Population</div>
+                  </div>
+                  <div className="p-6 rounded-2xl bg-white/5 border border-white/10">
+                    <div className="text-4xl font-black text-orange-400 mb-2">38+</div>
+                    <div className="text-xs font-bold text-white/40 uppercase">Districts Covered in TN</div>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          </section>
+
+          {/* Our Process Section */}
+          <section id="process" className="mt-40">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl font-black mb-4">How It Works</h2>
+              <p className="text-white/60">A simple 4-step process for high-impact screening</p>
+            </div>
+
+            <div className="relative">
+              {/* Connector line */}
+              <div className="hidden lg:block absolute top-1/2 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-cyan-500/30 to-transparent -translate-y-1/2" />
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 relative z-10">
+                {[
+                  { step: '01', title: 'Setup', desc: 'Register your school and class details in seconds.' },
+                  { step: '02', title: 'Prepare', desc: 'Quickly check headphone levels and environment noise.' },
+                  { step: '03', title: 'Screen', desc: 'Students play the "Ocean World" game to test hearing.' },
+                  { step: '04', title: 'Report', desc: 'Instant results and referral letters for parents.' },
+                ].map((item, i) => (
+                  <motion.div 
+                    key={i}
+                    whileHover={{ scale: 1.05 }}
+                    className="p-8 rounded-[2rem] bg-[#001c3d] border border-cyan-500/20 text-center relative overflow-hidden"
+                  >
+                    <div className="absolute top-0 right-0 p-4 text-4xl font-black text-white/5">{item.step}</div>
+                    <div className="w-12 h-12 rounded-full bg-cyan-500 text-[#000b1d] font-black flex items-center justify-center mx-auto mb-6 shadow-lg shadow-cyan-500/40">
+                      {item.step}
+                    </div>
+                    <h3 className="text-xl font-bold mb-3">{item.title}</h3>
+                    <p className="text-white/40 text-sm">{item.desc}</p>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </section>
+
         </div>
       </main>
 
@@ -298,6 +482,11 @@ export default function LandingPage() {
           50% { transform: translateY(-20px); }
           100% { transform: translateY(0px); }
         }
+        @keyframes pulse-glow {
+          0%, 100% { opacity: 0.3; transform: scale(1); }
+          50% { opacity: 0.5; transform: scale(1.1); }
+        }
+        .animate-pulse-glow { animation: pulse-glow 8s infinite alternate ease-in-out; }
       `}</style>
     </div>
   );

@@ -47,26 +47,6 @@ import AboutDeveloperPage from "./pages/admin/AboutDeveloperPage";
 import PracticeRoundPage from "./pages/PracticeRoundPage";
 import ActiveTestPage from "./pages/ActiveTestPage";
 import ResultsPage from "./pages/ResultsPage";
-import ExplorePage from "./pages/ExplorePage";
-
-const queryClient = new QueryClient();
-
-function ExploreFloatingButton() {
-  const loc = useLocation();
-  if (loc.pathname === "/explore") return null;
-  return (
-    <Link to="/explore" style={{
-      position: "fixed", bottom: 20, right: 20, zIndex: 9999,
-      background: "linear-gradient(135deg,#06b6d4,#3b82f6)",
-      color: "#fff", borderRadius: "50px", padding: "10px 18px",
-      fontWeight: 700, fontSize: 13, boxShadow: "0 4px 20px rgba(6,182,212,.4)",
-      display: "flex", alignItems: "center", gap: 6, textDecoration: "none"
-    }}>
-      🧭 Explore
-    </Link>
-  );
-}
-
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -99,7 +79,6 @@ const App = () => (
             <Route path="/leaderboard" element={<LeaderboardPage />} />
             <Route path="/help" element={<HelpPage />} />
             <Route path="/about" element={<AboutPage />} />
-            <Route path="/explore" element={<ExplorePage />} />
 
             <Route path="/practice" element={<PracticeRoundPage />} />
             <Route path="/active-test" element={<ActiveTestPage />} />
@@ -134,7 +113,6 @@ const App = () => (
             {/* keep catch-all last */}
             <Route path="*" element={<NotFound />} />
           </Routes>
-          <ExploreFloatingButton />
         </BrowserRouter>
         <SpeedInsights />
       </SessionProvider>
@@ -143,3 +121,4 @@ const App = () => (
 );
 
 export default App;
+

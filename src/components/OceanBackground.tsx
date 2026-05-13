@@ -53,15 +53,15 @@ export default function OceanBackground() {
       <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[hsl(43,87%,65%)] to-transparent opacity-60" />
 
       {/* Glowing orbs background */}
-      <div className="absolute -left-32 top-20 h-96 w-96 rounded-full bg-[hsl(200,100%,70%)]/30 blur-3xl animate-pulse-glow" />
-      <div className="absolute -right-32 bottom-32 h-80 w-80 rounded-full bg-[hsl(200,100%,60%)]/20 blur-3xl animate-pulse-glow" style={{ animationDelay: '0.5s' }} />
-      <div className="absolute left-1/4 top-1/3 h-64 w-64 rounded-full bg-[hsl(4,74%,63%)]/10 blur-3xl" />
+      <div className="absolute -left-32 top-20 h-96 w-96 rounded-full bg-[hsl(200,100%,70%)]/30 blur-[100px] animate-pulse-glow" />
+      <div className="absolute -right-32 bottom-32 h-80 w-80 rounded-full bg-[hsl(200,100%,60%)]/20 blur-[120px] animate-pulse-glow" style={{ animationDelay: '0.5s' }} />
+      <div className="absolute left-1/4 top-1/3 h-64 w-64 rounded-full bg-[hsl(4,74%,63%)]/10 blur-[80px]" />
 
       {/* Animated bubbles */}
       {bubbles.map((bubble) => (
         <div
           key={bubble.id}
-          className="absolute rounded-full border-2 border-[hsl(200,100%,85%)]/60 bg-[hsl(200,100%,95%)]/30 animate-bubble-rise"
+          className={`absolute rounded-full border-2 border-[hsl(200,100%,85%)]/60 bg-[hsl(200,100%,95%)]/30 animate-bubble-rise ${bubble.size < 15 ? 'blur-[1px]' : ''}`}
           style={{
             width: bubble.size,
             height: bubble.size,
@@ -82,7 +82,7 @@ export default function OceanBackground() {
       {fish.map((f) => (
         <div
           key={f.id}
-          className={f.reverse ? 'animate-fish-swim-reverse' : 'animate-fish-swim'}
+          className={`${f.reverse ? 'animate-fish-swim-reverse' : 'animate-fish-swim'} ${f.top < 40 ? 'blur-[2px] opacity-40' : 'blur-0 opacity-70'}`}
           style={{
             position: 'absolute',
             top: `${f.top}%`,
@@ -92,16 +92,16 @@ export default function OceanBackground() {
         >
           <svg width="60" height="40" viewBox="0 0 60 40" fill="none" xmlns="http://www.w3.org/2000/svg">
             {/* Fish body */}
-            <ellipse cx="30" cy="20" rx="18" ry="12" fill="hsl(200,100%,55%)" opacity="0.7" />
+            <ellipse cx="30" cy="20" rx="18" ry="12" fill="hsl(200,100%,55%)" />
             {/* Fish head */}
-            <circle cx="42" cy="20" r="10" fill="hsl(200,100%,60%)" opacity="0.8" />
+            <circle cx="42" cy="20" r="10" fill="hsl(200,100%,60%)" />
             {/* Fish eye */}
             <circle cx="46" cy="18" r="3" fill="white" />
             <circle cx="46" cy="18" r="1.5" fill="black" />
             {/* Fish tail */}
-            <path d="M12 20 L-5 10 L-5 30 Z" fill="hsl(200,100%,50%)" opacity="0.6" />
+            <path d="M12 20 L-5 10 L-5 30 Z" fill="hsl(200,100%,50%)" />
             {/* Fin */}
-            <path d="M28 14 L25 5 L30 14 Z" fill="hsl(200,100%,45%)" opacity="0.5" />
+            <path d="M28 14 L25 5 L30 14 Z" fill="hsl(200,100%,45%)" />
           </svg>
         </div>
       ))}

@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import LanguageToggle from '@/components/LanguageToggle';
 import { Loader2, ShieldCheck } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+import OceanBackground from '@/components/OceanBackground';
 
 export default function SessionSetupPage() {
   const navigate = useNavigate();
@@ -107,14 +108,21 @@ export default function SessionSetupPage() {
   };
 
   return (
-    <div className="page-shell flex flex-col">
-      <div className="mx-auto w-full max-w-3xl">
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-2xl font-bold text-foreground">{t('startSession', lang)}</h2>
-          <LanguageToggle />
-        </div>
+    <div className="page-shell relative min-h-screen">
+      <div className="fixed inset-0 pointer-events-none opacity-40 blur-sm">
+        <OceanBackground />
       </div>
-      <div className="mx-auto w-full max-w-3xl glass-panel p-5 sm:p-6">
+
+      <div className="relative z-10 flex flex-col min-h-[calc(100vh-80px)]">
+        <div className="mx-auto w-full max-w-3xl">
+          <div className="mb-6 flex items-center justify-between">
+            <h2 className="text-3xl font-black text-blue-900 tracking-tight">{t('startSession', lang)}</h2>
+            <LanguageToggle />
+          </div>
+        </div>
+
+        <div className="mx-auto w-full max-w-3xl glass-panel p-6 sm:p-10 border-4 border-white/50 shadow-2xl backdrop-blur-md">
+
         <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
           <ShieldCheck className="h-3.5 w-3.5" />
           Configure screening session
