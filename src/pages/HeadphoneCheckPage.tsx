@@ -6,7 +6,7 @@ import { playSampleTone } from '@/lib/audio';
 import LanguageToggle from '@/components/LanguageToggle';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Headphones, Volume2 } from 'lucide-react';
+import { Headphones, Volume2, ArrowRight } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
 import OceanBackground from '@/components/OceanBackground';

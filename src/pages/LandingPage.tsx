@@ -15,7 +15,12 @@ import {
   ArrowRight,
   Shield,
   Zap,
-  CheckCircle2
+  CheckCircle2,
+  Headphones,
+  BarChart,
+  BookOpen,
+  HelpCircle,
+  LayoutDashboard
 } from 'lucide-react';
 import owlMascot from '@/assets/owl-mascot.png';
 import oceanFooter from '@/assets/ocean-footer.png';

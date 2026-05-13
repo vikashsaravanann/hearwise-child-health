@@ -6,6 +6,7 @@ import { playSampleTone } from '@/lib/audio';
 import OwlIcon from '@/components/OwlIcon';
 import LanguageToggle from '@/components/LanguageToggle';
 import { Button } from '@/components/ui/button';
+import { Sparkles, Volume2 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
 import OceanBackground from '@/components/OceanBackground';
