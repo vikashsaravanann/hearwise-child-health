@@ -27,6 +27,9 @@ jobs:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
 
+      - name: Upgrade Vercel CLI
+        run: npm i -g vercel@latest
+
       - name: Deploy to Vercel
         uses: amondnet/vercel-action@v25
         with:

@@ -1,6 +1,5 @@
 {
   "version": 2,
-  "name": "hearwise-child-health",
   "builds": [
     {
       "src": "package.json",
