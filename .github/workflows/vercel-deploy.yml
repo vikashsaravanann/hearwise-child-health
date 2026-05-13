@@ -21,14 +21,14 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
+      - name: Install latest Vercel CLI
+        run: npm install -g vercel@latest
+
       - name: Build
         run: npm run build
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
-
-      - name: Upgrade Vercel CLI
-        run: npm i -g vercel@latest
 
       - name: Deploy to Vercel
         uses: amondnet/vercel-action@v25
