@@ -10,6 +10,17 @@ function getAudioContext(): AudioContext {
   return audioContext;
 }
 
+// Helper to create white noise for the water/ocean wave effect
+function createNoiseBuffer(ctx: AudioContext, duration: number) {
+  const bufferSize = ctx.sampleRate * duration;
+  const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+  const data = buffer.getChannelData(0);
+  for (let i = 0; i < bufferSize; i++) {
+    data[i] = Math.random() * 2 - 1;
+  }
+  return buffer;
+}
+
 export function playTone(
   frequency: number,
   ear: 'left' | 'right',
@@ -17,34 +28,90 @@ export function playTone(
 ): Promise<void> {
   return new Promise((resolve) => {
     const ctx = getAudioContext();
+    
+    // --- 1. THE PURE TONE (Medical Test) ---
     const oscillator = ctx.createOscillator();
-    const gainNode = ctx.createGain();
-    const panner = ctx.createStereoPanner();
-
+    const toneGain = ctx.createGain();
     oscillator.type = 'sine';
     oscillator.frequency.setValueAtTime(frequency, ctx.currentTime);
+    
+    // Fade in/out for pure tone to avoid clicking
+    toneGain.gain.setValueAtTime(0, ctx.currentTime);
+    toneGain.gain.linearRampToValueAtTime(0.8, ctx.currentTime + 0.1);
+    toneGain.gain.linearRampToValueAtTime(0.8, ctx.currentTime + duration - 0.1);
+    toneGain.gain.linearRampToValueAtTime(0, ctx.currentTime + duration);
 
+    // --- 2. WATER / OCEAN WAVE SOUND ---
+    const noiseSource = ctx.createBufferSource();
+    noiseSource.buffer = createNoiseBuffer(ctx, duration);
+    
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'lowpass';
+    // Sweep the filter to sound like a wave washing in and out
+    filter.frequency.setValueAtTime(200, ctx.currentTime);
+    filter.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + duration / 2);
+    filter.frequency.exponentialRampToValueAtTime(200, ctx.currentTime + duration);
+    
+    const waveGain = ctx.createGain();
+    waveGain.gain.setValueAtTime(0, ctx.currentTime);
+    waveGain.gain.linearRampToValueAtTime(0.1, ctx.currentTime + duration / 2); // Subtle wave volume
+    waveGain.gain.linearRampToValueAtTime(0, ctx.currentTime + duration);
+
+    // --- 3. BIRD CHIRP SOUND ---
+    const birdOsc = ctx.createOscillator();
+    birdOsc.type = 'sine';
+    // First chirp
+    birdOsc.frequency.setValueAtTime(2500, ctx.currentTime);
+    birdOsc.frequency.exponentialRampToValueAtTime(3500, ctx.currentTime + 0.1);
+    // Second chirp
+    birdOsc.frequency.setValueAtTime(2500, ctx.currentTime + 0.3);
+    birdOsc.frequency.exponentialRampToValueAtTime(3800, ctx.currentTime + 0.45);
+    
+    const birdGain = ctx.createGain();
+    birdGain.gain.setValueAtTime(0, ctx.currentTime);
+    // First chirp volume envelope
+    birdGain.gain.linearRampToValueAtTime(0.05, ctx.currentTime + 0.05);
+    birdGain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.15);
+    // Second chirp volume envelope
+    birdGain.gain.setValueAtTime(0, ctx.currentTime + 0.3);
+    birdGain.gain.linearRampToValueAtTime(0.05, ctx.currentTime + 0.35);
+    birdGain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.5);
+
+    // --- ROUTING ---
+    const panner = ctx.createStereoPanner();
     panner.pan.setValueAtTime(ear === 'left' ? -1 : 1, ctx.currentTime);
 
-    // Fade in/out to avoid clicks
-    gainNode.gain.setValueAtTime(0, ctx.currentTime);
-    gainNode.gain.linearRampToValueAtTime(1, ctx.currentTime + 0.05);
-    gainNode.gain.linearRampToValueAtTime(1, ctx.currentTime + duration - 0.05);
-    gainNode.gain.linearRampToValueAtTime(0, ctx.currentTime + duration);
-
-    oscillator.connect(gainNode);
-    gainNode.connect(panner);
+    // Connect Medical Tone
+    oscillator.connect(toneGain);
+    toneGain.connect(panner);
+    
+    // Connect Water Sound
+    noiseSource.connect(filter);
+    filter.connect(waveGain);
+    waveGain.connect(panner);
+    
+    // Connect Bird Sound
+    birdOsc.connect(birdGain);
+    birdGain.connect(panner);
+    
+    // Connect to Speakers
     panner.connect(ctx.destination);
 
+    // Start everything
     oscillator.start(ctx.currentTime);
+    noiseSource.start(ctx.currentTime);
+    birdOsc.start(ctx.currentTime);
+    
     oscillator.stop(ctx.currentTime + duration);
+    noiseSource.stop(ctx.currentTime + duration);
+    birdOsc.stop(ctx.currentTime + duration);
 
     oscillator.onended = () => resolve();
   });
 }
 
 export function playSampleTone(): Promise<void> {
-  return playTone(1000, 'left', 1);
+  return playTone(1000, 'left', 1.5);
 }
 
 export const TEST_FREQUENCIES = [500, 1000, 2000, 4000] as const;

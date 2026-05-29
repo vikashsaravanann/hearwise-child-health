@@ -18,10 +18,11 @@ import { t } from '@/lib/i18n';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { BarChart3, Users, School, AlertOctagon, LogIn, Download, Loader2, LogOut, ArrowLeft, RefreshCw, Trash2, FileDown } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Legend } from 'recharts';
 
 interface Stats {
   totalSchools: number;
@@ -52,6 +53,7 @@ export default function DashboardPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loginLoading, setLoginLoading] = useState(false);
+  
   const [stats, setStats] = useState<Stats>({ totalSchools: 0, totalStudents: 0, totalReferrals: 0, totalSessions: 0 });
   const [sessions, setSessions] = useState<SessionRow[]>([]);
   const [trend, setTrend] = useState<TrendRow[]>([]);
@@ -61,29 +63,11 @@ export default function DashboardPage() {
   const [syncHealth, setSyncHealth] = useState<SyncHealthSummary>(() => getSyncHealthSummary());
   const [syncActionLoading, setSyncActionLoading] = useState(false);
 
-  // Check existing auth
   useEffect(() => {
-    const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        setIsLoggedIn(true);
-        loadData();
-      }
-      setAuthLoading(false);
-    };
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (session) {
-        setIsLoggedIn(true);
-        loadData();
-      } else {
-        setIsLoggedIn(false);
-      }
-    });
-
-    checkAuth();
-    return () => subscription.unsubscribe();
-  }, []);
+    if (isLoggedIn) {
+      loadData();
+    }
+  }, [isLoggedIn]);
 
   useEffect(() => {
     const refresh = () => setSyncHealth(getSyncHealthSummary());
@@ -102,7 +86,15 @@ export default function DashboardPage() {
       ]);
       setStats(s);
       setSessions(sess);
-      setTrend(t);
+      // Format trend for recharts
+      const formattedTrend = t.map((item: any) => ({
+        name: item.month.slice(5),
+        Normal: item.normal,
+        Mild: item.mild,
+        Refer: item.refer,
+        Total: item.normal + item.mild + item.refer
+      }));
+      setTrend(formattedTrend);
     } catch (e) {
       console.error('Dashboard load error:', e);
     } finally {
@@ -120,12 +112,13 @@ export default function DashboardPage() {
       toast({ title: t('loginFailed', lang), description: message, variant: 'destructive' });
     } finally {
       setLoginLoading(false);
-    }
+    }, 800); // simulate network request for effect
   };
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
+  const handleLogout = () => {
+    sessionStorage.removeItem('isAdminLoggedIn');
     setIsLoggedIn(false);
+    toast({ title: 'Logged out successfully' });
   };
 
   const handleExportCSV = async () => {
@@ -143,6 +136,7 @@ export default function DashboardPage() {
       a.download = `hearwise-data-${new Date().toISOString().slice(0, 10)}.csv`;
       a.click();
       URL.revokeObjectURL(url);
+      toast({ title: 'Export Successful', description: 'Data downloaded as CSV.' });
     } catch (e) {
       toast({ title: t('exportFailed', lang), variant: 'destructive' });
     } finally {
@@ -275,7 +269,10 @@ export default function DashboardPage() {
       </div>
 
       {dataLoading ? (
-        <div className="mt-20 flex justify-center"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
+        <div className="mt-32 flex flex-col items-center justify-center space-y-4">
+          <Loader2 className="h-10 w-10 animate-spin text-primary" />
+          <p className="text-muted-foreground animate-pulse">Synchronizing Data...</p>
+        </div>
       ) : (
         <>
           {/* Stats */}
@@ -387,7 +384,6 @@ export default function DashboardPage() {
                 </div>
               </CardContent>
             </Card>
-          )}
 
           {/* Filter & Sessions */}
           <div className="mt-6">

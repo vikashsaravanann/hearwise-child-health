@@ -66,6 +66,10 @@ export default function LandingPage() {
     { label: 'Screening Accuracy', value: '98% Clinical', icon: <Shield className="w-4 h-4 text-emerald-400" /> },
   ];
 
+  const scrollToSection = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-[#000b1d] text-white font-sans selection:bg-cyan-500/30">
       
