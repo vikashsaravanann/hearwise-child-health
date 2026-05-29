@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PageWrapper from '@/components/shared/PageWrapper';
 import { useSession } from '@/contexts/SessionContext';
+import { motion, AnimatePresence } from 'framer-motion';
 
 /* ---------- GAME DATA ---------- */
 const SOUND_ITEMS = [

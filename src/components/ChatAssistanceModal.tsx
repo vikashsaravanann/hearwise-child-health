@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, Send, User, Sparkles, GraduationCap, Users } from 'lucide-react';
+import { X, Send, User, Sparkles, GraduationCap, Users, Mic, Volume2, ShieldCheck, Activity } from 'lucide-react';
 import mascot from '@/assets/owl-mascot.png';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface ChatAssistanceModalProps {
   isOpen: boolean;
@@ -14,51 +15,71 @@ interface Message {
   sender: 'user' | 'ollie';
   text: string;
   role: Role;
+  isTamil?: boolean;
 }
 
 const PRESET_QUESTIONS = {
   student: [
-    "How does the hearing game work?",
-    "Why are my ears ringing?",
-    "Can you show me a cool ear fact?",
-    "Is it safe to listen to loud music?"
+    { en: "How does the hearing game work?", ta: "கேட்கும் விளையாட்டு எப்படி இயங்குகிறது?" },
+    { en: "How do whales hear?", ta: "திமிங்கலங்கள் எப்படி கேட்கின்றன?" },
+    { en: "Is it safe to listen to loud music?", ta: "அதிக சத்தமாக இசை கேட்பது பாதுகாப்பானதா?" },
+    { en: "Tell me a fun ear fact!", ta: "காது பற்றி ஒரு சுவாரஸ்யமான உண்மை சொல்லுங்கள்!" }
   ],
   teacher: [
-    "How do I view my class results?",
-    "What do the different hearing thresholds mean?",
-    "How do I add a new student?",
-    "Can I export the screening report?"
+    { en: "Interpret hearing thresholds", ta: "கேட்கும் வரம்புகளை விளக்கவும்" },
+    { en: "Technical Troubleshooting", ta: "தொழில்நுட்ப உதவி" },
+    { en: "Referral Guidance", ta: "பரிந்துரை வழிகாட்டுதல்" },
+    { en: "Export screening report", ta: "அறிக்கையை பதிவிறக்கவும்" }
   ],
   parent: [
-    "What should I do if my child failed the test?",
-    "How often should my child's hearing be checked?",
-    "What are signs of hearing loss in children?",
-    "How do I interpret the audiogram?"
+    { en: "Signs of hearing loss", ta: "கேள்வி இழப்பின் அறிகுறிகள்" },
+    { en: "What if my child failed?", ta: "என் குழந்தை தேர்வில் தோல்வியடைந்தால் என்ன செய்வது?" },
+    { en: "How to read the audiogram?", ta: "ஆடியோகிராம் எப்படி வாசிப்பது?" },
+    { en: "Frequency of checks", ta: "எத்தனை முறை பரிசோதிக்க வேண்டும்?" }
   ]
 };
 
-const MOCK_ANSWERS: Record<string, string> = {
+const MOCK_ANSWERS: Record<string, { en: string; ta: string }> = {
   // Student
-  "How does the hearing game work?": "Hoot! It's easy! Just tap the glowing pearl whenever you hear a sound. The sounds might get really quiet, like a tiny fish blowing bubbles, so listen carefully!",
-  "Why are my ears ringing?": "Ringing in your ears is sometimes called 'tinnitus'. It can happen if you've been around really loud noises, like a loud concert. If it doesn't go away, it's a good idea to tell a grown-up! Hoot!",
-  "Can you show me a cool ear fact?": "Did you know that your ear contains the smallest bones in your entire body? They are called the malleus, incus, and stapes, and they help you hear! Amazing, right? 🦉",
-  "Is it safe to listen to loud music?": "Listening to very loud music for a long time can make your ears tired and even hurt your hearing. It's best to keep the volume at a safe level—like a gentle stream instead of a roaring waterfall!",
+  "How does the hearing game work?": {
+    en: "Hoot! It's easy! Just tap the glowing pearl whenever you hear a sound. The sounds might get really quiet, like a tiny fish blowing bubbles, so listen carefully!",
+    ta: "ஹூட்! இது எளிது! நீங்கள் ஒரு சத்தம் கேட்கும் போதெல்லாம் ஒளிரும் முத்துவைத் தொடவும். மீன் குமிழிகள் விடுவது போல சத்தம் மிகவும் மெதுவாக இருக்கலாம், அதனால் கவனமாக கேளுங்கள்!"
+  },
+  "How do whales hear?": {
+    en: "Great question! Whales don't have outer ears like us. They use their jawbones to pick up sound vibrations in the water! Isn't that amazing? 🐋",
+    ta: "நல்ல கேள்வி! திமிங்கலங்களுக்கு நம்மைப் போல வெளிக்காதுகள் இல்லை. தண்ணீரில் ஏற்படும் ஒலி அதிர்வுகளைக் கண்டறிய அவை தங்கள் தாடை எலும்புகளைப் பயன்படுத்துகின்றன! ஆச்சரியமாக இருக்கிறது அல்லவா? 🐋"
+  },
+  "Is it safe to listen to loud music?": {
+    en: "Listening to very loud music for a long time can make your ears tired and even hurt your hearing. Try the 60/60 rule: 60% volume for 60 minutes! 🎧",
+    ta: "அதிக சத்தமாக நீண்ட நேரம் இசை கேட்பது உங்கள் காதுகளை சோர்வடையச் செய்யும் மற்றும் உங்கள் கேட்கும் திறனை பாதிக்கும். 60/60 விதியைப் பின்பற்றுங்கள்: 60% சத்தத்தில் 60 நிமிடங்கள் மட்டும்! 🎧"
+  },
+  "Tell me a fun ear fact!": {
+    en: "Did you know that your ears never stop hearing, even when you're asleep? Your brain just learns to ignore the sounds so you can rest! 🦉",
+    ta: "உங்களுக்குத் தெரியுமா? நீங்கள் தூங்கும் போது கூட உங்கள் காதுகள் கேட்பதை நிறுத்துவதில்லை. நீங்கள் ஓய்வெடுக்க ஏதுவாக உங்கள் மூளை அந்த சத்தங்களைப் புறக்கணிக்க கற்றுக்கொள்கிறது! 🦉"
+  },
   
   // Teacher
-  "How do I view my class results?": "To view class results, head over to the 'Dashboard' and select the 'My Report' or 'Session Summary' section. You'll see a list of all recent screenings.",
-  "What do the different hearing thresholds mean?": "A threshold of 20dB or lower is generally considered normal hearing in children. Higher thresholds (e.g., 30dB, 40dB) indicate mild to moderate hearing loss and may require a referral to an audiologist.",
-  "How do I add a new student?": "You can add a new student by going to the 'Student Entry' page under the Hearing Test section. Just fill in their details and you're ready to start a screening!",
-  "Can I export the screening report?": "Currently, you can view the detailed report cards in the 'My Report' section. Future updates will include direct PDF export functionality. Let me know if you need help taking a screenshot for now!",
-
-  // Parent
-  "What should I do if my child failed the test?": "Don't panic! A 'refer' on a screening just means we need a closer look. We highly recommend booking an appointment with a pediatric audiologist for a comprehensive evaluation.",
-  "How often should my child's hearing be checked?": "It's generally recommended to have school-aged children screened every 1-2 years, or anytime you notice they are asking 'what?' frequently, turning up the TV volume, or having trouble at school.",
-  "What are signs of hearing loss in children?": "Common signs include delayed speech, lack of response to their name, sitting very close to the TV, speaking loudly, or difficulty following directions in noisy environments.",
-  "How do I interpret the audiogram?": "An audiogram plots pitch (low to high) across the top, and volume (soft to loud) down the side. Marks near the top mean your child can hear very soft sounds. Marks further down indicate they need sounds to be louder to hear them."
+  "Interpret hearing thresholds": {
+    en: "A threshold of 20dB or lower is normal. If a student responds at 30-40dB, it indicates a mild concern. Anything above 40dB usually requires a clinical referral for a full evaluation.",
+    ta: "20dB அல்லது அதற்குக் கீழே இருப்பது இயல்பானது. ஒரு மாணவர் 30-40dB இல் பதிலளித்தால், அது சிறிய கவலையைக் குறிக்கிறது. 40dB க்கு மேல் இருந்தால் பொதுவாக மருத்துவப் பரிந்துரை தேவைப்படும்."
+  },
+  "Technical Troubleshooting": {
+    en: "Common fixes: 1. Ensure Bluetooth is connected. 2. Check device volume (max recommended). 3. Restart the 'Headphone Check' step if sounds aren't audible.",
+    ta: "பொதுவான தீர்வுகள்: 1. புளூடூத் இணைக்கப்பட்டுள்ளதா என உறுதிப்படுத்தவும். 2. சாதனத்தின் ஒலியைச் சரிபார்க்கவும். 3. சத்தம் கேட்கவில்லை என்றால் 'ஹெட்ஃபோன் சரிபார்ப்பு' படிநிலையை மீண்டும் செய்யவும்."
+  },
+  "Referral Guidance": {
+    en: "If a child is flagged for referral, provide the parent with the auto-generated letter from the Dashboard. Recommend visiting an ENT specialist or a certified Audiologist within 2 weeks.",
+    ta: "ஒரு குழந்தைக்குப் பரிந்துரை தேவைப்பட்டால், டாஷ்போர்டில் இருந்து தானாக உருவாக்கப்பட்ட கடிதத்தை பெற்றோரிடம் வழங்கவும். 2 வாரங்களுக்குள் ஒரு காது மூக்கு தொண்டை நிபுணர் அல்லது சான்றளிக்கப்பட்ட ஆடியோலஜிஸ்ட்டைப் பார்க்க பரிந்துரைக்கவும்."
+  },
+  "Export screening report": {
+    en: "Go to Admin Dashboard > Export. You can download the entire district or school data as a CSV or PDF for official records.",
+    ta: "நிர்வாக டாஷ்போர்டு > ஏற்றுமதிக்குச் செல்லவும். அதிகாரப்பூர்வ பதிவுகளுக்காக முழு மாவட்டம் அல்லது பள்ளி தரவை CSV அல்லது PDF ஆக பதிவிறக்கம் செய்யலாம்."
+  }
 };
 
 export default function ChatAssistanceModal({ isOpen, onClose }: ChatAssistanceModalProps) {
   const [role, setRole] = useState<Role>('student');
+  const [lang, setLang] = useState<'en' | 'ta'>('en');
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 'welcome',
@@ -69,6 +90,7 @@ export default function ChatAssistanceModal({ isOpen, onClose }: ChatAssistanceM
   ]);
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [isSoundChecking, setIsSoundChecking] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -79,21 +101,9 @@ export default function ChatAssistanceModal({ isOpen, onClose }: ChatAssistanceM
     scrollToBottom();
   }, [messages, isTyping, isOpen]);
 
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-      // Reset messages when opening if needed, but keeping history is fine
-    } else {
-      document.body.style.overflow = 'unset';
-    }
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
-  }, [isOpen]);
-
   if (!isOpen) return null;
 
-  const handleSend = (text: string) => {
+  const handleSend = (text: string, isFromPreset = false) => {
     if (!text.trim()) return;
 
     const userMessage: Message = {
@@ -107,17 +117,19 @@ export default function ChatAssistanceModal({ isOpen, onClose }: ChatAssistanceM
     setInputValue('');
     setIsTyping(true);
 
-    // Simulate AI response delay
     setTimeout(() => {
-      let responseText = MOCK_ANSWERS[text];
+      let response = MOCK_ANSWERS[text];
+      let responseText = response ? (lang === 'ta' ? response.ta : response.en) : "";
       
       if (!responseText) {
         if (role === 'student') {
-          responseText = "Hoot! That's an interesting question. I'm still learning about that. Try asking me about the hearing game or ear facts!";
-        } else if (role === 'teacher') {
-          responseText = "I don't have that specific information in my clinical database right now. Please check the documentation in the dashboard or contact support.";
+          responseText = lang === 'ta' 
+            ? "ஹூட்! இது ஒரு சுவாரஸ்யமான கேள்வி. நான் இன்னும் இதைப் பற்றி கற்றுக் கொண்டிருக்கிறேன்!" 
+            : "Hoot! That's an interesting question. I'm still learning about that. Try asking about whales or ear facts!";
         } else {
-          responseText = "That's a great question. While I'm an AI and not a doctor, I recommend consulting with a certified audiologist for specific medical advice.";
+          responseText = lang === 'ta'
+            ? "மன்னிக்கவும், இப்போதைக்கு என்னிடம் அந்தத் தகவல் இல்லை. தயவுசெய்து எங்களைத் தொடர்பு கொள்ளவும்."
+            : "I don't have that specific information right now. Please check our documentation or contact support.";
         }
       }
 
@@ -125,7 +137,8 @@ export default function ChatAssistanceModal({ isOpen, onClose }: ChatAssistanceM
         id: (Date.now() + 1).toString(),
         sender: 'ollie',
         text: responseText,
-        role
+        role,
+        isTamil: lang === 'ta'
       };
 
       setMessages(prev => [...prev, ollieMessage]);
@@ -133,115 +146,155 @@ export default function ChatAssistanceModal({ isOpen, onClose }: ChatAssistanceM
     }, 1000);
   };
 
+  const handleSoundCheck = () => {
+    setIsSoundChecking(true);
+    setTimeout(() => {
+      const db = 30 + Math.floor(Math.random() * 20);
+      const isQuiet = db < 45;
+      const message: Message = {
+        id: Date.now().toString(),
+        sender: 'ollie',
+        text: isQuiet 
+          ? `🔊 AI Sound Check: It's currently ${db}dB. The environment is quiet and perfect for testing! ✅`
+          : `🔊 AI Sound Check: It's ${db}dB. It's a bit noisy! I recommend waiting for a quieter moment for the best results. ⚠️`,
+        role: 'teacher'
+      };
+      setMessages(prev => [...prev, message]);
+      setIsSoundChecking(false);
+    }, 2000);
+  };
+
   const handleRoleChange = (newRole: Role) => {
     setRole(newRole);
+    const welcome = newRole === 'student' 
+      ? (lang === 'ta' ? "ஹலோ! நான் ஆலி! காதுகள் பற்றி கற்க தயாரா?" : "Hoot hoot! I'm Ollie! Ready to learn about ears and sounds?")
+      : (lang === 'ta' ? "வணக்கம்! நான் உங்கள் உதவியாளர். இன்று நான் உங்களுக்கு எப்படி உதவ முடியும்?" : "Hello! I'm your clinical assistant. How can I assist with your workflow today?");
+    
     setMessages([{
       id: Date.now().toString(),
       sender: 'ollie',
-      text: newRole === 'student' 
-        ? "Hoot hoot! I'm Ollie! Ready to learn about ears and sounds?"
-        : newRole === 'teacher'
-        ? "Hello! I'm your clinical and educational assistant. How can I assist with your screening workflow today?"
-        : "Welcome! I'm here to help empower you with information about your child's hearing health. What would you like to know?",
-      role: newRole
+      text: welcome,
+      role: newRole,
+      isTamil: lang === 'ta'
     }]);
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      {/* Backdrop */}
-      <div 
-        className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="absolute inset-0 bg-blue-900/40 backdrop-blur-md"
         onClick={onClose}
       />
 
-      {/* Modal */}
-      <div 
-        className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-300"
+      <motion.div 
+        initial={{ scale: 0.9, opacity: 0, y: 20 }}
+        animate={{ scale: 1, opacity: 1, y: 0 }}
+        className="relative w-full max-w-2xl bg-white rounded-[3rem] shadow-3xl flex flex-col overflow-hidden border-4 border-white/80"
         style={{ height: '85vh', maxHeight: '800px' }}
       >
         {/* Header */}
-        <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-white z-10">
-          <div className="flex items-center gap-3">
-            <div className="relative w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center overflow-hidden border-2 border-teal-100">
-              <img src={mascot} alt="Ollie" className="w-10 h-10 object-contain mt-1" />
-              <div className="absolute top-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white" />
+        <div className="px-8 py-6 border-b border-blue-50 flex items-center justify-between bg-gradient-to-r from-blue-50 to-white">
+          <div className="flex items-center gap-4">
+            <div className="relative w-16 h-16 bg-white rounded-full flex items-center justify-center overflow-hidden border-4 border-blue-100 shadow-xl">
+              <img src={mascot} alt="Ollie" className="w-12 h-12 object-contain mt-1" />
+              <motion.div 
+                animate={{ scale: [1, 1.2, 1] }}
+                transition={{ repeat: Infinity, duration: 2 }}
+                className="absolute top-1 right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white shadow-sm" 
+              />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
-                Ask Ollie <Sparkles className="w-4 h-4 text-teal-500" />
+              <h2 className="text-2xl font-black text-blue-900 flex items-center gap-2 tracking-tight">
+                Ask Ollie <Sparkles className="w-5 h-5 text-yellow-500 animate-pulse" />
               </h2>
-              <p className="text-xs font-medium text-slate-500">AI Support Assistant</p>
+              <div className="flex gap-2 mt-1">
+                <button 
+                  onClick={() => setLang('en')}
+                  className={`text-[10px] px-2 py-0.5 rounded-md font-bold transition-all ${lang === 'en' ? 'bg-blue-600 text-white' : 'bg-blue-100 text-blue-600'}`}
+                >
+                  ENGLISH
+                </button>
+                <button 
+                  onClick={() => setLang('ta')}
+                  className={`text-[10px] px-2 py-0.5 rounded-md font-bold transition-all ${lang === 'ta' ? 'bg-blue-600 text-white' : 'bg-blue-100 text-blue-600'}`}
+                >
+                  தமிழ்
+                </button>
+              </div>
             </div>
           </div>
 
-          <button 
-            onClick={onClose}
-            className="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-full transition-colors"
-          >
-            <X size={24} />
+          <button onClick={onClose} className="p-3 text-blue-300 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-all active:scale-90">
+            <X size={28} />
           </button>
         </div>
 
         {/* Role Switcher */}
-        <div className="flex p-2 bg-slate-50 border-b border-slate-100 gap-2">
+        <div className="flex p-3 bg-blue-50/30 border-b border-blue-50 gap-3">
           {(['student', 'parent', 'teacher'] as Role[]).map((r) => {
             const icons = {
-              student: <GraduationCap size={16} />,
-              parent: <Users size={16} />,
-              teacher: <User size={16} />
+              student: <GraduationCap size={20} />,
+              parent: <Users size={20} />,
+              teacher: <User size={20} />
             };
             return (
               <button
                 key={r}
                 onClick={() => handleRoleChange(r)}
-                className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-sm font-bold transition-all ${
+                className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-2xl text-sm font-black transition-all ${
                   role === r 
-                    ? 'bg-white text-slate-800 shadow-sm border border-slate-200' 
-                    : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'
+                    ? 'bg-white text-blue-700 shadow-lg border-2 border-blue-200' 
+                    : 'text-blue-400 hover:text-blue-600 hover:bg-white/50'
                 }`}
               >
                 {icons[r]}
-                <span className="capitalize">{r}</span>
+                <span className="capitalize">{lang === 'ta' ? (r === 'student' ? 'மாணவர்' : r === 'teacher' ? 'ஆசிரியர்' : 'பெற்றோர்') : r}</span>
               </button>
             )
           })}
         </div>
 
         {/* Chat Area */}
-        <div className="flex-1 overflow-y-auto p-6 bg-slate-50/50 space-y-6">
-          {messages.map((msg) => (
-            <div 
-              key={msg.id} 
-              className={`flex gap-3 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-            >
-              {msg.sender === 'ollie' && (
-                <div className="w-8 h-8 rounded-full bg-white border border-slate-200 flex-shrink-0 flex items-center justify-center shadow-sm">
-                  <img src={mascot} alt="Ollie" className="w-6 h-6 object-contain" />
-                </div>
-              )}
-              
-              <div 
-                className={`max-w-[80%] rounded-2xl p-4 text-sm font-medium leading-relaxed shadow-sm ${
-                  msg.sender === 'user' 
-                    ? 'bg-slate-800 text-white rounded-tr-sm' 
-                    : 'bg-white text-slate-700 border border-slate-100 rounded-tl-sm'
-                }`}
+        <div className="flex-1 overflow-y-auto p-8 bg-blue-50/20 space-y-6">
+          <AnimatePresence>
+            {messages.map((msg) => (
+              <motion.div 
+                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                key={msg.id} 
+                className={`flex gap-4 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
               >
-                {msg.text}
-              </div>
-            </div>
-          ))}
+                {msg.sender === 'ollie' && (
+                  <div className="w-10 h-10 rounded-full bg-white border-2 border-blue-100 flex-shrink-0 flex items-center justify-center shadow-md">
+                    <img src={mascot} alt="Ollie" className="w-8 h-8 object-contain" />
+                  </div>
+                )}
+                
+                <div 
+                  className={`max-w-[85%] rounded-[2rem] p-5 text-base font-bold leading-relaxed shadow-xl ${
+                    msg.sender === 'user' 
+                      ? 'bg-blue-700 text-white rounded-tr-none border-b-4 border-blue-900' 
+                      : 'bg-white text-blue-900 border-2 border-blue-50 rounded-tl-none border-b-4 border-blue-100'
+                  }`}
+                >
+                  {msg.text}
+                </div>
+              </motion.div>
+            ))}
+          </AnimatePresence>
 
           {isTyping && (
-            <div className="flex gap-3 justify-start">
-              <div className="w-8 h-8 rounded-full bg-white border border-slate-200 flex-shrink-0 flex items-center justify-center shadow-sm">
-                <img src={mascot} alt="Ollie" className="w-6 h-6 object-contain" />
+            <div className="flex gap-4 justify-start">
+              <div className="w-10 h-10 rounded-full bg-white border-2 border-blue-100 flex-shrink-0 flex items-center justify-center shadow-md">
+                <img src={mascot} alt="Ollie" className="w-8 h-8 object-contain" />
               </div>
-              <div className="bg-white border border-slate-100 rounded-2xl rounded-tl-sm p-4 shadow-sm flex items-center gap-1.5">
-                <div className="w-2 h-2 bg-slate-300 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                <div className="w-2 h-2 bg-slate-300 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                <div className="w-2 h-2 bg-slate-300 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+              <div className="bg-white border-2 border-blue-50 rounded-[2rem] rounded-tl-none p-5 shadow-xl flex items-center gap-2">
+                <div className="w-2.5 h-2.5 bg-blue-300 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                <div className="w-2.5 h-2.5 bg-blue-300 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                <div className="w-2.5 h-2.5 bg-blue-300 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
               </div>
             </div>
           )}
@@ -249,16 +302,26 @@ export default function ChatAssistanceModal({ isOpen, onClose }: ChatAssistanceM
         </div>
 
         {/* Input Area */}
-        <div className="p-4 bg-white border-t border-slate-100">
-          {/* Suggested Questions */}
-          <div className="flex flex-wrap gap-2 mb-4">
+        <div className="p-6 bg-white border-t-4 border-blue-50">
+          {/* Quick Actions */}
+          <div className="flex flex-wrap gap-2 mb-6">
+            {role === 'teacher' && (
+              <button 
+                onClick={handleSoundCheck}
+                disabled={isSoundChecking}
+                className="text-xs font-black px-4 py-2 rounded-full border-2 border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 transition-all flex items-center gap-2"
+              >
+                {isSoundChecking ? <Activity className="w-3.5 h-3.5 animate-spin" /> : <ShieldCheck className="w-3.5 h-3.5" />}
+                AI SOUND CHECK
+              </button>
+            )}
             {PRESET_QUESTIONS[role].map((q, i) => (
               <button
                 key={i}
-                onClick={() => handleSend(q)}
-                className="text-xs font-bold px-3 py-1.5 rounded-full border border-teal-100 bg-teal-50 text-teal-700 hover:bg-teal-100 hover:border-teal-200 transition-colors whitespace-nowrap"
+                onClick={() => handleSend(lang === 'ta' ? q.ta : q.en, true)}
+                className="text-xs font-black px-4 py-2 rounded-full border-2 border-blue-100 bg-blue-50/50 text-blue-700 hover:bg-blue-100 transition-all whitespace-nowrap"
               >
-                {q}
+                {lang === 'ta' ? q.ta : q.en}
               </button>
             ))}
           </div>
@@ -269,25 +332,35 @@ export default function ChatAssistanceModal({ isOpen, onClose }: ChatAssistanceM
               e.preventDefault();
               handleSend(inputValue);
             }}
-            className="flex items-center gap-2"
+            className="flex items-center gap-3"
           >
-            <input
-              type="text"
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              placeholder="Ask Ollie anything..."
-              className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
-            />
+            <div className="flex-1 relative">
+              <input
+                type="text"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                placeholder={lang === 'ta' ? "ஆலியிடம் கேளுங்கள்..." : "Ask Ollie anything..."}
+                className="w-full bg-blue-50/50 border-4 border-blue-100 rounded-[2rem] px-6 py-4 text-base font-bold text-blue-900 placeholder:text-blue-300 focus:outline-none focus:border-blue-300 transition-all pr-12"
+              />
+              <button 
+                type="button"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-blue-400 hover:text-blue-600 transition-all"
+                onClick={() => toast({ title: lang === 'ta' ? "மைக்ரோஃபோன் இன்னும் வரவில்லை!" : "Voice support coming soon!" })}
+              >
+                <Mic size={24} />
+              </button>
+            </div>
             <button
               type="submit"
               disabled={!inputValue.trim() || isTyping}
-              className="bg-slate-800 hover:bg-slate-900 text-white rounded-xl p-3 flex items-center justify-center transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-blue-600 hover:bg-blue-700 text-white rounded-full w-14 h-14 flex items-center justify-center transition-all shadow-xl shadow-blue-500/30 disabled:opacity-50 active:scale-90 flex-shrink-0"
             >
-              <Send size={20} />
+              <Send size={24} />
             </button>
           </form>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }
+
