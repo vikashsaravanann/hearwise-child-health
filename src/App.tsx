@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { HashRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -14,6 +14,7 @@ import ActiveTestPage from "./pages/ActiveTestPage";
 import ResultsPage from "./pages/ResultsPage";
 import SessionSummaryPage from "./pages/SessionSummaryPage";
 import DashboardPage from "./pages/DashboardPage";
+import LearningHubPage from "./pages/LearningHubPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,7 +26,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <OfflineBadge />
-        <BrowserRouter>
+        <HashRouter>
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/setup" element={<SessionSetupPage />} />
@@ -36,9 +37,10 @@ const App = () => (
             <Route path="/results" element={<ResultsPage />} />
             <Route path="/session-summary" element={<SessionSummaryPage />} />
             <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/learning-hub" element={<LearningHubPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
-        </BrowserRouter>
+        </HashRouter>
       </SessionProvider>
     </TooltipProvider>
   </QueryClientProvider>

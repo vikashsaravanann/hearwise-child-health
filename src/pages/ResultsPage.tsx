@@ -41,6 +41,13 @@ export default function ResultsPage() {
 
   return (
     <div className="flex min-h-screen flex-col items-center px-6 py-8">
+      
+      {/* Thank you card for the child */}
+      <div className="w-full max-w-sm bg-gradient-to-r from-blue-100 to-purple-100 p-4 rounded-2xl border-2 border-purple-200 shadow-md mb-6 text-center animate-in slide-in-from-top-4 fade-in duration-500">
+        <h2 className="text-xl font-bold text-purple-700">🎉 Thank You, {student.name}!</h2>
+        <p className="text-sm text-purple-600 font-medium mt-1">You did a great job visiting our website and checking your ears today.</p>
+      </div>
+
       <div className={`flex w-full max-w-sm flex-col items-center rounded-2xl border-2 p-6 ${bgColor}`}>
         <OwlIcon mood={owlMood} size={80} />
         <p className="mt-4 text-center text-lg font-bold text-foreground">{message}</p>
