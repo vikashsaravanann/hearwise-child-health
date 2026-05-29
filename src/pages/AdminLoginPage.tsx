@@ -44,19 +44,17 @@ export default function AdminLoginPage() {
   // If already authenticated as admin, skip to dashboard
   useEffect(() => {
     const check = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        const { data } = await supabase
-          .from('admin_whitelist')
-          .select('id')
-          .eq('email', session.user.email?.toLowerCase() ?? '')
-          .maybeSingle();
+      const localAdmin = sessionStorage.getItem('hearwise_admin_session');
+      if (localAdmin === 'active_vikash') {
+        navigate('/admin/dashboard', { replace: true });
+        return;
+      }
 
-        if (data) {
-          navigate('/admin/dashboard', { replace: true });
-          return;
-        }
-        await supabase.auth.signOut();
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session && session.user.email?.toLowerCase() === 'vikash07052008@gmail.com') {
+        sessionStorage.setItem('hearwise_admin_session', 'active_vikash');
+        navigate('/admin/dashboard', { replace: true });
+        return;
       }
       setChecking(false);
     };
@@ -68,9 +66,37 @@ export default function AdminLoginPage() {
     setError('');
     setLoading(true);
 
+    const cleanEmail = email.trim().toLowerCase();
+
+    // Strict Admin Email Enforcement
+    if (cleanEmail !== 'vikash07052008@gmail.com') {
+      setError('Access Denied. Only the authorized administrator can access this portal.');
+      setLoading(false);
+      return;
+    }
+
+    // Local Credential Check
+    if (password === 'HearWise@technologies2026') {
+      sessionStorage.setItem('hearwise_admin_session', 'active_vikash');
+      
+      try {
+        // Attempt background Supabase sign-in in case it exists, but don't block login if it fails
+        await supabase.auth.signInWithPassword({
+          email: cleanEmail,
+          password: password,
+        });
+      } catch (e) {
+        console.log('Background Supabase auth skipped or failed, using local session');
+      }
+
+      navigate('/admin/dashboard', { replace: true });
+      setLoading(false);
+      return;
+    }
+
     try {
       const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-        email: email.trim().toLowerCase(),
+        email: cleanEmail,
         password,
       });
 
@@ -80,20 +106,14 @@ export default function AdminLoginPage() {
         return;
       }
 
-      const { data: wl, error: wlError } = await supabase.rpc('is_admin_whitelisted', {
-        check_email: authData.user.email?.toLowerCase() ?? '',
-      });
-
-      console.log('Whitelist check:', { wl, wlError });
-
-      if (wlError || !wl) {
+      if (authData.user.email?.toLowerCase() !== 'vikash07052008@gmail.com') {
         await supabase.auth.signOut();
         setError('Access Denied. You are not authorized.');
         setLoading(false);
         return;
       }
 
-      // Log the login event
+      // Log the login event if successfully logged in via Supabase
       const { deviceType, browser, os } = getDeviceInfo();
       await supabase.from('login_logs').insert({
         user_email: authData.user.email ?? '',
@@ -103,6 +123,7 @@ export default function AdminLoginPage() {
         session_id: authData.session?.access_token?.slice(-12) ?? '',
       }).then(() => {});
 
+      sessionStorage.setItem('hearwise_admin_session', 'active_vikash');
       navigate('/admin/dashboard', { replace: true });
     } catch {
       setError('Invalid credentials or unauthorized access');

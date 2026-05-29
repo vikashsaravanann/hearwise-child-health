@@ -28,7 +28,7 @@ export default function OceanLevelSelectPage() {
     { id: 2, name: 'Level 2', title: '🐠 Sound Explorer', description: 'Moderate sound waves', color: 'from-cyan-400 to-cyan-500', icon: <Zap className="w-12 h-12" />, difficulty: 'Easy', reward: 'Silver Star Badge', isUnlocked: true },
     { id: 3, name: 'Level 3', title: '🦀 Hearing Hero', description: 'Medium difficulty challenges', color: 'from-teal-400 to-teal-500', icon: <Award className="w-12 h-12" />, difficulty: 'Medium', reward: 'Gold Star Badge', isUnlocked: true },
     { id: 4, name: 'Level 4', title: '🐙 Sonic Champion', description: 'Advanced sound detection', color: 'from-emerald-400 to-emerald-500', icon: <Crown className="w-12 h-12" />, difficulty: 'Hard', reward: 'Diamond Badge', isUnlocked: true },
-    { id: 5, name: 'Level 5', title: '👑 Hearing Master', description: 'Ultimate challenge - Master all sounds!', color: 'from-yellow-300 to-orange-400', icon: <Trophy className="w-12 h-12" />, difficulty: 'Expert', reward: 'Golden Trophy + Certificate', isUnlocked: true },
+    { id: 5, name: 'Level 5', title: '👑 Hearing Master', description: 'Ultimate challenge - Master all sounds!', color: 'from-yellow-300 to-orange-400', icon: <Trophy className="w-12 h-12" />, difficulty: 'Expert', reward: 'Golden Trophy', isUnlocked: true },
   ];
 
   const handleLevelClick = (level: Level) => {

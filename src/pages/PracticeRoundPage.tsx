@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSession } from '@/contexts/SessionContext';
 import { t } from '@/lib/i18n';
@@ -8,8 +8,8 @@ import LanguageToggle from '@/components/LanguageToggle';
 import { Button } from '@/components/ui/button';
 import { Sparkles, Volume2 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
-
 import OceanBackground from '@/components/OceanBackground';
+import { startAmbientSound, stopAmbientSound, adjustAmbientVolume } from '@/lib/ambientAudio';
 
 export default function PracticeRoundPage() {
   const navigate = useNavigate();
@@ -17,6 +17,15 @@ export default function PracticeRoundPage() {
   const [tapped, setTapped] = useState(false);
   const [practicePlayed, setPracticePlayed] = useState(false);
   const [practiceTapped, setPracticeTapped] = useState(false);
+
+  // Play ambient sound on mount
+  useEffect(() => {
+    startAmbientSound();
+    adjustAmbientVolume(0.15); // Slightly quieter for practice
+    return () => {
+      stopAmbientSound();
+    };
+  }, []);
 
   const handleTap = () => {
     setTapped(true);
@@ -35,7 +44,7 @@ export default function PracticeRoundPage() {
       return;
     }
     setReadiness((prev) => ({ ...prev, practicePassed: true }));
-    navigate('/ocean-levels');
+    navigate('/active-test');
   };
 
   return (

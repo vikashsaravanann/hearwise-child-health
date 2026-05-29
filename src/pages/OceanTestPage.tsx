@@ -117,10 +117,10 @@ export default function OceanTestPage() {
         if (levelNum < 5) {
           setShowBubbleGame(true);
           setTimeout(() => {
-            navigate(`/level-result/${level}?score=${finalScore}`);
+            navigate('/thank-you', { state: { score: finalScore, level: levelNum } });
           }, 11500);
         } else {
-          navigate(`/level-result/${level}?score=${finalScore}`);
+          navigate('/thank-you', { state: { score: finalScore, level: levelNum } });
         }
       }
     }, 1200);

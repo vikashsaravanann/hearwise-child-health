@@ -8,6 +8,7 @@ import {
   Volume2
 } from 'lucide-react';
 import mascot from '@/assets/owl-mascot.png';
+import ChatAssistanceModal from '@/components/ChatAssistanceModal';
 
 // Custom hook for scroll reveal
 function useScrollReveal() {
@@ -46,7 +47,7 @@ const GROUPS = [
       { name: 'Student Entry', path: '/student-entry', desc: 'Enter student details', icon: FileText, bg: '#E8FFE8', border: 'rgba(34, 197, 94, 0.3)' },
       { name: 'Headphone Check', path: '/headphone-check', desc: 'Check volume levels', icon: Volume2, bg: '#E0F4FF', border: 'rgba(2, 132, 199, 0.3)' },
       { name: 'Practice Round', path: '/practice', desc: 'Try it out first', icon: Play, bg: '#FFF4E0', border: 'rgba(217, 119, 6, 0.3)' },
-      { name: 'Take the Test', path: '/ocean-levels', desc: 'Start the ocean journey', icon: Target, bg: '#F4E0FF', border: 'rgba(147, 51, 234, 0.3)' },
+      { name: 'Take the Test', path: '/active-test', desc: 'Start the ocean journey', icon: Target, bg: '#F4E0FF', border: 'rgba(147, 51, 234, 0.3)' },
       { name: 'My Results', path: '/results', desc: 'View hearing results', icon: CheckSquare, bg: '#FFE0E8', border: 'rgba(225, 29, 72, 0.3)' },
       { name: 'Session Summary', path: '/session-summary', desc: 'Overview of tests', icon: BarChart, bg: '#FFFDE0', border: 'rgba(202, 138, 4, 0.3)' },
     ]
@@ -87,13 +88,13 @@ const GROUPS = [
     color: '#ea580c',
     items: [
       { name: 'Book Appointment', path: '/book-appointment', desc: 'See a doctor', icon: Calendar, bg: '#FFF4E0', border: 'rgba(234, 88, 12, 0.3)' },
-      { name: 'Help', path: '/help', desc: 'Get assistance', icon: HelpCircle, bg: '#E0F4FF', border: 'rgba(2, 132, 199, 0.3)' },
+      { name: 'Help', path: '#chat', desc: 'Ask Ollie for help', icon: HelpCircle, bg: '#E0F4FF', border: 'rgba(2, 132, 199, 0.3)' },
       { name: 'About', path: '/about', desc: 'About HearWise', icon: Info, bg: '#F4E0FF', border: 'rgba(147, 51, 234, 0.3)' },
     ]
   }
 ];
 
-function Section({ group, index }: { group: typeof GROUPS[0], index: number }) {
+function Section({ group, index, onOpenChat }: { group: typeof GROUPS[0], index: number, onOpenChat?: () => void }) {
   const { ref, isVisible } = useScrollReveal();
 
   return (
@@ -115,6 +116,12 @@ function Section({ group, index }: { group: typeof GROUPS[0], index: number }) {
           <Link
             key={item.path}
             to={item.path}
+            onClick={(e) => {
+              if (item.path === '#chat') {
+                e.preventDefault();
+                onOpenChat?.();
+              }
+            }}
             className={`
               flex flex-col items-center justify-center text-center p-4 rounded-2xl
               transition-all duration-200 ease-in-out hover:scale-[1.04] hover:shadow-lg
@@ -146,6 +153,7 @@ function Section({ group, index }: { group: typeof GROUPS[0], index: number }) {
 
 export default function ExplorePage() {
   const dbStatus = useSupabaseHealth();
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   return (
     <div className="min-h-screen relative overflow-x-hidden bg-[#e0f7fa]">
@@ -193,11 +201,13 @@ export default function ExplorePage() {
         {/* Card Grid sections */}
         <div className="space-y-4">
           {GROUPS.map((group, idx) => (
-            <Section key={group.title} group={group} index={idx} />
+            <Section key={group.title} group={group} index={idx} onOpenChat={() => setIsChatOpen(true)} />
           ))}
         </div>
 
       </div>
+      
+      <ChatAssistanceModal isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} />
     </div>
   );
 }

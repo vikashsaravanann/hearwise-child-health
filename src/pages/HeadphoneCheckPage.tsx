@@ -36,7 +36,7 @@ export default function HeadphoneCheckPage() {
       return;
     }
     setReadiness((prev) => ({ ...prev, headphoneChecklistComplete: true }));
-    navigate('/ocean-levels');
+    navigate('/practice');
   };
 
   return (
@@ -60,21 +60,45 @@ export default function HeadphoneCheckPage() {
         </div>
 
         <div className="glass-panel flex w-full flex-col gap-4 p-6 sm:p-10 border-4 border-white/50 shadow-2xl backdrop-blur-xl">
-          {[t('volumeMax', lang), t('headphonesOn', lang), t('childSeated', lang)].map((label, i) => (
+          {[t('headphonesOn', lang), t('childSeated', lang), t('sittingVeryQuietly', lang)].map((label, i) => (
             <label key={i} className={`flex min-h-[70px] items-center gap-4 rounded-2xl border-2 transition-all duration-300 p-5 text-lg font-bold cursor-pointer ${checks[i] ? 'bg-blue-600/10 border-blue-400 text-blue-900' : 'bg-white/50 border-white/20 text-blue-800/70 hover:bg-white/70'}`}>
               <Checkbox checked={checks[i]} onCheckedChange={() => toggle(i)} className="w-6 h-6 rounded-lg border-2" />
               {label}
             </label>
           ))}
           
-          <Button 
-            variant="outline" 
-            className={`mt-4 h-16 gap-3 rounded-2xl border-2 font-black text-lg transition-all duration-300 ${samplePlayed ? 'bg-emerald-500/10 border-emerald-400 text-emerald-700' : 'bg-white/60 border-blue-200 text-blue-700 hover:bg-white/80'}`} 
-            onClick={handlePlaySample}
-          >
-            <Volume2 size={24} className={samplePlayed ? 'text-emerald-500' : 'text-blue-500'} />
-            {t('playSampleTone', lang)}
-          </Button>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+            <Button 
+              variant="outline" 
+              className={`h-16 gap-3 rounded-2xl border-2 font-black text-lg transition-all duration-300 ${samplePlayed ? 'bg-emerald-500/10 border-emerald-400 text-emerald-700' : 'bg-white/60 border-blue-200 text-blue-700 hover:bg-white/80'}`} 
+              onClick={handlePlaySample}
+            >
+              <Volume2 size={24} className={samplePlayed ? 'text-emerald-500' : 'text-blue-500'} />
+              {t('playSampleTone', lang)}
+            </Button>
+
+            <Button 
+              variant="outline" 
+              className="h-16 gap-3 rounded-2xl border-2 border-blue-400 bg-blue-50 text-blue-700 font-black text-lg hover:bg-blue-100 transition-all"
+              onClick={() => {
+                // Placeholder for Bluetooth connection logic
+                if ('bluetooth' in navigator) {
+                  (navigator as any).bluetooth.requestDevice({ acceptAllDevices: true })
+                    .then(() => toast({ title: 'Bluetooth Connected' }))
+                    .catch((e: any) => console.log(e));
+                } else {
+                  toast({ title: 'Bluetooth not supported on this browser', variant: 'destructive' });
+                }
+              }}
+            >
+              <div className="w-6 h-6 flex items-center justify-center">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-5 h-5">
+                  <path d="M7 7l10 10-5 5V2l5 5L7 17" />
+                </svg>
+              </div>
+              Connect Bluetooth
+            </Button>
+          </div>
         </div>
 
         <div className="mt-10 w-full">

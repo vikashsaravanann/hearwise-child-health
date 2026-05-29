@@ -185,19 +185,104 @@ function HighLowGame({ lang, onBack }: { lang: string; onBack: () => void }) {
   );
 }
 
+/* ---------- GAME 4 — Save the Sea Creatures ---------- */
+function SaveSeaCreaturesGame({ lang, onBack }: { lang: string; onBack: () => void }) {
+  const [round, setRound] = useState(0);
+  const [score, setScore] = useState(0);
+  const [done, setDone] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [creaturePos, setCreaturePos] = useState({ x: 50, y: 50 });
+  
+  const creatures = ['🐠', '🐙', '🦀', '🐚', '🐋', '🐢'];
+  const currentCreature = creatures[round % creatures.length];
+
+  const startLevel = () => {
+    setIsPlaying(true);
+    setCreaturePos({ x: 20 + Math.random() * 60, y: 20 + Math.random() * 60 });
+    // Play a sound logic here
+    setTimeout(() => {
+      setIsPlaying(false);
+    }, 1500);
+  };
+
+  const handleRescue = () => {
+    if (isPlaying) return;
+    setScore(s => s + 1);
+    if (round + 1 >= 5) {
+      setDone(true);
+    } else {
+      setRound(r => r + 1);
+      startLevel();
+    }
+  };
+
+  if (done) return (
+    <div className="text-center py-12">
+      <div className="text-7xl mb-4">🌊</div>
+      <h2 className="text-4xl font-black text-white mb-2">Ocean Hero!</h2>
+      <p className="text-white/80 text-lg mb-6">You saved {score} sea creatures!</p>
+      <div className="flex gap-3 justify-center">
+        <button onClick={() => { setRound(0); setScore(0); setDone(false); }}
+          className="px-8 py-4 bg-cyan-400 text-gray-900 rounded-[2rem] font-black hover:scale-105 transition-all shadow-xl">
+          🔄 Play Again
+        </button>
+        <button onClick={onBack} className="px-8 py-4 bg-white/20 text-white rounded-[2rem] font-bold">Back</button>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="relative h-[400px] w-full bg-blue-900/40 rounded-[3rem] border-4 border-white/40 overflow-hidden cursor-pointer"
+         onClick={handleRescue}>
+      <div className="absolute top-4 left-6 text-white font-black">Score: {score}/5</div>
+      <div className="absolute inset-0 flex items-center justify-center">
+         {!isPlaying && (
+           <motion.div 
+             animate={{ scale: [1, 1.1, 1] }}
+             transition={{ repeat: Infinity, duration: 1.5 }}
+             className="text-white font-black text-xl bg-blue-500/40 px-6 py-3 rounded-full backdrop-blur-sm"
+           >
+             Tap to Rescue!
+           </motion.div>
+         )}
+      </div>
+      <motion.div
+        animate={{ 
+          x: `${creaturePos.x}%`, 
+          y: `${creaturePos.y}%`,
+          scale: isPlaying ? [1, 1.5, 1] : 1,
+          opacity: isPlaying ? 0.5 : 1
+        }}
+        className="absolute text-6xl"
+        style={{ transform: 'translate(-50%, -50%)' }}
+      >
+        {currentCreature}
+      </motion.div>
+    </div>
+  );
+}
+
 /* ---------- MAIN GAMES HUB ---------- */
 export default function GamesPage() {
   const { lang } = useSession();
-  const [activeGame, setActiveGame] = useState<Game>('menu');
+  const [activeGame, setActiveGame] = useState<Game | 'saveSea'>('menu');
 
   const games = [
+    {
+      id: 'saveSea' as const,
+      emoji: '🌊',
+      title: lang === 'ta' ? 'கடல் உயிரினங்களைக் காப்போம்!' : 'Save Sea Creatures!',
+      desc: lang === 'ta' ? 'ஒலியைக் கேட்டு உயிரினங்களை மீட்கவும்' : 'Listen for sounds and rescue the animals',
+      difficulty: '🐟',
+      color: 'from-cyan-400 to-blue-600',
+    },
     {
       id: 'whatSound' as Game,
       emoji: '❓',
       title: lang === 'ta' ? 'இந்த ஒலி என்ன?' : 'What Sound Is This?',
       desc: lang === 'ta' ? '4 படங்களில் சரியான ஒலியை தேர்ந்தெடு' : 'Pick the right picture for each sound',
       difficulty: '🐟🐟',
-      color: 'from-blue-400 to-blue-600',
+      color: 'from-blue-400 to-indigo-600',
     },
     {
       id: 'highLow' as Game,
@@ -205,9 +290,15 @@ export default function GamesPage() {
       title: lang === 'ta' ? 'உயர்வா? தாழ்வா?' : 'High or Low?',
       desc: lang === 'ta' ? 'ஒலி உயர்வா தாழ்வா என்று சொல்' : 'Is the sound high or low pitch?',
       difficulty: '🐟',
-      color: 'from-teal-400 to-teal-600',
+      color: 'from-teal-400 to-emerald-600',
     },
   ];
+
+  if (activeGame === 'saveSea') return (
+    <PageWrapper title="Save Sea Creatures" owlState="excited" backTo="/games">
+      <SaveSeaCreaturesGame lang={lang} onBack={() => setActiveGame('menu')} />
+    </PageWrapper>
+  );
 
   if (activeGame === 'whatSound') return (
     <PageWrapper title={lang === 'ta' ? 'இந்த ஒலி என்ன?' : 'What Sound Is This?'} owlState="excited" backTo="/games">
@@ -224,30 +315,49 @@ export default function GamesPage() {
   return (
     <PageWrapper
       title={lang === 'ta' ? '🎮 கேளுங்கள் விளையாடுங்கள்!' : '🎮 Fun Hearing Games!'}
-      subtitle={lang === 'ta' ? 'KG – வகுப்பு 2' : 'KG – Grade 2'}
+      subtitle={lang === 'ta' ? 'KG – வகுப்பு 2' : 'Underwater Sound Adventure'}
       owlState="cheering"
       owlSpeech={lang === 'ta' ? 'விளையாட ஆரம்பிக்கலாம்! 🎮' : "Let's play and learn! 🎮"}
     >
-      <div className="max-w-2xl mx-auto">
-        <p className="text-center text-blue-100 mb-8 text-lg font-semibold">
-          {lang === 'ta' ? 'விளையாட்டை தேர்ந்தெடு!' : 'Choose a game to play!'}
-        </p>
-        <div className="grid gap-5">
-          {games.map((g) => (
-            <button key={g.id} onClick={() => setActiveGame(g.id)}
-              className={`w-full p-6 rounded-3xl bg-gradient-to-r ${g.color} text-white text-left shadow-2xl hover:scale-105 transition-all active:scale-95 border-2 border-white/30`}>
-              <div className="flex items-start gap-4">
-                <div className="text-5xl">{g.emoji}</div>
+      <div className="max-w-4xl mx-auto px-4">
+        <motion.p 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="text-center text-blue-900 font-black mb-12 text-2xl tracking-tight"
+        >
+          {lang === 'ta' ? 'விளையாட்டை தேர்ந்தெடு!' : 'Choose Your Adventure!'}
+        </motion.p>
+        <div className="grid md:grid-cols-1 gap-6">
+          {games.map((g, i) => (
+            <motion.button 
+              key={g.id} 
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: i * 0.1 }}
+              onClick={() => setActiveGame(g.id)}
+              className={`w-full p-8 rounded-[3rem] bg-gradient-to-r ${g.color} text-white text-left shadow-2xl hover:scale-[1.02] transition-all active:scale-95 border-4 border-white/40 group`}
+            >
+              <div className="flex items-center gap-8">
+                <div className="text-7xl group-hover:scale-110 transition-transform duration-500">{g.emoji}</div>
                 <div className="flex-1">
-                  <h3 className="text-2xl font-black mb-1" style={{ fontFamily: 'Fredoka, sans-serif' }}>{g.title}</h3>
-                  <p className="text-white/80 text-sm mb-2">{g.desc}</p>
-                  <span className="text-xs bg-white/20 rounded-full px-3 py-1 font-bold">
-                    {lang === 'ta' ? 'கஷ்டம்:' : 'Difficulty:'} {g.difficulty}
-                  </span>
+                  <h3 className="text-3xl font-black mb-2 tracking-tight" style={{ fontFamily: 'Fredoka, sans-serif' }}>{g.title}</h3>
+                  <p className="text-white/80 text-lg font-bold mb-4">{g.desc}</p>
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs bg-white/20 rounded-full px-4 py-1.5 font-black uppercase tracking-widest">
+                      {lang === 'ta' ? 'கஷ்டம்:' : 'Level:'} {g.difficulty}
+                    </span>
+                    <div className="h-1.5 flex-1 bg-white/20 rounded-full overflow-hidden">
+                       <motion.div 
+                         initial={{ width: 0 }}
+                         animate={{ width: g.id === 'saveSea' ? '30%' : g.id === 'whatSound' ? '60%' : '40%' }}
+                         className="h-full bg-white"
+                       />
+                    </div>
+                  </div>
                 </div>
-                <div className="text-3xl">→</div>
+                <div className="text-4xl opacity-0 group-hover:opacity-100 group-hover:translate-x-2 transition-all">→</div>
               </div>
-            </button>
+            </motion.button>
           ))}
         </div>
       </div>

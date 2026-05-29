@@ -174,9 +174,7 @@ export default function LandingPage() {
                   size="lg" 
                   variant="outline"
                   className="h-14 px-8 rounded-2xl border-white/20 bg-white/5 hover:bg-white/10 text-white/70 font-bold text-lg backdrop-blur-sm transition-all"
-                  onClick={() => {
-                    document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
-                  }}
+                  onClick={() => setShowAbout(true)}
                 >
                   Learn More
                 </Button>
@@ -270,22 +268,21 @@ export default function LandingPage() {
                 </div>
               </div>
               
-              <button
-                onClick={() => setShowAbout(true)}
+              <div
                 className="group relative flex flex-col items-center justify-center w-56 h-56 shrink-0"
               >
                 <div className="absolute inset-0 bg-cyan-500/20 rounded-full blur-2xl group-hover:bg-cyan-500/40 transition-all" />
-                <div className="relative w-full h-full rounded-full border-2 border-cyan-500/50 bg-[#000b1d] flex flex-col items-center justify-center gap-2 transition-transform group-hover:scale-105 active:scale-95 overflow-hidden">
+                <div className="relative w-full h-full rounded-full border-2 border-cyan-500/50 bg-[#000b1d] flex flex-col items-center justify-center gap-2 transition-transform group-hover:scale-105 overflow-hidden">
                   <div className="absolute inset-0 opacity-20 group-hover:opacity-30 transition-opacity">
                     <img src={owlMascot} alt="" className="w-full h-full object-cover" />
                   </div>
                   <div className="relative z-10 flex flex-col items-center justify-center gap-2">
                     <img src={owlMascot} alt="About" className="w-14 h-14 object-contain mb-1 drop-shadow-[0_0_15px_rgba(0,225,255,0.5)]" />
                     <span className="text-sm font-black text-white uppercase tracking-tighter">About Project</span>
-                    <div className="text-[10px] text-white/40 uppercase font-bold">Click to view details</div>
+                    <div className="text-[10px] text-white/40 uppercase font-bold">v2.0 Ocean Edition</div>
                   </div>
                 </div>
-              </button>
+              </div>
             </motion.div>
           </section>
 

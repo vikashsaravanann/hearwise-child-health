@@ -1,40 +1,49 @@
-# HearWise Project Audit
+# HearWise Project Audit - Production Readiness
 
-## Scope
+## Overview
+This audit evaluates the current state of the HearWise School Hearing Screening platform against production standards for healthcare applications.
 
-This audit summarizes the current mobile-first screening platform implemented in this repository.
+## Current Health Status
+- **Security:** Fairly Strong (Infrastructure) / Incomplete (RLS enforcement).
+- **TypeScript:** Good coverage, but needs refactoring of manual casts.
+- **Tests:** Minimal. Core logic is covered, but E2E is missing.
+- **Data Privacy:** Warning. PII stored in plain text locally; RLS allows too much internal visibility.
+- **Reliability:** Advanced offline sync design, but brittle (LocalStorage reliance).
 
-## Screens currently implemented
+## Production Gaps (Critical)
 
-- `LandingPage` (`/`)
-- `SessionSetupPage` (`/setup`)
-- `StudentEntryPage` (`/student-entry`)
-- `HeadphoneCheckPage` (`/headphone-check`)
-- `PracticeRoundPage` (`/practice`)
-- `ActiveTestPage` (`/test`)
-- `ResultsPage` (`/results`)
-- `SessionSummaryPage` (`/session-summary`)
-- `DashboardPage` (`/dashboard`)
-- `NotFound` (`*`)
+### 1. Security & Data Privacy
+- [ ] **RLS Lockdown:** Restrict `students`, `test_results`, and `referrals` to `admin_users` only.
+- [ ] **PII Encryption:** Student names and age are currently stored in plain text in `localStorage`. These must be encrypted before local persistence.
+- [ ] **Edge Function Integration:** The `ingest-screening-result` edge function is implemented but not used by the frontend sync path. Direct writes to `test_results` should be disabled.
+- [ ] **Consent Management:** Missing explicit parent/guardian consent flow in the session setup.
 
-## What is already working
+### 2. Testing & Quality Assurance
+- [ ] **E2E Coverage:** No automated tests for the full "Teacher to Result" flow.
+- [ ] **Sync Stress Test:** No verification of sync behavior with 100+ queued results (LocalStorage limit risk).
+- [ ] **Accessibility:** Screen reader and keyboard navigation audit for the screening flow.
 
-- Bilingual teacher/child flow (EN/TA) with persisted language preference.
-- Readiness-gated screening flow before active test starts.
-- Offline-first result queueing with background retries and sync-state visibility.
-- Parent guidance messaging and share-ready result output.
-- PDF and CSV reporting.
+### 3. Reliability & Observability
+- [ ] **Storage Migration:** Move from `localStorage` to `IndexedDB` for unsynced results to prevent data loss on cache clear.
+- [ ] **Error Telemetry:** Centralized logging for sync failures and clinical logic errors.
 
-## Remaining gaps
+## Clean-up List
+- Remove `src/test/example.test.ts`.
+- Delete duplicate file `src/vite-env.d 2.ts`.
+- Refactor `src/lib/database.ts` to reduce manual type casting and improve query modularity.
+- Consolidate redundant RLS policies in migration history.
 
-- Supabase RLS still needs role-scoped tightening for production healthcare data handling.
-- End-to-end automated tests are still limited compared to risk level.
-- Bundle size is high and should be optimized with code splitting.
-- Landing page corporate content remains mostly English-only.
+## Path Forward
 
-## Recommended next build priority
+### Phase 1: Security & Privacy (Immediate)
+1. Apply strict Admin-only RLS policies.
+2. Implement `localStorage` encryption for student data.
+3. Add a mandatory Parent Consent checkbox in `SessionSetupPage`.
 
-1. **Data security hardening**: tighten RLS and signed server-side ingestion path.
-2. **Testing expansion**: add integration/e2e tests for complete teacher-to-result workflow.
-3. **Performance**: route-level code splitting and dashboard chunk reduction.
-4. **Ops observability**: structured error and sync telemetry.
+### Phase 2: Ingestion & Reliability
+1. Transition frontend sync logic to use the `ingest-screening-result` Edge Function.
+2. Refactor `offlineSync.ts` to use IndexedDB.
+
+### Phase 3: Validation
+1. Set up Playwright for critical path E2E testing.
+2. Perform a production-mirror load and offline simulation test.

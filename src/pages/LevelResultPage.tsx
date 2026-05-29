@@ -10,7 +10,6 @@ interface LevelReward {
   emoji: string;
   badgeName: string;
   color: string;
-  certificateText: string;
 }
 
 export default function LevelResultPage() {
@@ -19,18 +18,17 @@ export default function LevelResultPage() {
   const [searchParams] = useSearchParams();
   const { lang } = useSession();
   const [showTrophyModal, setShowTrophyModal] = useState(true);
-  const [showCertificate, setShowCertificate] = useState(false);
   const [confetti, setConfetti] = useState<Array<{ id: number; left: number; delay: number; symbol: string }>>([]);
 
   const score = parseInt(searchParams.get('score') || '0');
   const levelNum = parseInt(level || '1');
 
   const rewards: Record<number, LevelReward> = {
-    1: { emoji: '🐚', badgeName: lang === 'ta' ? 'வெண்கல நட்சத்திரம்' : 'Bronze Star Badge', color: 'from-amber-700 to-amber-600', certificateText: 'Super Listener' },
-    2: { emoji: '🐠', badgeName: lang === 'ta' ? 'வெள்ளி நட்சத்திரம்' : 'Silver Star Badge', color: 'from-slate-400 to-slate-500', certificateText: 'Sound Explorer' },
-    3: { emoji: '🦀', badgeName: lang === 'ta' ? 'தங்க நட்சத்திரம்' : 'Gold Star Badge', color: 'from-yellow-400 to-yellow-500', certificateText: 'Hearing Hero' },
-    4: { emoji: '🐙', badgeName: lang === 'ta' ? 'வைர பதக்கம்' : 'Diamond Badge', color: 'from-cyan-300 to-blue-400', certificateText: 'Sonic Champion' },
-    5: { emoji: '👑', badgeName: lang === 'ta' ? 'தங்கக் கிரீடம்' : 'Golden Trophy', color: 'from-yellow-300 to-orange-400', certificateText: 'Hearing Master' },
+    1: { emoji: '🐚', badgeName: lang === 'ta' ? 'வெண்கல நட்சத்திரம்' : 'Bronze Star Badge', color: 'from-amber-700 to-amber-600' },
+    2: { emoji: '🐠', badgeName: lang === 'ta' ? 'வெள்ளி நட்சத்திரம்' : 'Silver Star Badge', color: 'from-slate-400 to-slate-500' },
+    3: { emoji: '🦀', badgeName: lang === 'ta' ? 'தங்க நட்சத்திரம்' : 'Gold Star Badge', color: 'from-yellow-400 to-yellow-500' },
+    4: { emoji: '🐙', badgeName: lang === 'ta' ? 'வைர பதக்கம்' : 'Diamond Badge', color: 'from-cyan-300 to-blue-400' },
+    5: { emoji: '👑', badgeName: lang === 'ta' ? 'தங்கக் கிரீடம்' : 'Golden Trophy', color: 'from-yellow-300 to-orange-400' },
   };
 
   const reward = rewards[levelNum];
@@ -48,7 +46,6 @@ export default function LevelResultPage() {
         symbol: symbols[Math.floor(Math.random() * symbols.length)],
       }))
     );
-    if (isPerfect) setTimeout(() => setShowCertificate(true), 3000);
   }, [isPerfect]);
 
   const getOwlState = () => {
@@ -157,39 +154,6 @@ export default function LevelResultPage() {
               </div>
             </div>
 
-            {/* Certificate — shown for perfect score on any level, always on L5 */}
-            {(isPerfect || levelNum === 5) && (
-              <div className="mb-6">
-                {showCertificate ? (
-                  <div className="p-5 bg-gradient-to-br from-yellow-100/80 to-orange-100/80 rounded-3xl border-4 border-yellow-400 shadow-xl text-center"
-                    style={{ animation: 'fade-in 0.5s ease-out' }}>
-                    <p className="text-sm text-amber-700 font-bold mb-1">📜 CERTIFICATE OF ACHIEVEMENT</p>
-                    <h2 className="text-2xl font-black text-amber-900 mb-1">{reward.certificateText}</h2>
-                    <p className="text-amber-800 font-semibold text-sm mb-3">
-                      {lang === 'ta'
-                        ? `நிலை ${levelNum} வெற்றிகரமாக முடிந்தது`
-                        : `Successfully completed Level ${levelNum}`}
-                    </p>
-                    <div className="flex gap-3 justify-center">
-                      <button onClick={() => window.print()}
-                        className="flex items-center gap-2 px-4 py-2 bg-amber-600 text-white rounded-full font-bold hover:bg-amber-700 transition-all text-sm">
-                        <Download size={16} />
-                        {lang === 'ta' ? 'பதிவிறக்கு' : 'Download'}
-                      </button>
-                      <button className="flex items-center gap-2 px-4 py-2 bg-orange-600 text-white rounded-full font-bold hover:bg-orange-700 transition-all text-sm">
-                        <Share2 size={16} />
-                        {lang === 'ta' ? 'பகிர்' : 'Share'}
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <button onClick={() => setShowCertificate(true)}
-                    className="px-6 py-3 bg-yellow-400 text-yellow-900 font-bold rounded-full hover:bg-yellow-300 transition-all">
-                    📜 {lang === 'ta' ? 'சான்றிதழ் பார்க்க' : 'View Certificate'}
-                  </button>
-                )}
-              </div>
-            )}
 
             {/* Badges collected */}
             <div className="pt-5 border-t-2 border-blue-200">

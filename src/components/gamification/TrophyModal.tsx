@@ -113,8 +113,8 @@ export default function TrophyModal({ levelNum, badgeName, emoji, score, maxScor
           </div>
 
           {isPerfect && (
-            <div className="mb-4 rounded-2xl border-2 border-yellow-400 bg-yellow-400/20 px-4 py-2">
-              <p className="font-black text-yellow-300 text-sm">🏆 PERFECT SCORE! Certificate Unlocked!</p>
+            <div className="mb-4 rounded-2xl border-2 border-emerald-400 bg-emerald-400/20 px-4 py-2">
+              <p className="font-black text-emerald-300 text-sm">🌟 PERFECT SCORE! YOU ARE A STAR! 🌟</p>
             </div>
           )}
 

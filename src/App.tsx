@@ -47,6 +47,8 @@ import AboutDeveloperPage from "./pages/admin/AboutDeveloperPage";
 import PracticeRoundPage from "./pages/PracticeRoundPage";
 import ActiveTestPage from "./pages/ActiveTestPage";
 import ResultsPage from "./pages/ResultsPage";
+import ThankYouPage from "./pages/ThankYouPage";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -85,6 +87,7 @@ const App = () => (
             <Route path="/practice" element={<PracticeRoundPage />} />
             <Route path="/active-test" element={<ActiveTestPage />} />
             <Route path="/results" element={<ResultsPage />} />
+            <Route path="/thank-you" element={<ThankYouPage />} />
 
             {/* Admin: standalone login page */}
             <Route path="/admin/login" element={<AdminLoginPage />} />
