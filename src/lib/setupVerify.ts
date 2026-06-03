@@ -1,4 +1,4 @@
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/supabase';
 
 export async function verifySupabaseSetup() {
   const adminEmail = import.meta.env.VITE_ADMIN_EMAIL;

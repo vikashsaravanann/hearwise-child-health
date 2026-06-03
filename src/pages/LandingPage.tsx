@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSession } from '@/contexts/SessionContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { t } from '@/lib/i18n';
 import LanguageToggle from '@/components/LanguageToggle';
 import { Button } from '@/components/ui/button';
@@ -52,6 +53,7 @@ export default function LandingPage() {
   const navigate = useNavigate();
   const [showAbout, setShowAbout] = useState(false);
   const { lang } = useSession();
+  const { user, isAdmin, signOut } = useAuth();
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -117,13 +119,42 @@ export default function LandingPage() {
             >
               Features
             </Button>
-            <Button 
-              variant="ghost" 
-              className="hidden sm:flex text-white/70 hover:text-white hover:bg-white/10"
-              onClick={() => navigate('/dashboard')}
-            >
-              Dashboard
-            </Button>
+            {!user ? (
+              <Button 
+                variant="outline" 
+                className="hidden sm:flex text-teal-400 border-teal-500 hover:bg-teal-500/10"
+                onClick={() => navigate('/login')}
+              >
+                Sign In
+              </Button>
+            ) : (
+              <>
+                {isAdmin && (
+                  <Button 
+                    variant="ghost" 
+                    className="hidden sm:flex text-teal-400 hover:bg-teal-500/10"
+                    onClick={() => navigate('/admin')}
+                  >
+                    Admin Panel
+                  </Button>
+                )}
+                <div className="hidden sm:flex items-center gap-3 ml-2">
+                  <div className="w-8 h-8 rounded-full bg-teal-500 text-slate-900 flex items-center justify-center font-bold">
+                    {user.email?.charAt(0).toUpperCase() || 'U'}
+                  </div>
+                  <Button 
+                    variant="ghost" 
+                    className="text-white/70 hover:text-red-400 hover:bg-red-400/10"
+                    onClick={async () => {
+                      await signOut()
+                      navigate('/login')
+                    }}
+                  >
+                    Sign Out
+                  </Button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </nav>

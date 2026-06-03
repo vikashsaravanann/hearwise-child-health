@@ -1,43 +1,37 @@
-import { type ReactNode, useEffect, useState } from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
-import { Loader2 } from 'lucide-react';
+import React from 'react'
+import { Navigate, useLocation } from 'react-router-dom'
+import { useAuth } from '@/contexts/AuthContext'
 
 interface ProtectedRouteProps {
-  children: ReactNode;
+  children: React.ReactNode
+  adminOnly?: boolean
 }
 
-export default function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
-  const location = useLocation();
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, adminOnly = false }) => {
+  const { user, loading, isAdmin } = useAuth()
+  const location = useLocation()
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setIsAuthenticated(!!session);
-    };
-
-    checkAuth();
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setIsAuthenticated(!!session);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  if (isAuthenticated === null) {
+  if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-5xl mb-4 animate-pulse">👂</div>
+          <p className="text-teal-400 text-lg font-medium">Loading HearWise…</p>
+          <div className="mt-4 flex gap-1 justify-center">
+            <span className="w-2 h-2 bg-teal-400 rounded-full animate-bounce [animation-delay:0ms]"></span>
+            <span className="w-2 h-2 bg-teal-400 rounded-full animate-bounce [animation-delay:150ms]"></span>
+            <span className="w-2 h-2 bg-teal-400 rounded-full animate-bounce [animation-delay:300ms]"></span>
+          </div>
+        </div>
       </div>
-    );
+    )
   }
 
-  if (!isAuthenticated) {
-    // Redirect to login page, but save the current location they were trying to go to
-    return <Navigate to="/login" state={{ from: location }} replace />;
+  if (adminOnly && !isAdmin) {
+    return <Navigate to="/login" state={{ from: location.pathname }} replace />
   }
 
-  return <>{children}</>;
+  return <>{children}</>
 }
+
+export default ProtectedRoute

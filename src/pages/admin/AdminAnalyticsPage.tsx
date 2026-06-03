@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/supabase';
 import { useAdminTimeFilter } from '@/contexts/AdminTimeFilterContext';
 import {
   Bar,

@@ -7,7 +7,7 @@
  */
 import { type ReactNode, useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/supabase';
 import { Loader2 } from 'lucide-react';
 
 type AuthState = 'loading' | 'allowed' | 'denied';

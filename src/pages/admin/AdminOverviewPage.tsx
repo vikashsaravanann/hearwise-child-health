@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { formatDistanceToNowStrict } from 'date-fns';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/supabase';
 import {
   School, GraduationCap, Users, Activity,
   CheckCircle2, AlertTriangle, XCircle, Loader2, RefreshCcw
