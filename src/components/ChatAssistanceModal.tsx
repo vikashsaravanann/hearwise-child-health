@@ -144,33 +144,35 @@ TROUBLESHOOTING:
 INSTRUCTIONS:
 Keep responses concise, friendly, and use emojis like 🦉, 🌊, or 🎧. Translate to Tamil if language is Tamil. Answer all questions about HearWise accurately based on the information above.`;
 
-      const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          systemInstruction: {
-            role: 'system',
-            parts: [{ text: systemPrompt }]
+      // Using the environment variable for Groq API Key
+      const apiKey = import.meta.env.VITE_GROQ_API_KEY;
+
+      const response = await fetch(
+        `https://api.groq.com/openai/v1/chat/completions`,
+        {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey}`
           },
-          contents: [{
-            role: 'user',
-            parts: [{ text }]
-          }],
-          generationConfig: {
-            maxOutputTokens: 300
-          }
-        })
-      });
+          body: JSON.stringify({
+            model: "llama-3.3-70b-versatile",
+            messages: [
+              { role: 'system', content: systemPrompt },
+              { role: 'user', content: text.trim() },
+            ],
+            max_tokens: 300,
+            temperature: 0.4,
+          }),
+        }
+      );
 
       if (!response.ok) {
-        throw new Error('Failed to fetch from Gemini');
+        throw new Error('Failed to fetch from Groq');
       }
 
       const data = await response.json();
-      const responseText = data.candidates?.[0]?.content?.parts?.[0]?.text || "Hoot! Something went wrong.";
+      const responseText = data?.choices?.[0]?.message?.content || "Hoot! Something went wrong.";
 
       const ollieMessage: Message = {
         id: (Date.now() + 1).toString(),

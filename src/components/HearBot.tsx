@@ -110,32 +110,42 @@ export default function HearBot() {
     setLoading(true);
 
     try {
-      const apiKey = import.meta.env.VITE_GEMINI_API_KEY as string;
+      // Using the environment variable for Groq API Key
+      const apiKey = import.meta.env.VITE_GROQ_API_KEY;
 
       const history = messages.slice(-6).map(m => ({
-        role: m.role === 'user' ? 'user' : 'model',
-        parts: [{ text: m.text }],
+        role: m.role === 'user' ? 'user' : 'assistant',
+        content: m.text,
       }));
 
       const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
+        `https://api.groq.com/openai/v1/chat/completions`,
         {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey}`
+          },
           body: JSON.stringify({
-            system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
-            contents: [
+            model: "llama-3.3-70b-versatile",
+            messages: [
+              { role: 'system', content: SYSTEM_PROMPT },
               ...history,
-              { role: 'user', parts: [{ text: text.trim() }] },
+              { role: 'user', content: text.trim() },
             ],
-            generationConfig: { maxOutputTokens: 300, temperature: 0.4 },
+            max_tokens: 300, 
+            temperature: 0.4,
           }),
         }
       );
 
+      if (!response.ok) {
+        throw new Error('Failed to fetch from Groq');
+      }
+
       const data = await response.json();
       const reply =
-        data?.candidates?.[0]?.content?.parts?.[0]?.text ||
+        data?.choices?.[0]?.message?.content ||
         "I'm sorry, I couldn't process that. Please try again.";
 
       setMessages(prev => [...prev, { id: (Date.now() + 1).toString(), role: 'bot', text: reply, time: getTime() }]);
