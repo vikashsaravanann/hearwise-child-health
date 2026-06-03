@@ -10,6 +10,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { RequireAuth, RequireAdmin } from "@/components/ProtectedRoute";
 import OfflineBadge from "@/components/OfflineBadge";
 import SWUpdatePrompt from "@/components/SWUpdatePrompt";
+import PWAInstallPrompt from "@/components/PWAInstallPrompt";
 import LanguageToggle from "@/components/LanguageToggle";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import HearBot from "@/components/HearBot";
