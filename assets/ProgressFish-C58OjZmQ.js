@@ -1,0 +1,11 @@
+import{j as s}from"./ui-VBf5s6Zf.js";function o({percent:e,current:l,total:i}){const t=e>=100;return s.jsxs("div",{className:"w-full mb-6",children:[s.jsxs("div",{className:"flex justify-between items-center mb-1 px-1",children:[s.jsxs("span",{className:"text-xs font-bold text-blue-700",children:["Question ",l," of ",i]}),s.jsxs("span",{className:"text-xs font-bold text-emerald-600",children:[Math.round(e),"%"]})]}),s.jsxs("div",{className:"relative h-8 rounded-full bg-white/50 border-2 border-blue-300 overflow-visible shadow-inner",children:[s.jsx("div",{className:"absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 transition-all duration-700 ease-out",style:{width:`${Math.min(e,100)}%`}}),s.jsx("div",{className:"absolute top-1/2 -translate-y-1/2 transition-all duration-700 ease-out",style:{left:`calc(${Math.min(e,96)}% - 20px)`,animation:t?"none":"fish-bob 0.6s ease-in-out infinite"},children:s.jsxs("svg",{width:"36",height:"24",viewBox:"0 0 60 40",fill:"none",xmlns:"http://www.w3.org/2000/svg",children:[s.jsx("ellipse",{cx:"30",cy:"20",rx:"18",ry:"12",fill:"#0099FF",opacity:"0.9"}),s.jsx("circle",{cx:"42",cy:"20",r:"10",fill:"#00BBFF",opacity:"0.95"}),s.jsx("circle",{cx:"46",cy:"17",r:"3",fill:"white"}),s.jsx("circle",{cx:"46",cy:"17",r:"1.5",fill:"#111"}),s.jsx("path",{d:"M12 20 L-5 10 L-5 30 Z",fill:"#0077CC",opacity:"0.8"}),s.jsx("path",{d:"M28 14 L25 5 L30 14 Z",fill:"#0088EE",opacity:"0.7"})]})}),s.jsx("div",{className:"absolute right-1 top-1/2 -translate-y-1/2 text-xl select-none",style:{animation:t?"chest-open 0.5s ease-out":"none"},children:t?"💰":"🎁"}),t&&s.jsx("div",{className:"absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none",children:["✨","⭐","🌟"].map((n,a)=>s.jsx("span",{className:"absolute text-sm",style:{right:`${4+a*14}px`,top:`${-8-a*6}px`,animation:`star-burst 0.8s ease-out ${a*.1}s forwards`},children:n},a))})]}),s.jsx("style",{children:`
+        @keyframes fish-bob {
+          0%, 100% { transform: translateY(-50%) rotate(-3deg); }
+          50% { transform: translateY(-60%) rotate(3deg); }
+        }
+        @keyframes chest-open {
+          0% { transform: translateY(-50%) scale(1); }
+          50% { transform: translateY(-70%) scale(1.4); }
+          100% { transform: translateY(-50%) scale(1.1); }
+        }
+      `})]})}export{o as P};
