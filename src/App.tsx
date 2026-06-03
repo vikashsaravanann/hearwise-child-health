@@ -45,6 +45,8 @@ const HearingHealthPage = React.lazy(() => import("./pages/HearingHealthPage"));
 const NotFound = React.lazy(() => import("./pages/NotFound"));
 const SchoolOnboarding = React.lazy(() => import("./pages/SchoolOnboarding"));
 const TeacherTraining = React.lazy(() => import("./pages/TeacherTraining"));
+const Blog = React.lazy(() => import("./pages/Blog"));
+const BlogPost = React.lazy(() => import("./pages/BlogPost"));
 const AdminLayout = React.lazy(() => import("./components/AdminLayout"));
 const AdminGuard = React.lazy(() => import("./components/AdminGuard"));
 const AdminOverviewPage = React.lazy(() => import("./pages/admin/AdminOverviewPage"));
@@ -85,6 +87,8 @@ const InnerRoutes = () => {
         <Route path="/hearing-health" element={<PageTransition><HearingHealthPage /></PageTransition>} />
         <Route path="/onboarding" element={<PageTransition><SchoolOnboarding /></PageTransition>} />
         <Route path="/teacher-training" element={<PageTransition><TeacherTraining /></PageTransition>} />
+        <Route path="/blog" element={<PageTransition><Blog /></PageTransition>} />
+        <Route path="/blog/:slug" element={<PageTransition><BlogPost /></PageTransition>} />
         
         {/* Protected App Routes */}
         <Route path="/setup" element={<PageTransition><ProtectedRoute><SessionSetupPage /></ProtectedRoute></PageTransition>} />
