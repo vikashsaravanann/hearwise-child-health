@@ -21,11 +21,13 @@ import {
   BarChart,
   BookOpen,
   HelpCircle,
-  LayoutDashboard
+  LayoutDashboard,
+  Heart
 } from 'lucide-react';
 import owlMascot from '@/assets/owl-mascot.png';
 import oceanFooter from '@/assets/ocean-footer.png';
 import AboutHearWiseModal from '@/components/AboutHearWiseModal';
+import ImpactSection from '@/components/ImpactSection';
 
 import OceanBackground from '@/components/OceanBackground';
 
@@ -100,7 +102,7 @@ export default function LandingPage() {
       {/* Navigation */}
       <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-[#000b1d]/80 backdrop-blur-lg border-b border-white/10 py-3' : 'py-6'}`}>
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}>
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/20">
               <img src={owlMascot} alt="Logo" className="w-7 h-7 object-contain" />
             </div>
@@ -118,6 +120,20 @@ export default function LandingPage() {
               }}
             >
               Features
+            </Button>
+            <Button 
+              variant="ghost" 
+              className="hidden sm:flex text-white/70 hover:text-white hover:bg-white/10"
+              onClick={() => navigate('/about')}
+            >
+              About
+            </Button>
+            <Button 
+              variant="ghost" 
+              className="hidden sm:flex text-white/70 hover:text-white hover:bg-white/10"
+              onClick={() => navigate('/hearing-health')}
+            >
+              Hearing Health
             </Button>
             {!user ? (
               <Button 
@@ -268,6 +284,11 @@ export default function LandingPage() {
               </div>
             </motion.div>
           </section>
+
+          {/* Impact Section */}
+          <div className="mt-20">
+            <ImpactSection />
+          </div>
 
           {/* Features Section */}
           <section id="features" className="mt-32">

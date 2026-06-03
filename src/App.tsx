@@ -38,6 +38,7 @@ const BookAppointmentPage = React.lazy(() => import("./pages/BookAppointment"));
 const LeaderboardPage = React.lazy(() => import("./pages/Leaderboard"));
 const HelpPage = React.lazy(() => import("./pages/Help"));
 const AboutPage = React.lazy(() => import("./pages/AboutPage"));
+const HearingHealthPage = React.lazy(() => import("./pages/HearingHealthPage"));
 const NotFound = React.lazy(() => import("./pages/NotFound"));
 const AdminLayout = React.lazy(() => import("./components/AdminLayout"));
 const AdminGuard = React.lazy(() => import("./components/AdminGuard"));
@@ -83,6 +84,8 @@ const App = () => (
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/auth/callback" element={<AuthCallback />} />
+                <Route path="/about" element={<AboutPage />} />
+                <Route path="/hearing-health" element={<HearingHealthPage />} />
 
                 {/* Protected App Routes */}
                 <Route path="/setup" element={<ProtectedRoute><SessionSetupPage /></ProtectedRoute>} />
@@ -106,7 +109,6 @@ const App = () => (
                 <Route path="/book-appointment" element={<ProtectedRoute><BookAppointmentPage /></ProtectedRoute>} />
                 <Route path="/leaderboard" element={<ProtectedRoute><LeaderboardPage /></ProtectedRoute>} />
                 <Route path="/help" element={<ProtectedRoute><HelpPage /></ProtectedRoute>} />
-                <Route path="/about" element={<ProtectedRoute><AboutPage /></ProtectedRoute>} />
 
                 <Route path="/practice" element={<ProtectedRoute><PracticeRoundPage /></ProtectedRoute>} />
                 <Route path="/active-test" element={<ProtectedRoute><ActiveTestPage /></ProtectedRoute>} />
