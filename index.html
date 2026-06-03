@@ -3,18 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>HearWise — School Hearing Screening Platform</title>
-    
-    <!-- PWA meta tags -->
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="HearWise">
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;900&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>HearWise — India's First School Hearing Screening Platform</title>
     
     <!-- GitHub Pages SPA redirect handler -->
     <script type="text/javascript">
@@ -29,7 +18,12 @@
         }
       }(window.location))
     </script>
-    <script type="module" crossorigin src="/hearwise-child-health/assets/index-BH3FsxqE.js"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;900&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script type="module" crossorigin src="/hearwise-child-health/assets/index-B_5CIYqt.js"></script>
     <link rel="modulepreload" crossorigin href="/hearwise-child-health/assets/router-CooTeSgm.js">
     <link rel="modulepreload" crossorigin href="/hearwise-child-health/assets/ui-CDQ5RyEh.js">
     <link rel="modulepreload" crossorigin href="/hearwise-child-health/assets/charts-2gcD1qLF.js">
@@ -39,5 +33,11 @@
 
   <body>
     <div id="root"></div>
+    <script>
+      window.onerror = function(msg, url, line, col, error) {
+        console.error("Global Error: " + msg + " at " + url + ":" + line);
+        // alert("Global Error: " + msg); // Uncomment for extreme debugging
+      };
+    </script>
   </body>
 </html>
