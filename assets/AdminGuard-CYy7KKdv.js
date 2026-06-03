@@ -1,0 +1,1 @@
+import{j as t}from"./ui-338BKa1D.js";import{F as i}from"./index-3nsWf98Q.js";import"./router-CooTeSgm.js";import"./charts-2gcD1qLF.js";import"./supabase-DFdX1Aey.js";function s({children:r}){return t.jsx(i,{children:r})}export{s as default};
