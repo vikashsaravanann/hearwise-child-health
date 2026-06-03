@@ -49,6 +49,7 @@ const TeacherTraining = React.lazy(() => import("./pages/TeacherTraining"));
 const Blog = React.lazy(() => import("./pages/Blog"));
 const BlogPost = React.lazy(() => import("./pages/BlogPost"));
 const Audiologists = React.lazy(() => import("./pages/Audiologists"));
+const WaitlistPage = React.lazy(() => import("./pages/Waitlist"));
 const AdminLayout = React.lazy(() => import("./components/AdminLayout"));
 const AdminGuard = React.lazy(() => import("./components/AdminGuard"));
 const AdminOverviewPage = React.lazy(() => import("./pages/admin/AdminOverviewPage"));
@@ -92,6 +93,7 @@ const InnerRoutes = () => {
         <Route path="/blog" element={<PageTransition><Blog /></PageTransition>} />
         <Route path="/blog/:slug" element={<PageTransition><BlogPost /></PageTransition>} />
         <Route path="/audiologists" element={<PageTransition><Audiologists /></PageTransition>} />
+        <Route path="/waitlist" element={<PageTransition><WaitlistPage /></PageTransition>} />
         
         {/* Protected App Routes */}
         <Route path="/setup" element={<PageTransition><ProtectedRoute><SessionSetupPage /></ProtectedRoute></PageTransition>} />
@@ -161,9 +163,10 @@ const App = () => (
           <Sonner />
           <OfflineBadge />
           <LanguageToggle />
-          <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '')}>
+          <BrowserRouter basename={import.meta.env.BASE_URL || '/'}>
             <HearBot />
             <SWUpdatePrompt />
+            <PWAInstallPrompt />
             <Suspense fallback={<Loader fullscreen text="LOADING" />}>
               <InnerRoutes />
             </Suspense>
