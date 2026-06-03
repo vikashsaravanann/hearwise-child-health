@@ -2,10 +2,8 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
 import path from 'path'
 
-const isGitHubPages = process.env.GITHUB_PAGES === 'true';
-
 export default defineConfig({
-  base: isGitHubPages ? '/hearwise-child-health/' : '/',
+  base: '/hearwise-child-health/',
   plugins: [react()],
   resolve: {
     alias: {
@@ -14,7 +12,8 @@ export default defineConfig({
   },
   build: {
     target: 'es2020',
-    outDir: 'dist',
+    outDir: 'docs',
+    emptyOutDir: true,
     sourcemap: false,
     rollupOptions: {
       output: {

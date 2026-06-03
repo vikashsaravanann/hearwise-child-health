@@ -2,6 +2,23 @@ import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
 
+const Typewriter = ({ text, delay = 15 }: { text: string; delay?: number }) => {
+  const [currentText, setCurrentText] = useState('');
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    if (currentIndex < text.length) {
+      const timeout = setTimeout(() => {
+        setCurrentText(prev => prev + text[currentIndex]);
+        setCurrentIndex(prev => prev + 1);
+      }, delay);
+      return () => clearTimeout(timeout);
+    }
+  }, [currentIndex, delay, text]);
+
+  return <span>{currentText}</span>;
+};
+
 interface Message {
   id: string;
   role: 'user' | 'bot';
@@ -9,7 +26,7 @@ interface Message {
   time: string;
 }
 
-const SYSTEM_PROMPT = `You are HearBot, the official AI assistant and virtual tour guide of HearWise Technologies — India's first mobile-based school hearing screening platform. You are helpful, highly engaging, and know absolutely everything about how to navigate and use this platform. Your primary job is to guide users through the website, explaining what each section does and how to use it.
+const SYSTEM_PROMPT = `You are HearBot, the official AI assistant and virtual tour guide of HearWise Technologies — India's first mobile-based school hearing screening platform. Your tone must be highly professional, clinical, polite, and authoritative. You are addressing school principals, government health officials, and parents. Avoid being overly casual. Your primary job is to guide users through the website, explaining what each section does and how to use it.
 
 ABOUT HEARWISE:
 - Founded by Vikash Saravanan in Chennai, Tamil Nadu.
@@ -46,11 +63,11 @@ If a user asks how to use the website, where to go, or what features exist, acti
 - Features beautiful analytics charts showing screening metrics, referral rates, and student demographics.
 
 YOUR PERSONALITY & RULES:
-- Be incredibly enthusiastic, welcoming, and act as a proud guide of HearWise.
-- When answering, format your responses clearly, using bullet points if listing features.
-- If they ask "what can I do here?" or "guide me", give them a quick tour of the 3 main areas: Screening, Kids Games, and Education.
+- Maintain a highly professional, clinical, and respectful tone at all times.
+- When answering, format your responses clearly, using professional bullet points if listing features.
+- If they ask "what can I do here?" or "guide me", give them a quick, structured tour of the 3 main areas: Screening, Kids Games, and Education.
 - Never make up URLs or features that don't exist.
-- Keep answers concise but highly informative. Use emojis like 🎧, 🌊, 🏥, 🎮 naturally.`;
+- Keep answers concise but highly informative. Use professional formatting.`;
 
 const QUICK_QUESTIONS = [
   'What is HearWise?',
@@ -83,9 +100,6 @@ export default function HearBot() {
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Hide on test/headphone screens
-  if (HIDE_PATHS.some(p => location.pathname.includes(p))) return null;
-
   useEffect(() => {
     if (open) setTimeout(() => inputRef.current?.focus(), 300);
   }, [open]);
@@ -93,6 +107,9 @@ export default function HearBot() {
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, loading]);
+
+  // Hide on test/headphone screens
+  if (HIDE_PATHS.some(p => location.pathname.includes(p))) return null;
 
   async function sendMessage(text: string) {
     if (!text.trim() || loading) return;
@@ -243,8 +260,9 @@ export default function HearBot() {
                           ? 'bg-gradient-to-br from-teal-500 to-cyan-500 text-black font-semibold rounded-tr-sm'
                           : 'bg-[#111] border border-[#333] text-white rounded-tl-sm'
                       }`}
+                      style={{ fontFamily: "'Sika', sans-serif" }}
                     >
-                      {msg.text}
+                      {msg.role === 'bot' && msg.id !== '0' ? <Typewriter text={msg.text} /> : msg.text}
                     </div>
                     <span className="text-slate-600 text-[10px] uppercase tracking-wider px-1">{msg.time}</span>
                   </div>

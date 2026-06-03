@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { HashRouter, Route, Routes } from "react-router-dom";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
@@ -156,12 +156,12 @@ const App = () => (
           <Sonner />
           <OfflineBadge />
           <LanguageToggle />
-          <BrowserRouter basename={import.meta.env.BASE_URL ? import.meta.env.BASE_URL.replace(/\/$/, '') : '/'}>
+          <HashRouter>
             <HearBot />
             <Suspense fallback={<Loader fullscreen text="LOADING" />}>
               <InnerRoutes />
             </Suspense>
-          </BrowserRouter>
+          </HashRouter>
           <SpeedInsights />
         </SessionProvider>
       </TooltipProvider>
