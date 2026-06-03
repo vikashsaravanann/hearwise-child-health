@@ -1,184 +1,127 @@
-import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
-import { useSession } from '@/contexts/SessionContext';
-import { t } from '@/lib/i18n';
+import React from 'react';
 import PageWrapper from '@/components/shared/PageWrapper';
-import { Button } from '@/components/ui/button';
-import { 
-  BarChart, Baby, TrendingUp, School, Target, Telescope, Heart,
-  Code, Shield, GraduationCap 
-} from 'lucide-react';
+import FadeInSection from '@/components/FadeInSection';
+import { Target, Lightbulb, Users, Globe2, Heart, Award } from 'lucide-react';
 
 export default function AboutPage() {
-  const navigate = useNavigate();
-  const { lang } = useSession();
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: { staggerChildren: 0.15 }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
-  };
-
   return (
-    <PageWrapper title={t('about', lang)} backPath="/">
-      <div className="bg-[#000b1d] min-h-screen text-slate-300 py-12 px-4 md:px-8">
-        <motion.div 
-          className="max-w-6xl mx-auto space-y-24"
-          variants={containerVariants}
-          initial="hidden"
-          animate="show"
-        >
-          {/* SECTION 1 — HERO BANNER */}
-          <motion.section variants={itemVariants} className="text-center space-y-6 bg-gradient-to-b from-teal-900/40 to-transparent rounded-3xl p-8 md:p-12 border border-teal-500/20">
-            <h1 className="text-3xl md:text-5xl font-bold text-white leading-tight">
-              {t('aboutHeroTitle', lang)}
-            </h1>
-            <p className="text-xl text-teal-400 font-medium">
-              {t('aboutHeroSub', lang)}
-            </p>
-            <div className="flex flex-wrap justify-center gap-4 pt-4">
-              <span className="border border-teal-500/30 bg-teal-500/10 text-teal-300 rounded-full px-4 py-1 text-sm font-medium">
-                {t('statMadeInIndia', lang)}
-              </span>
-              <span className="border border-teal-500/30 bg-teal-500/10 text-teal-300 rounded-full px-4 py-1 text-sm font-medium">
-                {t('statGovSchools', lang)}
-              </span>
-              <span className="border border-teal-500/30 bg-teal-500/10 text-teal-300 rounded-full px-4 py-1 text-sm font-medium">
-                {t('statHearingHealth', lang)}
-              </span>
+    <PageWrapper title="About HearWise Technologies" showBack={true} backTo="/">
+      <div className="min-h-screen bg-slate-50 pb-20">
+        {/* Section 1: Hero Banner */}
+        <FadeInSection delay={0.1}>
+          <div className="relative bg-gradient-to-br from-indigo-900 via-purple-900 to-slate-900 py-24 px-6 overflow-hidden">
+            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+            <div className="max-w-5xl mx-auto text-center relative z-10">
+              <h1 className="text-4xl md:text-6xl font-black text-white mb-6 font-['Syne'] tracking-tight">
+                About HearWise Technologies
+              </h1>
+              <p className="text-xl md:text-2xl text-purple-100 max-w-3xl mx-auto leading-relaxed">
+                Revolutionizing pediatric audiology in India through accessible, mobile-based hearing screening for every child.
+              </p>
             </div>
-          </motion.section>
+          </div>
+        </FadeInSection>
 
-          {/* SECTION 2 — THE PROBLEM WE ARE SOLVING */}
-          <motion.section variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div className="space-y-6">
-              <h2 className="text-3xl font-bold text-white">{t('silentCrisisTitle', lang)}</h2>
-              <p className="leading-relaxed">{t('silentCrisisPara1', lang)}</p>
-              <p className="leading-relaxed">{t('silentCrisisPara2', lang)}</p>
-              <p className="leading-relaxed font-semibold text-teal-400">{t('silentCrisisPara3', lang)}</p>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-3">
-                <BarChart className="w-8 h-8 text-teal-400" />
-                <div className="text-2xl font-bold text-white">{t('stat63M', lang)}</div>
-                <div className="text-sm text-slate-400">{t('stat63MDesc', lang)}</div>
+        <div className="max-w-6xl mx-auto px-6 space-y-24 mt-16">
+          
+          {/* Section 2: Mission & Vision */}
+          <FadeInSection delay={0.2}>
+            <div className="grid md:grid-cols-2 gap-8">
+              <div className="hw-card hw-card-accent-blue">
+                <div className="w-14 h-14 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center mb-6">
+                  <Target size={28} />
+                </div>
+                <h3 className="text-2xl font-bold text-slate-900 mb-4 font-['Syne']">Our Mission</h3>
+                <p className="text-slate-600 leading-relaxed text-lg">
+                  To democratize early hearing screening by transforming standard smartphones into powerful audiological tools, ensuring no child's hearing loss goes undetected due to a lack of resources or accessibility.
+                </p>
               </div>
-              <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-3">
-                <Baby className="w-8 h-8 text-pink-400" />
-                <div className="text-2xl font-bold text-white">{t('stat1in8', lang)}</div>
-                <div className="text-sm text-slate-400">{t('stat1in8Desc', lang)}</div>
-              </div>
-              <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-3">
-                <TrendingUp className="w-8 h-8 text-blue-400" />
-                <div className="text-2xl font-bold text-white">{t('stat90Pct', lang)}</div>
-                <div className="text-sm text-slate-400">{t('stat90PctDesc', lang)}</div>
-              </div>
-              <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-3">
-                <School className="w-8 h-8 text-amber-400" />
-                <div className="text-2xl font-bold text-white">{t('stat0Prog', lang)}</div>
-                <div className="text-sm text-slate-400">{t('stat0ProgDesc', lang)}</div>
+              
+              <div className="hw-card hw-card-accent-teal">
+                <div className="w-14 h-14 rounded-2xl bg-teal-100 text-teal-600 flex items-center justify-center mb-6">
+                  <Lightbulb size={28} />
+                </div>
+                <h3 className="text-2xl font-bold text-slate-900 mb-4 font-['Syne']">Our Vision</h3>
+                <p className="text-slate-600 leading-relaxed text-lg">
+                  A world where every school-going child has access to early, accurate, and engaging hearing assessments, empowering them to reach their full potential without the barrier of untreated hearing loss.
+                </p>
               </div>
             </div>
-          </motion.section>
+          </FadeInSection>
 
-          {/* SECTION 3 — OUR STORY */}
-          <motion.section variants={itemVariants} className="space-y-10">
-            <h2 className="text-3xl font-bold text-white text-center">{t('howHearWiseBegan', lang)}</h2>
-            <div className="relative border-l border-teal-500/30 ml-4 md:ml-12 space-y-12 pb-4">
-              <div className="relative pl-8 md:pl-12">
-                <div className="absolute left-[-9px] top-1 w-4 h-4 rounded-full bg-teal-400 shadow-[0_0_10px_rgba(45,212,191,0.5)]" />
-                <span className="inline-block bg-teal-500/20 text-teal-300 text-xs font-bold px-2 py-1 rounded mb-2">2025</span>
-                <h3 className="text-xl font-bold text-white mb-3">{t('timelineIdea', lang)}</h3>
-                <p className="leading-relaxed">{t('timelineIdeaDesc', lang)}</p>
+          {/* Section 3: The Problem We Solve */}
+          <FadeInSection delay={0.3}>
+            <div className="text-center mb-12">
+              <h2 className="hw-section-title">The Problem We Solve</h2>
+            </div>
+            <div className="grid md:grid-cols-3 gap-8">
+              <div className="hw-card text-center p-8">
+                <div className="hw-stat-counter mb-2">60%</div>
+                <div className="text-slate-700 font-medium text-lg">of childhood hearing loss is preventable</div>
               </div>
-              <div className="relative pl-8 md:pl-12">
-                <div className="absolute left-[-9px] top-1 w-4 h-4 rounded-full bg-teal-400 shadow-[0_0_10px_rgba(45,212,191,0.5)]" />
-                <span className="inline-block bg-teal-500/20 text-teal-300 text-xs font-bold px-2 py-1 rounded mb-2">2025</span>
-                <h3 className="text-xl font-bold text-white mb-3">{t('timelinePhase1', lang)}</h3>
-                <p className="leading-relaxed">{t('timelinePhase1Desc', lang)}</p>
+              <div className="hw-card text-center p-8">
+                <div className="hw-stat-counter mb-2">1 in 1000</div>
+                <div className="text-slate-700 font-medium text-lg">infants are born with hearing loss globally</div>
               </div>
-              <div className="relative pl-8 md:pl-12">
-                <div className="absolute left-[-9px] top-1 w-4 h-4 rounded-full bg-teal-400 shadow-[0_0_10px_rgba(45,212,191,0.5)]" />
-                <span className="inline-block bg-teal-500/20 text-teal-300 text-xs font-bold px-2 py-1 rounded mb-2">2026</span>
-                <h3 className="text-xl font-bold text-white mb-3">{t('timelinePhase2', lang)}</h3>
-                <p className="leading-relaxed">{t('timelinePhase2Desc', lang)}</p>
-              </div>
-              <div className="relative pl-8 md:pl-12">
-                <div className="absolute left-[-9px] top-1 w-4 h-4 rounded-full bg-slate-600" />
-                <span className="inline-block bg-slate-800 text-slate-300 text-xs font-bold px-2 py-1 rounded mb-2">2026–2027</span>
-                <h3 className="text-xl font-bold text-white mb-3">{t('timelineWhatsNext', lang)}</h3>
-                <p className="leading-relaxed">{t('timelineWhatsNextDesc', lang)}</p>
+              <div className="hw-card text-center p-8">
+                <div className="hw-stat-counter mb-2">34M</div>
+                <div className="text-slate-700 font-medium text-lg">children worldwide require rehabilitation</div>
               </div>
             </div>
-          </motion.section>
+          </FadeInSection>
 
-          {/* SECTION 4 — OUR MISSION, VISION & VALUES */}
-          <motion.section variants={itemVariants} className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-gradient-to-br from-teal-900/30 to-slate-800/30 border border-teal-500/20 rounded-3xl p-8 text-center space-y-4">
-              <Target className="w-12 h-12 text-teal-400 mx-auto" />
-              <h3 className="text-2xl font-bold text-white">{t('missionTitle', lang)}</h3>
-              <p className="text-sm leading-relaxed">{t('missionText', lang)}</p>
+          {/* Section 4: Timeline */}
+          <FadeInSection delay={0.4}>
+            <div className="text-center mb-12">
+              <h2 className="hw-section-title">Our Journey</h2>
             </div>
-            <div className="bg-gradient-to-br from-teal-900/30 to-slate-800/30 border border-teal-500/20 rounded-3xl p-8 text-center space-y-4">
-              <Telescope className="w-12 h-12 text-blue-400 mx-auto" />
-              <h3 className="text-2xl font-bold text-white">{t('visionTitle', lang)}</h3>
-              <p className="text-sm leading-relaxed">{t('visionText', lang)}</p>
+            <div className="relative border-l-2 border-indigo-100 ml-4 md:ml-1/2 space-y-12 pb-8">
+              <div className="relative pl-8">
+                <div className="absolute left-[-7px] top-1 hw-timeline-dot"></div>
+                <h4 className="text-lg font-bold text-indigo-900">Project Inception</h4>
+                <p className="text-slate-600 mt-2">Identified the critical need for accessible school hearing screening.</p>
+              </div>
+              <div className="relative pl-8">
+                <div className="absolute left-[-7px] top-1 hw-timeline-dot"></div>
+                <h4 className="text-lg font-bold text-indigo-900">Gamified Testing Engine</h4>
+                <p className="text-slate-600 mt-2">Developed the core interactive ocean-themed audiometry engine.</p>
+              </div>
+              <div className="relative pl-8">
+                <div className="absolute left-[-7px] top-1 hw-timeline-dot"></div>
+                <h4 className="text-lg font-bold text-indigo-900">Clinical Validation</h4>
+                <p className="text-slate-600 mt-2">Aligned algorithms with WHO pediatric screening standards.</p>
+              </div>
+              <div className="relative pl-8">
+                <div className="absolute left-[-7px] top-1 hw-timeline-dot"></div>
+                <h4 className="text-lg font-bold text-indigo-900">Nationwide Rollout</h4>
+                <p className="text-slate-600 mt-2">Deploying HearWise to schools across India.</p>
+              </div>
             </div>
-            <div className="bg-gradient-to-br from-teal-900/30 to-slate-800/30 border border-teal-500/20 rounded-3xl p-8 text-center space-y-4">
-              <Heart className="w-12 h-12 text-pink-400 mx-auto" />
-              <h3 className="text-2xl font-bold text-white">{t('valuesTitle', lang)}</h3>
-              <p className="text-sm leading-relaxed">{t('valuesText', lang)}</p>
-            </div>
-          </motion.section>
+          </FadeInSection>
 
-          {/* SECTION 5 — THE TEAM SPIRIT */}
-          <motion.section variants={itemVariants} className="space-y-12">
-            <div className="text-center max-w-3xl mx-auto space-y-4">
-              <h2 className="text-3xl font-bold text-white">{t('builtWithPurpose', lang)}</h2>
-              <p className="text-lg">{t('builtWithPurposeSub', lang)}</p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="space-y-3 bg-white/5 p-6 rounded-2xl">
-                <Code className="w-8 h-8 text-cyan-400" />
-                <h4 className="text-lg font-bold text-white">{t('techCol', lang)}</h4>
-                <p className="text-sm">{t('techColDesc', lang)}</p>
-              </div>
-              <div className="space-y-3 bg-white/5 p-6 rounded-2xl">
-                <Shield className="w-8 h-8 text-emerald-400" />
-                <h4 className="text-lg font-bold text-white">{t('clinicalCol', lang)}</h4>
-                <p className="text-sm">{t('clinicalColDesc', lang)}</p>
-              </div>
-              <div className="space-y-3 bg-white/5 p-6 rounded-2xl">
-                <GraduationCap className="w-8 h-8 text-amber-400" />
-                <h4 className="text-lg font-bold text-white">{t('eduCol', lang)}</h4>
-                <p className="text-sm">{t('eduColDesc', lang)}</p>
+          {/* Section 5: Founder / Team */}
+          <FadeInSection delay={0.5}>
+            <div className="hw-card bg-white p-8 md:p-12">
+              <div className="flex flex-col md:flex-row gap-8 items-center">
+                <div className="w-32 h-32 md:w-48 md:h-48 rounded-full bg-slate-200 overflow-hidden flex-shrink-0 shadow-lg border-4 border-white">
+                  <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Vikash&backgroundColor=e2e8f0" alt="Vikash Saravanan" className="w-full h-full object-cover" />
+                </div>
+                <div>
+                  <h3 className="text-3xl font-bold text-slate-900 mb-2 font-['Syne']">Vikash Saravanan</h3>
+                  <p className="text-indigo-600 font-semibold text-lg mb-4">Founder & Lead Developer</p>
+                  <p className="text-slate-600 leading-relaxed text-lg mb-6">
+                    Driven by a passion for healthcare technology and pediatric well-being, Vikash engineered HearWise to bridge the massive gap in early childhood hearing screening. By combining clinical precision with engaging gameplay, he aims to ensure no child is left behind in the classroom due to undetected hearing issues.
+                  </p>
+                  <div className="flex gap-4">
+                    <span className="flex items-center gap-2 text-sm font-medium text-slate-500 bg-slate-100 px-3 py-1.5 rounded-full"><Award size={16} /> Tech for Good</span>
+                    <span className="flex items-center gap-2 text-sm font-medium text-slate-500 bg-slate-100 px-3 py-1.5 rounded-full"><Heart size={16} /> Healthcare Innovation</span>
+                  </div>
+                </div>
               </div>
             </div>
-          </motion.section>
+          </FadeInSection>
 
-          {/* SECTION 6 — CALL TO ACTION */}
-          <motion.section variants={itemVariants} className="text-center space-y-8 pb-12">
-            <div className="max-w-2xl mx-auto space-y-4">
-              <h2 className="text-3xl font-bold text-white">{t('joinMovement', lang)}</h2>
-              <p className="text-lg">{t('joinMovementSub', lang)}</p>
-            </div>
-            <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <Button size="lg" className="bg-teal-600 hover:bg-teal-500 text-white rounded-full px-8" onClick={() => navigate('/onboarding')}>
-                {t('registerSchoolBtn', lang)}
-              </Button>
-              <Button size="lg" variant="outline" className="border-teal-500/50 text-teal-400 hover:bg-teal-500/10 rounded-full px-8" onClick={() => navigate('/waitlist')}>
-                {t('joinWaitlistBtn', lang)}
-              </Button>
-            </div>
-          </motion.section>
-        </motion.div>
+        </div>
       </div>
     </PageWrapper>
   );

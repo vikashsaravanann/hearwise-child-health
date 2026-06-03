@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSession } from '@/contexts/SessionContext';
 import { useAuth } from '@/contexts/AuthContext';
@@ -28,6 +28,7 @@ import owlMascot from '@/assets/owl-mascot.png';
 import oceanFooter from '@/assets/ocean-footer.png';
 import AboutHearWiseModal from '@/components/AboutHearWiseModal';
 import ImpactSection from '@/components/ImpactSection';
+import TestimonialsSection from '@/components/TestimonialsSection';
 
 import OceanBackground from '@/components/OceanBackground';
 
@@ -53,10 +54,23 @@ const Bubble = ({ size, delay, left }: { size: number, delay: number, left: stri
 
 export default function LandingPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [showAbout, setShowAbout] = useState(false);
+  const [showBlockedMsg, setShowBlockedMsg] = useState(false);
   const { lang } = useSession();
   const { user, isAdmin, signOut } = useAuth();
   const [scrolled, setScrolled] = useState(false);
+
+  // Show blocked message when redirected from dashboard (non-admin tried to access)
+  useEffect(() => {
+    if (location.state?.adminBlocked) {
+      setShowBlockedMsg(true);
+      const t = setTimeout(() => setShowBlockedMsg(false), 5000);
+      // Clean up the state so it doesn't persist on refresh
+      window.history.replaceState({}, document.title);
+      return () => clearTimeout(t);
+    }
+  }, [location.state]);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -126,23 +140,32 @@ export default function LandingPage() {
               className="hidden sm:flex text-white/70 hover:text-white hover:bg-white/10"
               onClick={() => navigate('/about')}
             >
-              About
+              About HearWise Technologies
             </Button>
             <Button 
               variant="ghost" 
               className="hidden sm:flex text-white/70 hover:text-white hover:bg-white/10"
               onClick={() => navigate('/hearing-health')}
             >
-              Hearing Health
+              HearWise Health Operations
             </Button>
             {!user ? (
-              <Button 
-                variant="outline" 
-                className="hidden sm:flex text-teal-400 border-teal-500 hover:bg-teal-500/10"
-                onClick={() => navigate('/login')}
-              >
-                Sign In
-              </Button>
+              <>
+                <Button 
+                  variant="ghost" 
+                  className="hidden sm:flex text-white/70 hover:text-white hover:bg-white/10"
+                  onClick={() => navigate('/onboarding')}
+                >
+                  Register School
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="hidden sm:flex text-teal-400 border-teal-500 hover:bg-teal-500/10"
+                  onClick={() => navigate('/login')}
+                >
+                  Sign In
+                </Button>
+              </>
             ) : (
               <>
                 {isAdmin && (
@@ -174,6 +197,14 @@ export default function LandingPage() {
           </div>
         </div>
       </nav>
+
+      {/* Blocked message toast */}
+      {showBlockedMsg && (
+        <div className="fixed top-4 right-4 z-50 bg-red-600 text-white px-5 py-3 rounded-xl shadow-xl text-sm font-medium flex items-center gap-2 animate-fade-in">
+          <span>🔒</span>
+          <span>Dashboard access is restricted to the admin only.</span>
+        </div>
+      )}
 
       <main className="relative z-10 pt-32 pb-20">
         <div className="max-w-7xl mx-auto px-6">
@@ -289,6 +320,8 @@ export default function LandingPage() {
           <div className="mt-20">
             <ImpactSection />
           </div>
+
+          <TestimonialsSection />
 
           {/* Features Section */}
           <section id="features" className="mt-32">

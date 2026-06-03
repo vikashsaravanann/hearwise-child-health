@@ -7,8 +7,10 @@ import type { TestResult } from '@/lib/testEngine';
 import AnimatedOwl from '@/components/owl/AnimatedOwl';
 import LanguageToggle from '@/components/LanguageToggle';
 import { Button } from '@/components/ui/button';
-import { Share2, ArrowRight, UserRoundPlus, Home, Volume2, ShieldCheck, HeartPulse } from 'lucide-react';
+import { Share2, ArrowRight, UserRoundPlus, Home, Volume2, ShieldCheck, HeartPulse, Hospital } from 'lucide-react';
 import OceanBackground from '@/components/OceanBackground';
+import DownloadReportButton from '@/components/DownloadReportButton';
+import type { ScreeningResult } from '@/utils/generateReport';
 
 const freqs = ['500', '1000', '2000', '4000'] as const;
 
@@ -90,6 +92,27 @@ export default function ResultsPage() {
     const overallLabel = results.overall === 'normal' ? t('normal', lang) : results.overall === 'mild' ? t('mildConcernLabel', lang) : t('referToDoctor', lang);
     const text = `${t('hearingReportTitle', lang)}\n${t('student', lang)}: ${student.name}\n${t('age', lang)}: ${student.age}\n${t('school', lang)}: ${session?.schoolName ?? '-'}\n${t('date', lang)}: ${new Date().toLocaleDateString()}\n${t('leftEar', lang)}: ${leftResult}\n${t('rightEar', lang)}: ${rightResult}\n${t('overallResult', lang)}: ${overallLabel}\n\n${t('poweredByHearWise', lang)}`;
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+  };
+
+  const screeningResultData: ScreeningResult = {
+    studentName: student.name,
+    age: student.age,
+    schoolName: session?.schoolName || 'N/A',
+    classSection: 'N/A',
+    teacherName: session?.teacherName || 'N/A',
+    overallResult: results.overall === 'normal' ? 'PASS' : 'REFER',
+    rightEar: freqs.map(f => ({
+      level: 40,
+      sound: 'Tone',
+      frequency: `${f}Hz`,
+      result: results.right[f] ? 'Pass' : 'Refer'
+    })),
+    leftEar: freqs.map(f => ({
+      level: 40,
+      sound: 'Tone',
+      frequency: `${f}Hz`,
+      result: results.left[f] ? 'Pass' : 'Refer'
+    }))
   };
 
   return (
@@ -190,7 +213,19 @@ export default function ResultsPage() {
         </div>
 
         {/* Action Controls */}
-        <div className="w-full flex flex-col sm:flex-row gap-4 justify-center">
+        <div className="w-full flex flex-col sm:flex-row flex-wrap gap-4 justify-center">
+          <DownloadReportButton result={screeningResultData} />
+
+          {results.overall !== 'normal' && (
+            <Button 
+              className="bg-amber-600 hover:bg-amber-500 text-white font-medium"
+              onClick={() => navigate('/audiologists?refer=true')}
+            >
+              <Hospital className="mr-2 h-4 w-4" />
+              Find an Audiologist Near You →
+            </Button>
+          )}
+
           <Button 
             className="h-16 px-8 rounded-2xl text-lg font-black shadow-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-blue-500/20 active:scale-95 transition-all flex items-center justify-center gap-2"
             onClick={() => navigate('/student-entry')}
@@ -239,3 +274,4 @@ export default function ResultsPage() {
     </div>
   );
 }
+

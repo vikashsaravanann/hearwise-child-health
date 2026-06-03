@@ -48,7 +48,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.removeItem('hearwise_admin_auth')
   }
 
-  const isAdmin = !!user && user.email === adminEmail
+  const isAdmin = !!user && user.email?.toLowerCase() === adminEmail?.toLowerCase()
 
   return (
     <AuthContext.Provider value={{ user, session, loading, isAdmin, signOut }}>

@@ -89,7 +89,8 @@ const GROUPS = [
     items: [
       { name: 'Book Appointment', path: '/book-appointment', desc: 'See a doctor', icon: Calendar, bg: '#FFF4E0', border: 'rgba(234, 88, 12, 0.3)' },
       { name: 'Help', path: '#chat', desc: 'Ask Ollie for help', icon: HelpCircle, bg: '#E0F4FF', border: 'rgba(2, 132, 199, 0.3)' },
-      { name: 'About', path: '/about', desc: 'About HearWise', icon: Info, bg: '#F4E0FF', border: 'rgba(147, 51, 234, 0.3)' },
+      { name: 'Hearing Health', path: '/hearing-health', desc: 'HearWise Health Operations', icon: Activity, bg: '#FEE2E2', border: 'rgba(239, 68, 68, 0.3)' },
+      { name: 'About', path: '/about', desc: 'About HearWise Technologies', icon: Info, bg: '#F4E0FF', border: 'rgba(147, 51, 234, 0.3)' },
     ]
   }
 ];

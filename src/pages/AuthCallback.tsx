@@ -13,7 +13,7 @@ const AuthCallback = () => {
         if (error) throw error
         if (session?.user) {
           if (session.user.email === adminEmail) {
-            navigate('/admin', { replace: true })
+            navigate('/dashboard', { replace: true })
           } else {
             navigate('/', { replace: true })
           }

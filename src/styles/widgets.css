@@ -1,0 +1,103 @@
+/* Premium Widget Cards */
+.hw-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.05);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.hw-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.10);
+}
+
+.hw-card-accent-teal {
+  border-left: 4px solid #0d9488;
+}
+
+.hw-card-accent-blue {
+  border-left: 4px solid #3b82f6;
+}
+
+.hw-card-accent-amber {
+  border-left: 4px solid #f59e0b;
+}
+
+/* Stat Counter Widget */
+.hw-stat-counter {
+  font-family: 'Syne', sans-serif;
+  font-size: 3rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #0d9488, #3b82f6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Section Headers */
+.hw-section-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #0f172a;
+  position: relative;
+  display: inline-block;
+}
+
+.hw-section-title::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 0;
+  width: 48px;
+  height: 3px;
+  background: linear-gradient(90deg, #0d9488, #3b82f6);
+  border-radius: 2px;
+}
+
+/* Animated Timeline Dot */
+.hw-timeline-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #0d9488;
+  box-shadow: 0 0 0 4px rgba(13, 148, 136, 0.2);
+  animation: pulse-teal 2s ease-in-out infinite;
+}
+
+@keyframes pulse-teal {
+  0%, 100% { box-shadow: 0 0 0 4px rgba(13, 148, 136, 0.2); }
+  50% { box-shadow: 0 0 0 8px rgba(13, 148, 136, 0.05); }
+}
+
+/* Step Indicator */
+.hw-step {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  transition: all 0.2s ease;
+}
+
+.hw-step:hover {
+  background: #f0fdfa;
+  border-color: #0d9488;
+}
+
+.hw-step-number {
+  min-width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0d9488, #0891b2);
+  color: white;
+  font-weight: 700;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
