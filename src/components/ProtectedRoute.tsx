@@ -1,19 +1,14 @@
 import React from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
+import Loader from '@/components/Loader'
 
 // Guard 1 — Any logged-in user (teachers, parents, screeners)
 export function RequireAuth({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth()
   const location = useLocation()
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-950">
-        <div className="text-white text-sm animate-pulse">Loading...</div>
-      </div>
-    )
-  }
+  if (loading) return <Loader fullscreen text="VERIFYING" />
 
   if (!user) {
     return <Navigate to="/login" state={{ from: location }} replace />
@@ -27,13 +22,7 @@ export function RequireAdmin({ children }: { children: React.ReactNode }) {
   const { user, isAdmin, loading } = useAuth()
   const location = useLocation()
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-950">
-        <div className="text-white text-sm animate-pulse">Verifying access...</div>
-      </div>
-    )
-  }
+  if (loading) return <Loader fullscreen text="VERIFYING" />
 
   // Not logged in at all → go to login
   if (!user) {

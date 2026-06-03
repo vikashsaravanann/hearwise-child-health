@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useSupabaseHealth } from '@/hooks/useSupabaseHealth';
 import { 
   Headphones, Play, CheckSquare, Gamepad2, Trophy, 
-  BookOpen, Music, HeartPulse, HelpCircle, 
+  BookOpen, Music, HeartPulse, HelpCircle, Activity,
   Info, LayoutDashboard, FileText, BarChart, Calendar, Target,
   Volume2
 } from 'lucide-react';

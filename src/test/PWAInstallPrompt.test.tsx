@@ -6,7 +6,6 @@ import PWAInstallPrompt from '@/components/PWAInstallPrompt';
 vi.mock('framer-motion', () => ({
   motion: {
     div: ({ children, ...props }: any) => {
-      // Strip framer-motion-specific props that React DOM doesn't accept
       const { initial, animate, exit, transition, ...validProps } = props;
       return <div {...validProps}>{children}</div>;
     },
@@ -34,10 +33,29 @@ describe('PWAInstallPrompt', () => {
   beforeEach(() => {
     vi.useFakeTimers();
     localStorage.clear();
+    // Restore matchMedia from the setup file (returns matches:false for all)
+    window.matchMedia = Object.defineProperty(
+      {} as any,
+      'matchMedia',
+      {
+        writable: true,
+        value: (query: string) => ({
+          matches: false,
+          media: query,
+          onchange: null,
+          addListener: vi.fn(),
+          removeListener: vi.fn(),
+          addEventListener: vi.fn(),
+          removeEventListener: vi.fn(),
+          dispatchEvent: vi.fn(),
+        }),
+      }
+    ).matchMedia as any;
   });
 
   afterEach(() => {
     vi.useRealTimers();
+    vi.restoreAllMocks();
   });
 
   it('renders nothing when no beforeinstallprompt event has fired', () => {
@@ -46,8 +64,7 @@ describe('PWAInstallPrompt', () => {
   });
 
   it('renders nothing in standalone mode', () => {
-    // Override matchMedia to simulate standalone mode
-    window.matchMedia = vi.fn().mockImplementation((query: string) => ({
+    vi.spyOn(window, 'matchMedia').mockImplementation((query: string) => ({
       matches: query === '(display-mode: standalone)',
       media: query,
       onchange: null,
@@ -56,11 +73,11 @@ describe('PWAInstallPrompt', () => {
       addEventListener: vi.fn(),
       removeEventListener: vi.fn(),
       dispatchEvent: vi.fn(),
-    })) as any;
+    }));
 
     render(<PWAInstallPrompt />);
 
-    // In standalone mode, the prompt should never show
+    // In standalone mode, the prompt should never show even after timer
     vi.advanceTimersByTime(5000);
     expect(screen.queryByText('Install HearWise')).toBeNull();
   });
@@ -74,7 +91,7 @@ describe('PWAInstallPrompt', () => {
       (event as any).prompt = vi.fn();
       (event as any).userChoice = Promise.resolve({ outcome: 'accepted' });
       window.dispatchEvent(event);
-      // Let React process the state update
+      // Flush microtasks so React processes the state update
       await Promise.resolve();
     });
 
@@ -88,22 +105,17 @@ describe('PWAInstallPrompt', () => {
 
     await act(async () => {
       vi.advanceTimersByTime(4000);
-      // Flush pending microtasks for React state updates
     });
 
     expect(screen.getByText('Install HearWise')).toBeInTheDocument();
   });
 
   it('dismisses when the close button is clicked', async () => {
-    // First trigger the prompt via fallback timer
     render(<PWAInstallPrompt />);
 
-    await act(async () => {
-      vi.advanceTimersByTime(4000);
-    });
+    await act(async () => { vi.advanceTimersByTime(4000); });
     expect(screen.getByText('Install HearWise')).toBeInTheDocument();
 
-    // Click the close button
     await act(async () => {
       fireEvent.click(screen.getByLabelText('Dismiss'));
     });
@@ -114,9 +126,7 @@ describe('PWAInstallPrompt', () => {
   it('dismisses when "Not now" is clicked', async () => {
     render(<PWAInstallPrompt />);
 
-    await act(async () => {
-      vi.advanceTimersByTime(4000);
-    });
+    await act(async () => { vi.advanceTimersByTime(4000); });
     expect(screen.getByText('Install HearWise')).toBeInTheDocument();
 
     await act(async () => {
@@ -127,6 +137,9 @@ describe('PWAInstallPrompt', () => {
   });
 
   it('calls deferredPrompt.prompt and hides on install', async () => {
+    // Use real timers for this test so async promise chains resolve properly
+    vi.useRealTimers();
+
     const mockPrompt = vi.fn();
 
     render(<PWAInstallPrompt />);
@@ -145,17 +158,17 @@ describe('PWAInstallPrompt', () => {
     // Click Install
     await act(async () => {
       fireEvent.click(screen.getByTestId('install-btn'));
-      // Flush the userChoice promise
-      await vi.advanceTimersToNextTimerAsync?.() ?? await Promise.resolve();
     });
 
     expect(mockPrompt).toHaveBeenCalledTimes(1);
+
+    // Wait for the userChoice promise to resolve and hide the prompt
     await waitFor(() => {
       expect(screen.queryByText('Install HearWise')).toBeNull();
     });
   });
 
-  it('does not show again after dismissal when fallback timer re-fires', async () => {
+  it('does not show again after permanent dismissal', async () => {
     render(<PWAInstallPrompt />);
 
     // Show via timer
@@ -168,7 +181,7 @@ describe('PWAInstallPrompt', () => {
     });
     expect(screen.queryByText('Install HearWise')).toBeNull();
 
-    // Another 4s passes - should not re-show since dismissed=true
+    // Another timer cycle — should NOT re-show since dismissed=true
     await act(async () => { vi.advanceTimersByTime(4000); });
     expect(screen.queryByText('Install HearWise')).toBeNull();
   });

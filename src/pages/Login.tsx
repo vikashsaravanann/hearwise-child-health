@@ -72,33 +72,80 @@ export default function Login() {
   }
 
   async function handleGoogleLogin() {
-    setLoading(true); setError('');
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: { redirectTo: `${window.location.origin}/auth/callback` }
-    });
-    if (error) { setError(error.message); setLoading(false); }
+    setLoading(true);
+    setError('');
+    try {
+      const redirectUrl = `${window.location.origin}/auth/callback`;
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: redirectUrl,
+          queryParams: { access_type: 'offline', prompt: 'consent' },
+        },
+      });
+      if (error) {
+        setError(`GOOGLE SIGN-IN FAILED: ${error.message.toUpperCase()}`);
+        setLoading(false);
+        return;
+      }
+      if (data?.url) window.location.href = data.url;
+    } catch {
+      setError('UNEXPECTED ERROR. PLEASE TRY AGAIN.');
+      setLoading(false);
+    }
   }
 
   async function handleEmailSend() {
-    if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
-      setError('Please enter a valid email address.'); return;
+    const emailRegex = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(email)) {
+      setError('PLEASE ENTER A VALID EMAIL ADDRESS.');
+      return;
     }
-    setLoading(true); setError('');
-    const { error } = await supabase.auth.signInWithOtp({ email });
-    if (error) { setError(error.message); }
-    else { setStep('otp'); }
-    setLoading(false);
+    setLoading(true);
+    setError('');
+    try {
+      const { error } = await supabase.auth.signInWithOtp({
+        email: email.toLowerCase().trim(),
+        options: {
+          shouldCreateUser: true,
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+      if (error) {
+        setError(`FAILED TO SEND CODE: ${error.message.toUpperCase()}`);
+      } else {
+        setStep('otp');
+      }
+    } catch {
+      setError('UNEXPECTED ERROR. PLEASE TRY AGAIN.');
+    } finally {
+      setLoading(false);
+    }
   }
 
   async function handleEmailVerify() {
     const code = otp.join('');
-    if (code.length < 6) { setError('Enter the complete 6-digit code.'); return; }
-    setLoading(true); setError('');
-    const { error } = await supabase.auth.verifyOtp({ email, token: code, type: 'email' });
-    if (error) { setError(error.message); }
-    else { navigate('/auth/callback'); }
-    setLoading(false);
+    if (code.length < 6) { setError('ENTER THE COMPLETE 6-DIGIT CODE.'); return; }
+    setLoading(true);
+    setError('');
+    try {
+      const { data, error } = await supabase.auth.verifyOtp({
+        email: email.toLowerCase().trim(),
+        token: code,
+        type: 'email',
+      });
+      if (error) {
+        setError(`INVALID OR EXPIRED CODE: ${error.message.toUpperCase()}`);
+      } else if (data.session) {
+        const userEmail = data.session.user?.email?.toLowerCase();
+        const adminEmail = (import.meta.env.VITE_ADMIN_EMAIL as string)?.toLowerCase();
+        navigate(userEmail === adminEmail ? '/dashboard' : '/');
+      }
+    } catch {
+      setError('VERIFICATION FAILED. PLEASE TRY AGAIN.');
+    } finally {
+      setLoading(false);
+    }
   }
 
   const adminEmail = import.meta.env.VITE_ADMIN_EMAIL as string;
@@ -128,9 +175,9 @@ export default function Login() {
             <motion.div
               animate={{ y: [0, -4, 0] }}
               transition={{ duration: 3, repeat: Infinity }}
-              className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-teal-500 to-cyan-500 shadow-lg shadow-teal-500/30 mb-4"
+              className="inline-flex items-center justify-center w-16 h-16 rounded-2xl overflow-hidden shadow-lg shadow-teal-500/30 mb-4"
             >
-              <span className="text-2xl">🦉</span>
+              <img src="/owl-mascot.png" alt="HearWise" className="w-full h-full object-cover" />
             </motion.div>
             <h1 className="text-2xl font-black text-white uppercase tracking-widest">HEARWISE</h1>
             <div className="flex justify-center mt-2 mb-1">
@@ -281,6 +328,13 @@ export default function Login() {
                     className="w-full text-gray-500 text-xs uppercase tracking-widest hover:text-gray-300 transition-colors py-2"
                   >
                     ← CHANGE EMAIL
+                  </button>
+                  <button
+                    onClick={async () => { setOtp(['','','','','','']); setError(''); await handleEmailSend(); }}
+                    disabled={loading}
+                    className="w-full text-teal-500 text-xs uppercase tracking-widest hover:text-teal-300 transition-colors disabled:opacity-50"
+                  >
+                    RESEND CODE
                   </button>
                 </div>
               )}

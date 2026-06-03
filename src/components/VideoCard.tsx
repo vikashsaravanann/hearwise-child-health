@@ -1,5 +1,4 @@
 import { motion } from 'framer-motion';
-import { useState } from 'react';
 
 interface VideoCardProps {
   title: string;
@@ -13,120 +12,110 @@ interface VideoCardProps {
 }
 
 export default function VideoCard({
-  title, description, duration, category, icon,
-  gradientFrom, gradientTo, stats = []
+  title,
+  description,
+  duration,
+  category,
+  icon,
+  gradientFrom,
+  gradientTo,
+  stats = [],
 }: VideoCardProps) {
-  const [isHovered, setIsHovered] = useState(false);
-
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      whileHover={{ y: -6, scale: 1.01 }}
-      onHoverStart={() => setIsHovered(true)}
-      onHoverEnd={() => setIsHovered(false)}
-      className="relative rounded-2xl overflow-hidden border border-white/10 cursor-pointer group"
-      style={{ aspectRatio: '16/9', minHeight: '240px' }}
+      whileHover={{ y: -4, scale: 1.015 }}
+      transition={{ duration: 0.25 }}
+      className="relative rounded-2xl overflow-hidden border border-white/10 cursor-pointer group bg-[#0d1a2a] flex flex-col"
+      style={{ minHeight: '0' }}
     >
-      {/* Animated gradient background */}
+      {/* ── Thumbnail (16:9) ───────────────────────────── */}
       <div
-        className="absolute inset-0 transition-all duration-500"
-        style={{
-          background: `linear-gradient(135deg, ${gradientFrom}, ${gradientTo})`,
-          opacity: isHovered ? 1 : 0.85
-        }}
-      />
+        className="relative w-full overflow-hidden"
+        style={{ paddingTop: '56.25%' /* 16:9 */ }}
+      >
+        {/* gradient fill */}
+        <div
+          className="absolute inset-0 transition-all duration-500 group-hover:scale-105"
+          style={{ background: `linear-gradient(135deg, ${gradientFrom}, ${gradientTo})` }}
+        />
 
-      {/* Animated wave lines at bottom */}
-      <div className="absolute bottom-0 left-0 right-0 h-16 overflow-hidden opacity-20">
-        {[0, 1, 2, 3].map(i => (
-          <div
+        {/* subtle animated noise overlay */}
+        <div className="absolute inset-0 opacity-[0.08] bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJhIj48ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iLjc1IiBzdGl0Y2hUaWxlcz0ic3RpdGNoIi8+PC9maWx0ZXI+PHJlY3Qgd2lkdGg9IjMwMCIgaGVpZ2h0PSIzMDAiIGZpbHRlcj0idXJsKCNhKSIgb3BhY2l0eT0iMSIvPjwvc3ZnPg==')]" />
+
+        {/* floating particles */}
+        {[0.15, 0.55, 0.35, 0.75, 0.25].map((x, i) => (
+          <motion.div
             key={i}
-            className="absolute bottom-0 left-0 right-0 h-8 border-t border-white/30 rounded-full"
-            style={{
-              transform: `translateY(${i * 8}px)`,
-              animation: `pulse ${2 + i * 0.5}s ease-in-out infinite`,
-              animationDelay: `${i * 0.3}s`
-            }}
+            className="absolute w-1 h-1 rounded-full bg-white/30"
+            style={{ left: `${x * 100}%`, top: `${(0.2 + i * 0.15) * 100}%` }}
+            animate={{ y: [-6, 6, -6], opacity: [0.3, 0.7, 0.3] }}
+            transition={{ duration: 2 + i * 0.4, repeat: Infinity, delay: i * 0.3 }}
           />
         ))}
-      </div>
 
-      {/* Floating particles */}
-      {[...Array(6)].map((_, i) => (
-        <motion.div
-          key={i}
-          className="absolute w-1.5 h-1.5 rounded-full bg-white/30"
-          style={{
-            left: `${15 + i * 14}%`,
-            top: `${20 + (i % 3) * 25}%`
-          }}
-          animate={{
-            y: [-8, 8, -8],
-            opacity: [0.3, 0.7, 0.3],
-          }}
-          transition={{
-            duration: 2 + i * 0.4,
-            repeat: Infinity,
-            delay: i * 0.3,
-          }}
-        />
-      ))}
-
-      {/* Content overlay */}
-      <div className="absolute inset-0 flex flex-col justify-between p-6 z-10">
-        {/* Top row */}
-        <div className="flex items-start justify-between">
-          <span className="px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm text-white text-xs font-black uppercase tracking-widest">
+        {/* category badge — top left */}
+        <div className="absolute top-3 left-3 z-10">
+          <span className="px-2.5 py-1 rounded-full bg-black/40 backdrop-blur-sm text-white/90 text-[10px] font-black uppercase tracking-widest">
             {category}
           </span>
-          <span className="px-3 py-1 rounded-full bg-black/30 backdrop-blur-sm text-white/80 text-xs font-semibold">
+        </div>
+
+        {/* coming soon + duration — top right */}
+        <div className="absolute top-3 right-3 z-10 flex flex-col items-end gap-1.5">
+          <motion.span
+            animate={{ opacity: [0.7, 1, 0.7] }}
+            transition={{ duration: 2, repeat: Infinity }}
+            className="px-2 py-0.5 rounded-full bg-teal-400/90 text-black text-[9px] font-black uppercase tracking-widest shadow"
+          >
+            COMING SOON
+          </motion.span>
+          <span className="px-2 py-0.5 rounded-full bg-black/50 backdrop-blur-sm text-white/80 text-[10px] font-semibold">
             {duration}
           </span>
         </div>
 
-        {/* Center play button */}
-        <div className="flex items-center justify-center">
+        {/* centre play button */}
+        <div className="absolute inset-0 flex items-center justify-center z-10">
           <motion.div
-            className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm border-2 border-white/40 flex items-center justify-center"
-            animate={{ scale: isHovered ? 1.15 : 1 }}
-            transition={{ duration: 0.2 }}
+            className="w-14 h-14 rounded-full bg-white/15 backdrop-blur-sm border border-white/30 flex items-center justify-center shadow-xl"
+            whileHover={{ scale: 1.15, backgroundColor: 'rgba(255,255,255,0.25)' }}
+            transition={{ duration: 0.18 }}
           >
-            <div className="text-2xl">{icon}</div>
+            {/* play triangle */}
+            <svg className="w-6 h-6 ml-1" viewBox="0 0 24 24" fill="white">
+              <path d="M8 5v14l11-7z" />
+            </svg>
           </motion.div>
         </div>
 
-        {/* Bottom content */}
-        <div>
-          <h3 className="text-white font-black text-lg uppercase leading-tight mb-2 drop-shadow-lg">
-            {title}
-          </h3>
-          <p className="text-white/80 text-xs leading-relaxed mb-3 line-clamp-2">
-            {description}
-          </p>
-          {stats.length > 0 && (
-            <div className="flex gap-4">
-              {stats.map(s => (
-                <div key={s.label} className="text-center">
-                  <div className="text-white font-black text-sm">{s.value}</div>
-                  <div className="text-white/60 text-xs uppercase tracking-wider">{s.label}</div>
-                </div>
-              ))}
-            </div>
-          )}
+        {/* large icon — bottom-right decoration */}
+        <div className="absolute bottom-3 right-4 text-4xl opacity-20 select-none pointer-events-none">
+          {icon}
         </div>
       </div>
 
-      {/* COMING SOON ribbon */}
-      <div className="absolute top-4 right-4 z-20">
-        <motion.div
-          className="px-3 py-1 rounded-full bg-teal-400/90 text-black text-xs font-black uppercase tracking-widest shadow-lg"
-          animate={{ opacity: [0.7, 1, 0.7] }}
-          transition={{ duration: 2, repeat: Infinity }}
-        >
-          COMING SOON
-        </motion.div>
+      {/* ── Info panel ─────────────────────────────────── */}
+      <div className="flex flex-col gap-2 p-4 flex-1">
+        <h3 className="text-white font-black text-sm uppercase leading-tight tracking-wide line-clamp-2">
+          {title}
+        </h3>
+        <p className="text-slate-400 text-xs leading-relaxed line-clamp-2 flex-1">
+          {description}
+        </p>
+
+        {stats.length > 0 && (
+          <div className="flex gap-4 mt-1 pt-3 border-t border-white/5">
+            {stats.map(s => (
+              <div key={s.label} className="text-center">
+                <div className="text-teal-400 font-black text-sm">{s.value}</div>
+                <div className="text-slate-600 text-[10px] uppercase tracking-wider">{s.label}</div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </motion.div>
   );

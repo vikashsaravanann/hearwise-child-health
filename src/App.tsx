@@ -14,8 +14,8 @@ import SWUpdatePrompt from "@/components/SWUpdatePrompt";
 import PWADevPreview from "@/components/PWADevPreview";
 import LanguageToggle from "@/components/LanguageToggle";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import FloatingChatButton from "@/components/FloatingChatButton";
-import PageLoadingSkeleton from "@/components/PageLoadingSkeleton";
+import HearBot from "@/components/HearBot";
+import Loader from "@/components/Loader";
 import LandingPage from "./pages/LandingPage";
 import { AnimatePresence } from 'framer-motion';
 import PageTransition from '@/components/PageTransition';
@@ -164,11 +164,11 @@ const App = () => (
           <OfflineBadge />
           <LanguageToggle />
           <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '')}>
-            <FloatingChatButton />
+            <HearBot />
             <PWAInstallPrompt />
             <SWUpdatePrompt />
             <PWADevPreview />
-            <Suspense fallback={<PageLoadingSkeleton />}>
+            <Suspense fallback={<Loader fullscreen text="LOADING" />}>
               <InnerRoutes />
             </Suspense>
           </BrowserRouter>

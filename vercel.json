@@ -28,7 +28,7 @@
         { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
         { "key": "Permissions-Policy", "value": "microphone=(), camera=(), geolocation=()" },
         { "key": "Strict-Transport-Security", "value": "max-age=31536000; includeSubDomains" },
-        { "key": "Content-Security-Policy", "value": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.anthropic.com https://accounts.google.com; img-src 'self' data: https: blob:; frame-ancestors 'none';" }
+        { "key": "Content-Security-Policy", "value": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://generativelanguage.googleapis.com https://accounts.google.com; img-src 'self' data: https: blob:; frame-ancestors 'none';" }
       ]
     }
   ],
@@ -37,7 +37,7 @@
     "VITE_SUPABASE_ANON_KEY": "@vite_supabase_anon_key",
     "VITE_ADMIN_EMAIL": "@vite_admin_email",
     "VITE_ADMIN_PASSWORD": "@vite_admin_password",
-    "VITE_ANTHROPIC_API_KEY": "@vite_anthropic_api_key",
+    "VITE_GEMINI_API_KEY": "@vite_gemini_api_key",
     "VITE_GOOGLE_CLIENT_ID": "@vite_google_client_id"
   }
 }

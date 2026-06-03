@@ -329,7 +329,7 @@ export default function LandingPage() {
               <p className="text-white/60 uppercase tracking-widest text-sm">WATCH HOW HEARWISE IS CHANGING LIVES IN SCHOOLS ACROSS TAMIL NADU</p>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <VideoCard
                 title="WHAT IS HEARWISE? — 60 SECOND EXPLAINER"
                 description="Discover how HearWise is transforming childhood hearing screening across India's schools with just a smartphone and headphones."

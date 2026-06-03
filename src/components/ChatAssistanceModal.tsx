@@ -398,7 +398,7 @@ Keep responses concise, friendly, and use emojis like 🦉, 🌊, or 🎧. Trans
               <button 
                 type="button"
                 className="absolute right-4 top-1/2 -translate-y-1/2 text-blue-400 hover:text-blue-600 transition-all"
-                onClick={() => toast({ title: lang === 'ta' ? "மைக்ரோஃபோன் இன்னும் வரவில்லை!" : "Voice support coming soon!" })}
+                onClick={() => toast(lang === 'ta' ? "மைக்ரோஃபோன் இன்னும் வரவில்லை!" : "Voice support coming soon!")}
               >
                 <Mic size={24} />
               </button>
