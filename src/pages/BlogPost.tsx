@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import PageWrapper from '@/components/shared/PageWrapper';
 import { blogPosts, BlogPost as BlogPostType } from '@/data/blogPosts';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Clock, Share2, Calendar, ArrowRight } from 'lucide-react';
@@ -31,7 +30,7 @@ export default function BlogPost() {
   const relatedPosts = blogPosts.filter(p => p.slug !== post.slug).slice(0, 2);
 
   return (
-    <PageWrapper title={post.title} backPath="/blog">
+    <>
       <div className="bg-[#020817] min-h-screen text-slate-300 relative overflow-hidden pb-24">
         
         {/* Animated background orbs */}
@@ -138,6 +137,6 @@ export default function BlogPost() {
         </div>
 
       </div>
-    </PageWrapper>
+    </>
   );
 }
