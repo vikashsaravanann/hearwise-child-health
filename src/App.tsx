@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
@@ -15,9 +15,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import HearBot from "@/components/HearBot";
 import Loader from "@/components/Loader";
 import LandingPage from "./pages/LandingPage";
-import { AnimatePresence } from 'framer-motion';
-import PageTransition from '@/components/PageTransition';
-
+import PWAInstallPrompt from '@/components/PWAInstallPrompt';
 const LoginPage = React.lazy(() => import("./pages/Login"));
 const AuthCallback = React.lazy(() => import("./pages/AuthCallback"));
 const SessionSetupPage = React.lazy(() => import("./pages/SessionSetupPage"));
@@ -79,78 +77,73 @@ const queryClient = new QueryClient({
 });
 
 const InnerRoutes = () => {
-  const location = useLocation();
   return (
-    <AnimatePresence mode="wait">
-      <Routes location={location} key={location.pathname}>
-        <Route path="/" element={<PageTransition><LandingPage /></PageTransition>} />
-        <Route path="/login" element={<PageTransition><LoginPage /></PageTransition>} />
-        <Route path="/auth/callback" element={<PageTransition><AuthCallback /></PageTransition>} />
-        <Route path="/about" element={<PageTransition><AboutPage /></PageTransition>} />
-        <Route path="/hearing-health" element={<PageTransition><HearingHealthPage /></PageTransition>} />
-        <Route path="/onboarding" element={<PageTransition><SchoolOnboarding /></PageTransition>} />
-        <Route path="/teacher-training" element={<PageTransition><TeacherTraining /></PageTransition>} />
-        <Route path="/blog" element={<PageTransition><Blog /></PageTransition>} />
-        <Route path="/blog/:slug" element={<PageTransition><BlogPost /></PageTransition>} />
-        <Route path="/audiologists" element={<PageTransition><Audiologists /></PageTransition>} />
-        <Route path="/waitlist" element={<PageTransition><WaitlistPage /></PageTransition>} />
-        
-        {/* Protected App Routes */}
-        <Route path="/setup" element={<PageTransition><ProtectedRoute><SessionSetupPage /></ProtectedRoute></PageTransition>} />
-        <Route path="/student-entry" element={<PageTransition><ProtectedRoute><StudentEntryPage /></ProtectedRoute></PageTransition>} />
-        <Route path="/headphone-check" element={<PageTransition><ProtectedRoute><HeadphoneCheckPage /></ProtectedRoute></PageTransition>} />
-        <Route path="/ocean-levels" element={<PageTransition><ProtectedRoute><OceanLevelSelectPage /></ProtectedRoute></PageTransition>} />
-        <Route path="/ocean-test/:level" element={<PageTransition><ProtectedRoute><OceanTestPage /></ProtectedRoute></PageTransition>} />
-        <Route path="/level-result/:level" element={<PageTransition><ProtectedRoute><LevelResultPage /></ProtectedRoute></PageTransition>} />
-        <Route path="/session-summary" element={<PageTransition><ProtectedRoute><SessionSummaryPage /></ProtectedRoute></PageTransition>} />
-        <Route path="/dashboard" element={<PageTransition><ProtectedRoute adminOnly={true}><AnimatedDashboardPage /></ProtectedRoute></PageTransition>} />
-        <Route path="/games" element={<PageTransition><ProtectedRoute><GamesPage /></ProtectedRoute></PageTransition>} />
-        <Route path="/trophies" element={<PageTransition><ProtectedRoute><TrophiesPage /></ProtectedRoute></PageTransition>} />
-        <Route path="/ear-care" element={<PageTransition><ProtectedRoute><EarCarePage /></ProtectedRoute></PageTransition>} />
-        <Route path="/education" element={<PageTransition><ProtectedRoute><EducationPage /></ProtectedRoute></PageTransition>} />
-        <Route path="/learn" element={<PageTransition><ProtectedRoute><LearnPage /></ProtectedRoute></PageTransition>} />
-        <Route path="/sound-explorer" element={<PageTransition><ProtectedRoute><SoundExplorerPage /></ProtectedRoute></PageTransition>} />
-        <Route path="/my-report" element={<PageTransition><ProtectedRoute><MyReportPage /></ProtectedRoute></PageTransition>} />
-        <Route path="/headphone-safety" element={<PageTransition><ProtectedRoute><HeadphoneSafetyPage /></ProtectedRoute></PageTransition>} />
-        <Route path="/noise-awareness" element={<PageTransition><ProtectedRoute><NoiseAwarenessPage /></ProtectedRoute></PageTransition>} />
-        <Route path="/self-check" element={<PageTransition><ProtectedRoute><SelfCheckPage /></ProtectedRoute></PageTransition>} />
-        <Route path="/book-appointment" element={<PageTransition><ProtectedRoute><BookAppointmentPage /></ProtectedRoute></PageTransition>} />
-        <Route path="/leaderboard" element={<PageTransition><ProtectedRoute><LeaderboardPage /></ProtectedRoute></PageTransition>} />
-        <Route path="/help" element={<PageTransition><ProtectedRoute><HelpPage /></ProtectedRoute></PageTransition>} />
+    <Routes>
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/auth/callback" element={<AuthCallback />} />
+      <Route path="/about" element={<AboutPage />} />
+      <Route path="/hearing-health" element={<HearingHealthPage />} />
+      <Route path="/onboarding" element={<SchoolOnboarding />} />
+      <Route path="/teacher-training" element={<TeacherTraining />} />
+      <Route path="/blog" element={<Blog />} />
+      <Route path="/blog/:slug" element={<BlogPost />} />
+      <Route path="/audiologists" element={<Audiologists />} />
+      <Route path="/waitlist" element={<WaitlistPage />} />
+      
+      {/* Protected App Routes */}
+      <Route path="/setup" element={<ProtectedRoute><SessionSetupPage /></ProtectedRoute>} />
+      <Route path="/student-entry" element={<ProtectedRoute><StudentEntryPage /></ProtectedRoute>} />
+      <Route path="/headphone-check" element={<ProtectedRoute><HeadphoneCheckPage /></ProtectedRoute>} />
+      <Route path="/ocean-levels" element={<ProtectedRoute><OceanLevelSelectPage /></ProtectedRoute>} />
+      <Route path="/ocean-test/:level" element={<ProtectedRoute><OceanTestPage /></ProtectedRoute>} />
+      <Route path="/level-result/:level" element={<ProtectedRoute><LevelResultPage /></ProtectedRoute>} />
+      <Route path="/session-summary" element={<ProtectedRoute><SessionSummaryPage /></ProtectedRoute>} />
+      <Route path="/dashboard" element={<ProtectedRoute adminOnly={true}><AnimatedDashboardPage /></ProtectedRoute>} />
+      <Route path="/games" element={<ProtectedRoute><GamesPage /></ProtectedRoute>} />
+      <Route path="/trophies" element={<ProtectedRoute><TrophiesPage /></ProtectedRoute>} />
+      <Route path="/ear-care" element={<ProtectedRoute><EarCarePage /></ProtectedRoute>} />
+      <Route path="/education" element={<ProtectedRoute><EducationPage /></ProtectedRoute>} />
+      <Route path="/learn" element={<ProtectedRoute><LearnPage /></ProtectedRoute>} />
+      <Route path="/sound-explorer" element={<ProtectedRoute><SoundExplorerPage /></ProtectedRoute>} />
+      <Route path="/my-report" element={<ProtectedRoute><MyReportPage /></ProtectedRoute>} />
+      <Route path="/headphone-safety" element={<ProtectedRoute><HeadphoneSafetyPage /></ProtectedRoute>} />
+      <Route path="/noise-awareness" element={<ProtectedRoute><NoiseAwarenessPage /></ProtectedRoute>} />
+      <Route path="/self-check" element={<ProtectedRoute><SelfCheckPage /></ProtectedRoute>} />
+      <Route path="/book-appointment" element={<ProtectedRoute><BookAppointmentPage /></ProtectedRoute>} />
+      <Route path="/leaderboard" element={<ProtectedRoute><LeaderboardPage /></ProtectedRoute>} />
+      <Route path="/help" element={<ProtectedRoute><HelpPage /></ProtectedRoute>} />
 
-        <Route path="/practice" element={<PageTransition><ProtectedRoute><PracticeRoundPage /></ProtectedRoute></PageTransition>} />
-        <Route path="/active-test" element={<PageTransition><ProtectedRoute><ActiveTestPage /></ProtectedRoute></PageTransition>} />
-        <Route path="/results" element={<PageTransition><ProtectedRoute><ResultsPage /></ProtectedRoute></PageTransition>} />
-        <Route path="/thank-you" element={<PageTransition><ProtectedRoute><ThankYouPage /></ProtectedRoute></PageTransition>} />
+      <Route path="/practice" element={<ProtectedRoute><PracticeRoundPage /></ProtectedRoute>} />
+      <Route path="/active-test" element={<ProtectedRoute><ActiveTestPage /></ProtectedRoute>} />
+      <Route path="/results" element={<ProtectedRoute><ResultsPage /></ProtectedRoute>} />
+      <Route path="/thank-you" element={<ProtectedRoute><ThankYouPage /></ProtectedRoute>} />
 
-        {/* Admin */}
-        <Route
-          path="/admin"
-          element={
-            <PageTransition>
-              <AdminGuard>
-                <AdminLayout />
-              </AdminGuard>
-            </PageTransition>
-          }
-        >
-          <Route index element={<PageTransition><AdminOverviewPage /></PageTransition>} />
-          <Route path="dashboard" element={<PageTransition><AdminOverviewPage /></PageTransition>} />
-          <Route path="analytics" element={<PageTransition><AdminAnalyticsPage /></PageTransition>} />
-          <Route path="schools" element={<PageTransition><AdminSchoolsPage /></PageTransition>} />
-          <Route path="teachers" element={<PageTransition><AdminTeachersPage /></PageTransition>} />
-          <Route path="students" element={<PageTransition><AdminStudentsPage /></PageTransition>} />
-          <Route path="sessions" element={<PageTransition><AdminSessionsPage /></PageTransition>} />
-          <Route path="referrals" element={<PageTransition><AdminReferralsPage /></PageTransition>} />
-          <Route path="logins" element={<PageTransition><AdminLoginsPage /></PageTransition>} />
-          <Route path="settings" element={<PageTransition><AdminSettingsPage /></PageTransition>} />
-          <Route path="export" element={<PageTransition><AdminExportPage /></PageTransition>} />
-          <Route path="about" element={<PageTransition><AboutDeveloperPage /></PageTransition>} />
-        </Route>
+      {/* Admin */}
+      <Route
+        path="/admin"
+        element={
+          <AdminGuard>
+            <AdminLayout />
+          </AdminGuard>
+        }
+      >
+        <Route index element={<AdminOverviewPage />} />
+        <Route path="dashboard" element={<AdminOverviewPage />} />
+        <Route path="analytics" element={<AdminAnalyticsPage />} />
+        <Route path="schools" element={<AdminSchoolsPage />} />
+        <Route path="teachers" element={<AdminTeachersPage />} />
+        <Route path="students" element={<AdminStudentsPage />} />
+        <Route path="sessions" element={<AdminSessionsPage />} />
+        <Route path="referrals" element={<AdminReferralsPage />} />
+        <Route path="logins" element={<AdminLoginsPage />} />
+        <Route path="settings" element={<AdminSettingsPage />} />
+        <Route path="export" element={<AdminExportPage />} />
+        <Route path="about" element={<AboutDeveloperPage />} />
+      </Route>
 
-        <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
-      </Routes>
-    </AnimatePresence>
+      <Route path="*" element={<NotFound />} />
+    </Routes>
   );
 };
 
@@ -165,8 +158,6 @@ const App = () => (
           <LanguageToggle />
           <BrowserRouter basename={import.meta.env.BASE_URL ? import.meta.env.BASE_URL.replace(/\/$/, '') : '/'}>
             <HearBot />
-            <SWUpdatePrompt />
-            <PWAInstallPrompt />
             <Suspense fallback={<Loader fullscreen text="LOADING" />}>
               <InnerRoutes />
             </Suspense>
