@@ -110,6 +110,10 @@ export default function HearBot() {
         content: m.text,
       }));
 
+      if (!apiKey || apiKey.includes('hidden_for_deployment_replace_in_vercel') || apiKey === '') {
+        throw new Error('MISSING_API_KEY');
+      }
+
       const response = await fetch(
         `https://api.groq.com/openai/v1/chat/completions`,
         {
@@ -132,7 +136,7 @@ export default function HearBot() {
       );
 
       if (!response.ok) {
-        throw new Error('Failed to fetch from Groq');
+        throw new Error(`Failed to fetch from Groq: ${response.statusText}`);
       }
 
       const data = await response.json();
@@ -141,13 +145,22 @@ export default function HearBot() {
         "I'm sorry, I couldn't process that. Please try again.";
 
       setMessages(prev => [...prev, { id: (Date.now() + 1).toString(), role: 'bot', text: reply, time: getTime() }]);
-    } catch {
-      setMessages(prev => [...prev, {
-        id: (Date.now() + 1).toString(),
-        role: 'bot',
-        text: "I'm having trouble connecting right now. Please check your internet and try again.",
-        time: getTime(),
-      }]);
+    } catch (err: any) {
+      if (err.message === 'MISSING_API_KEY') {
+        setMessages(prev => [...prev, {
+          id: (Date.now() + 1).toString(),
+          role: 'bot',
+          text: "My AI brain isn't connected right now! The Groq API key is missing. Please add a valid VITE_GROQ_API_KEY to your environment variables.",
+          time: getTime(),
+        }]);
+      } else {
+        setMessages(prev => [...prev, {
+          id: (Date.now() + 1).toString(),
+          role: 'bot',
+          text: "I'm having trouble connecting right now. Please check your internet and try again.",
+          time: getTime(),
+        }]);
+      }
     } finally {
       setLoading(false);
     }

@@ -163,9 +163,10 @@ const App = () => (
           <Sonner />
           <OfflineBadge />
           <LanguageToggle />
-          <BrowserRouter basename={import.meta.env.BASE_URL || '/'}>
+          <BrowserRouter basename={import.meta.env.BASE_URL ? import.meta.env.BASE_URL.replace(/\/$/, '') : '/'}>
             <HearBot />
             <SWUpdatePrompt />
+            <PWAInstallPrompt />
             <Suspense fallback={<Loader fullscreen text="LOADING" />}>
               <InnerRoutes />
             </Suspense>
