@@ -3,40 +3,24 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>HearWise — India's First School Hearing Screening Platform</title>
-    
-    <!-- GitHub Pages SPA redirect handler -->
-    <script type="text/javascript">
-      (function(l) {
-        if (l.search[1] === '/' ) {
-          var decoded = l.search.slice(1).split('&').map(function(s) { 
-            return s.replace(/~and~/g, '&')
-          }).join('?');
-          window.history.replaceState(null, null,
-              l.pathname.slice(0, -1) + decoded + l.hash
-          );
-        }
-      }(window.location))
-    </script>
-    
+    <title>HearWise</title>
+    <link rel="icon" type="image/png" href="/hearwise-child-health/owl-mascot.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;900&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script type="module" crossorigin src="/hearwise-child-health/assets/index-C_jhB2ll.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script type="module" crossorigin src="/hearwise-child-health/assets/index-BCy4dfi6.js"></script>
     <link rel="modulepreload" crossorigin href="/hearwise-child-health/assets/router-CooTeSgm.js">
-    <link rel="modulepreload" crossorigin href="/hearwise-child-health/assets/ui-VBf5s6Zf.js">
+    <link rel="modulepreload" crossorigin href="/hearwise-child-health/assets/ui-DxHzpFgT.js">
     <link rel="modulepreload" crossorigin href="/hearwise-child-health/assets/charts-2gcD1qLF.js">
     <link rel="modulepreload" crossorigin href="/hearwise-child-health/assets/supabase-DFdX1Aey.js">
     <link rel="stylesheet" crossorigin href="/hearwise-child-health/assets/index-CJuiwFui.css">
-  <link rel="manifest" href="/hearwise-child-health/manifest.webmanifest"></head>
-
+  </head>
   <body>
     <div id="root"></div>
     <script>
-      window.onerror = function(msg, url, line, col, error) {
-        console.error("Global Error: " + msg + " at " + url + ":" + line);
-        // alert("Global Error: " + msg); // Uncomment for extreme debugging
+      console.log("Index.html loaded");
+      window.onerror = function(msg, url, line) {
+        document.body.innerHTML += '<div style="color:red;padding:20px;background:white;z-index:9999;position:fixed;top:0;">Error: ' + msg + '</div>';
       };
     </script>
   </body>
