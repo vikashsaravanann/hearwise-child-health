@@ -196,15 +196,9 @@ export default function HearBot() {
             style={{ height: '540px' }}
           >
             {/* Background */}
-            <div className="absolute inset-0 bg-black">
-              <div
-                className="absolute inset-0 opacity-[0.04]"
-                style={{
-                  backgroundImage: 'radial-gradient(circle, #14b8a6 1px, transparent 1px)',
-                  backgroundSize: '28px 28px',
-                }}
-              />
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-48 rounded-full bg-teal-500/10 blur-[60px] pointer-events-none" />
+            <div className="absolute inset-0 pointer-events-none">
+              <img src={`${import.meta.env.BASE_URL}space-bg.png`} alt="background" className="w-full h-full object-cover opacity-80" />
+              <div className="absolute inset-0 bg-black/40" />
             </div>
 
             {/* Header */}
