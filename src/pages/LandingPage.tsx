@@ -128,10 +128,10 @@ export default function LandingPage() {
             </span>
           </div>
           
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 md:gap-4">
             <Button 
               variant="ghost" 
-              className="hidden sm:flex text-white/70 hover:text-white hover:bg-white/10 uppercase tracking-widest text-xs font-semibold"
+              className="hidden lg:flex text-white/70 hover:text-white hover:bg-white/10 uppercase tracking-widest text-[10px] font-semibold"
               onClick={() => {
                 document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
               }}
@@ -140,30 +140,44 @@ export default function LandingPage() {
             </Button>
             <Button 
               variant="ghost" 
-              className="hidden sm:flex text-white/70 hover:text-white hover:bg-white/10 uppercase tracking-widest text-xs font-semibold"
+              className="hidden lg:flex text-white/70 hover:text-white hover:bg-white/10 uppercase tracking-widest text-[10px] font-semibold"
               onClick={() => navigate('/about')}
             >
-              ABOUT HEARWISE TECHNOLOGIES
+              ABOUT
             </Button>
             <Button 
               variant="ghost" 
-              className="hidden sm:flex text-white/70 hover:text-white hover:bg-white/10 uppercase tracking-widest text-xs font-semibold"
+              className="hidden lg:flex text-white/70 hover:text-white hover:bg-white/10 uppercase tracking-widest text-[10px] font-semibold"
               onClick={() => navigate('/hearing-health')}
             >
-              HEARWISE HEALTH OPERATIONS
+              HEALTH
+            </Button>
+            <Button 
+              variant="ghost" 
+              className="hidden lg:flex text-white/70 hover:text-white hover:bg-white/10 uppercase tracking-widest text-[10px] font-semibold"
+              onClick={() => navigate('/blog')}
+            >
+              BLOG
+            </Button>
+            <Button 
+              variant="ghost" 
+              className="hidden lg:flex text-white/70 hover:text-white hover:bg-white/10 uppercase tracking-widest text-[10px] font-semibold"
+              onClick={() => navigate('/audiologists')}
+            >
+              CLINICS
             </Button>
             {!user ? (
               <>
                 <Button 
                   variant="ghost" 
-                  className="hidden sm:flex text-white/70 hover:text-white hover:bg-white/10 uppercase tracking-widest text-xs font-semibold"
+                  className="hidden sm:flex text-white/70 hover:text-white hover:bg-white/10 uppercase tracking-widest text-[10px] font-semibold"
                   onClick={() => navigate('/onboarding')}
                 >
-                  REGISTER SCHOOL
+                  REGISTER
                 </Button>
                 <Button 
                   variant="outline" 
-                  className="hidden sm:flex text-teal-400 border-teal-500 hover:bg-teal-500/10 uppercase tracking-widest text-xs font-semibold"
+                  className="hidden sm:flex text-teal-400 border-teal-500 hover:bg-teal-500/10 uppercase tracking-widest text-[10px] font-semibold"
                   onClick={() => navigate('/login')}
                 >
                   SIGN IN
