@@ -75,7 +75,7 @@ export default function Login() {
     setLoading(true);
     setError('');
     try {
-      const redirectUrl = `${window.location.origin}/auth/callback`;
+      const redirectUrl = `${window.location.origin}${import.meta.env.BASE_URL}auth/callback`;
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
@@ -108,7 +108,7 @@ export default function Login() {
         email: email.toLowerCase().trim(),
         options: {
           shouldCreateUser: true,
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
+          emailRedirectTo: `${window.location.origin}${import.meta.env.BASE_URL}auth/callback`,
         },
       });
       if (error) {
