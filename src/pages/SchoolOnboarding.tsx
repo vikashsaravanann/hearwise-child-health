@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSession } from '@/contexts/SessionContext';
 import { t } from '@/lib/i18n';
-import PageWrapper from '@/components/shared/PageWrapper';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -118,7 +118,7 @@ export default function SchoolOnboarding() {
 
   if (isSuccess) {
     return (
-      <PageWrapper title="Registration Complete" backPath="/">
+      <>
         <div className="bg-[#020817] min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
           <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none mix-blend-overlay"></div>
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-emerald-500/20 rounded-full blur-[150px] pointer-events-none" />
@@ -160,12 +160,12 @@ export default function SchoolOnboarding() {
             </Button>
           </motion.div>
         </div>
-      </PageWrapper>
+      </>
     );
   }
 
   return (
-    <PageWrapper title="Register School" backPath="/">
+    <>
       <div className="bg-[#020817] min-h-screen text-slate-200 relative overflow-hidden pb-24">
         
         {/* Animated background orbs */}
@@ -601,6 +601,6 @@ export default function SchoolOnboarding() {
           </div>
         </div>
       </div>
-    </PageWrapper>
+    </>
   );
 }

@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import PageWrapper from '@/components/shared/PageWrapper';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -105,7 +105,7 @@ export default function Audiologists() {
   };
 
   return (
-    <PageWrapper title="Find an Audiologist" backPath="/">
+    <>
       <div className="bg-[#020817] min-h-screen text-slate-300 pb-24 relative overflow-hidden">
         
         {/* Animated background orbs */}
@@ -434,6 +434,6 @@ export default function Audiologists() {
 
         </div>
       </div>
-    </PageWrapper>
+    </>
   );
 }

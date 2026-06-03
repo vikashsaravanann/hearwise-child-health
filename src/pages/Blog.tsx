@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import PageWrapper from '@/components/shared/PageWrapper';
+
 import { blogPosts } from '@/data/blogPosts';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, BookOpen, Mail, BellRing, Sparkles } from 'lucide-react';
@@ -19,7 +19,7 @@ export default function Blog() {
   const featuredPost = blogPosts[0];
 
   return (
-    <PageWrapper title="Blog" backPath="/">
+    <>
       <div className="bg-[#020817] min-h-screen text-slate-300 relative overflow-hidden pb-24">
         
         {/* Animated background orbs */}
@@ -208,6 +208,6 @@ export default function Blog() {
 
         </div>
       </div>
-    </PageWrapper>
+    </>
   );
 }
