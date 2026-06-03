@@ -2,6 +2,13 @@ import { useSession } from '@/contexts/SessionContext';
 
 export default function LanguageToggle() {
   const { lang, setLang } = useSession();
+  
+  const handleToggle = () => {
+    if (lang === 'en') setLang('ta');
+    else if (lang === 'ta') setLang('hi');
+    else setLang('en');
+  };
+
   return (
     <div className="fixed top-4 right-4 z-[100] flex items-center gap-1 rounded-full border border-white/20 bg-black/40 backdrop-blur-md p-1 shadow-lg">
       <button
@@ -16,6 +23,13 @@ export default function LanguageToggle() {
       >
         தமிழ்
       </button>
+      <button
+        onClick={() => setLang('hi')}
+        className={`rounded-full px-3 py-1 text-sm font-bold transition-all ${lang === 'hi' ? 'bg-cyan-500 text-[#000b1d] shadow-md' : 'text-white/70 hover:text-white hover:bg-white/10'}`}
+      >
+        हिंदी
+      </button>
     </div>
   );
 }
+

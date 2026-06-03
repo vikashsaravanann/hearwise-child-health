@@ -31,6 +31,8 @@ import ImpactSection from '@/components/ImpactSection';
 import TestimonialsSection from '@/components/TestimonialsSection';
 
 import OceanBackground from '@/components/OceanBackground';
+import VideoCard from '@/components/VideoCard';
+import VideoModal from '@/components/VideoModal';
 
 // Animated Bubble Component for the original dark theme
 const Bubble = ({ size, delay, left }: { size: number, delay: number, left: string }) => (
@@ -60,6 +62,15 @@ export default function LandingPage() {
   const { lang } = useSession();
   const { user, isAdmin, signOut } = useAuth();
   const [scrolled, setScrolled] = useState(false);
+  
+  // Video Modal State
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
+  const [currentVideoId, setCurrentVideoId] = useState('');
+
+  const openVideo = (youtubeId: string) => {
+    setCurrentVideoId(youtubeId);
+    setIsVideoModalOpen(true);
+  };
 
   // Show blocked message when redirected from dashboard (non-admin tried to access)
   useEffect(() => {
@@ -314,6 +325,44 @@ export default function LandingPage() {
                 </motion.div>
               </div>
             </motion.div>
+          </section>
+
+          {/* Videos Section */}
+          <section className="mt-24 mb-10">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl font-black mb-4">See HearWise in Action</h2>
+              <p className="text-white/60">Watch how HearWise is changing lives in schools across Tamil Nadu</p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <VideoCard 
+                thumbnailColor="bg-gradient-to-br from-teal-800 to-slate-900"
+                title="What is HearWise? — 60 Second Overview"
+                description="Learn how HearWise helps school teachers screen children for hearing loss in just 2 minutes."
+                duration="1:02"
+                youtubeId="PLACEHOLDER_VIDEO_1"
+                icon="👂"
+                onClick={() => openVideo('PLACEHOLDER_VIDEO_1')}
+              />
+              <VideoCard 
+                thumbnailColor="bg-gradient-to-br from-blue-800 to-slate-900"
+                title="How to Conduct a Hearing Test — Teacher Guide"
+                description="Step-by-step walkthrough of how any school teacher can run the HearWise hearing test."
+                duration="3:45"
+                youtubeId="PLACEHOLDER_VIDEO_2"
+                icon="🏫"
+                onClick={() => openVideo('PLACEHOLDER_VIDEO_2')}
+              />
+              <VideoCard 
+                thumbnailColor="bg-gradient-to-br from-purple-800 to-slate-900"
+                title="Why Early Detection Changes Everything"
+                description="Hear from experts about how detecting hearing loss early transforms a child's future."
+                duration="4:12"
+                youtubeId="PLACEHOLDER_VIDEO_3"
+                icon="🧒"
+                onClick={() => openVideo('PLACEHOLDER_VIDEO_3')}
+              />
+            </div>
           </section>
 
           {/* Impact Section */}
@@ -819,6 +868,12 @@ export default function LandingPage() {
         }
         .animate-pulse-glow { animation: pulse-glow 8s infinite alternate ease-in-out; }
       `}</style>
+      {/* Video Modal */}
+      <VideoModal 
+        isOpen={isVideoModalOpen} 
+        onClose={() => setIsVideoModalOpen(false)} 
+        youtubeId={currentVideoId} 
+      />
     </div>
   );
 }

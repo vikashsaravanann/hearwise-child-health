@@ -1,9 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PageWrapper from '@/components/shared/PageWrapper';
 import FadeInSection from '@/components/FadeInSection';
 import { Target, Lightbulb, Users, Globe2, Heart, Award } from 'lucide-react';
+import VideoCard from '@/components/VideoCard';
+import VideoModal from '@/components/VideoModal';
 
 export default function AboutPage() {
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
+  
   return (
     <PageWrapper title="About HearWise Technologies" showBack={true} backTo="/">
       <div className="min-h-screen bg-slate-50 pb-20">
@@ -23,6 +27,23 @@ export default function AboutPage() {
         </FadeInSection>
 
         <div className="max-w-6xl mx-auto px-6 space-y-24 mt-16">
+          
+          {/* Section 1.5: Video */}
+          <FadeInSection delay={0.15}>
+            <div className="max-w-3xl mx-auto">
+              <div className="text-center mb-8">
+                <h2 className="hw-section-title">Our Story in 90 Seconds</h2>
+              </div>
+              <VideoCard 
+                thumbnailColor="bg-gradient-to-br from-indigo-800 to-purple-900"
+                title="The Story of HearWise Technologies"
+                description="Why we built HearWise, who we built it for, and where we are going."
+                duration="1:32"
+                youtubeId="PLACEHOLDER_ABOUT_VIDEO"
+                onClick={() => setIsVideoModalOpen(true)}
+              />
+            </div>
+          </FadeInSection>
           
           {/* Section 2: Mission & Vision */}
           <FadeInSection delay={0.2}>
@@ -123,6 +144,12 @@ export default function AboutPage() {
 
         </div>
       </div>
+      
+      <VideoModal 
+        isOpen={isVideoModalOpen} 
+        onClose={() => setIsVideoModalOpen(false)} 
+        youtubeId="PLACEHOLDER_ABOUT_VIDEO" 
+      />
     </PageWrapper>
   );
 }
