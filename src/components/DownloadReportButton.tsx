@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { generateReport, ScreeningResult } from '@/utils/generateReport';
+import { generateHearWiseReport } from '@/utils/generateReport';
 import { FileText, Loader2 } from 'lucide-react';
+import type { EarResult, ReportData } from '@/utils/generateReport';
 
 interface DownloadReportButtonProps {
-  result: ScreeningResult;
+  result: ReportData;
 }
 
 export default function DownloadReportButton({ result }: DownloadReportButtonProps) {
@@ -12,10 +13,9 @@ export default function DownloadReportButton({ result }: DownloadReportButtonPro
 
   const handleDownload = () => {
     setIsGenerating(true);
-    // Add a small delay to show the loading state before synchronous PDF generation blocks the thread
     setTimeout(() => {
       try {
-        generateReport(result);
+        generateHearWiseReport(result);
       } catch (error) {
         console.error("Failed to generate PDF:", error);
       } finally {
@@ -28,7 +28,7 @@ export default function DownloadReportButton({ result }: DownloadReportButtonPro
     <Button 
       onClick={handleDownload} 
       disabled={isGenerating}
-      className="bg-teal-600 hover:bg-teal-500 text-white font-medium"
+      className="h-16 px-6 rounded-2xl text-base font-bold bg-teal-600 hover:bg-teal-500 text-white shadow-xl flex items-center justify-center gap-2 transition-all"
     >
       {isGenerating ? (
         <>
@@ -38,7 +38,7 @@ export default function DownloadReportButton({ result }: DownloadReportButtonPro
       ) : (
         <>
           <FileText className="mr-2 h-4 w-4" />
-          📄 Download Report (PDF)
+          📄 Download PDF Report
         </>
       )}
     </Button>

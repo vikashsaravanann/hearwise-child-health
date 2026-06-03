@@ -10,8 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Share2, ArrowRight, UserRoundPlus, Home, Volume2, ShieldCheck, HeartPulse, Hospital } from 'lucide-react';
 import OceanBackground from '@/components/OceanBackground';
 import DownloadReportButton from '@/components/DownloadReportButton';
-import type { ScreeningResult } from '@/utils/generateReport';
-
+import type { ReportData } from '@/utils/generateReport';
 const freqs = ['500', '1000', '2000', '4000'] as const;
 
 function FreqBar({ label, passed }: { label: string; passed: boolean }) {
@@ -94,24 +93,23 @@ export default function ResultsPage() {
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
   };
 
-  const screeningResultData: ScreeningResult = {
-    studentName: student.name,
-    age: student.age,
+  const screeningResultData: ReportData = {
+    childName: student.name,
+    age: student.age.toString(),
     schoolName: session?.schoolName || 'N/A',
-    classSection: 'N/A',
-    teacherName: session?.teacherName || 'N/A',
-    overallResult: results.overall === 'normal' ? 'PASS' : 'REFER',
-    rightEar: freqs.map(f => ({
+    className: 'N/A',
+    testDate: new Date().toLocaleDateString('en-IN'),
+    overallResult: results.overall === 'normal' ? 'pass' : 'refer',
+    conductedBy: user?.email || session?.teacherName || 'HearWise Screener',
+    rightEarResults: freqs.map(f => ({
       level: 40,
-      sound: 'Tone',
-      frequency: `${f}Hz`,
-      result: results.right[f] ? 'Pass' : 'Refer'
+      frequency: `${f} Hz`,
+      result: results.right[f] ? 'pass' : 'refer'
     })),
-    leftEar: freqs.map(f => ({
+    leftEarResults: freqs.map(f => ({
       level: 40,
-      sound: 'Tone',
-      frequency: `${f}Hz`,
-      result: results.left[f] ? 'Pass' : 'Refer'
+      frequency: `${f} Hz`,
+      result: results.left[f] ? 'pass' : 'refer'
     }))
   };
 

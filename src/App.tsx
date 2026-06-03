@@ -17,7 +17,6 @@ import PageLoadingSkeleton from "@/components/PageLoadingSkeleton";
 import LandingPage from "./pages/LandingPage";
 import { AnimatePresence } from 'framer-motion';
 import PageTransition from '@/components/PageTransition';
-import PWAInstallPrompt from '@/components/PWAInstallPrompt';
 
 const LoginPage = React.lazy(() => import("./pages/Login"));
 const AuthCallback = React.lazy(() => import("./pages/AuthCallback"));
@@ -49,6 +48,7 @@ const SchoolOnboarding = React.lazy(() => import("./pages/SchoolOnboarding"));
 const TeacherTraining = React.lazy(() => import("./pages/TeacherTraining"));
 const Blog = React.lazy(() => import("./pages/Blog"));
 const BlogPost = React.lazy(() => import("./pages/BlogPost"));
+const Audiologists = React.lazy(() => import("./pages/Audiologists"));
 const AdminLayout = React.lazy(() => import("./components/AdminLayout"));
 const AdminGuard = React.lazy(() => import("./components/AdminGuard"));
 const AdminOverviewPage = React.lazy(() => import("./pages/admin/AdminOverviewPage"));
@@ -91,6 +91,7 @@ const InnerRoutes = () => {
         <Route path="/teacher-training" element={<PageTransition><TeacherTraining /></PageTransition>} />
         <Route path="/blog" element={<PageTransition><Blog /></PageTransition>} />
         <Route path="/blog/:slug" element={<PageTransition><BlogPost /></PageTransition>} />
+        <Route path="/audiologists" element={<PageTransition><Audiologists /></PageTransition>} />
         
         {/* Protected App Routes */}
         <Route path="/setup" element={<PageTransition><ProtectedRoute><SessionSetupPage /></ProtectedRoute></PageTransition>} />
@@ -167,7 +168,6 @@ const App = () => (
               <InnerRoutes />
             </Suspense>
           </BrowserRouter>
-          <PWAInstallPrompt />
           <SpeedInsights />
         </SessionProvider>
       </TooltipProvider>

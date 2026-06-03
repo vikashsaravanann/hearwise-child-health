@@ -1,307 +1,320 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { useSession } from '@/contexts/SessionContext';
+import React, { useState } from 'react';
 import PageWrapper from '@/components/shared/PageWrapper';
-import { Button } from '@/components/ui/button';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Label } from '@/components/ui/label';
+import FadeInSection from '@/components/FadeInSection';
+import VideoCard from '@/components/VideoCard';
+import VideoModal from '@/components/VideoModal';
+import { jsPDF } from 'jspdf';
 import { 
-  CheckCircle2, 
-  Smartphone, 
-  Headphones, 
-  ClipboardList, 
-  VolumeX, 
-  Clock, 
-  AlertTriangle,
-  Award
+  FileDown, CheckCircle2, AlertCircle, XCircle 
 } from 'lucide-react';
-import confetti from 'canvas-confetti';
 
-const QUIZ_QUESTIONS = [
+const steps = [
   {
-    id: 1,
-    question: "Do you need medical training to conduct a HearWise screening?",
-    options: [
-      "Yes, you must be a doctor.",
-      "Yes, you must be a nurse.",
-      "No, any teacher can do it after this 10-minute training."
-    ],
-    answer: 2
+    num: 1,
+    title: 'Prepare the Environment',
+    icon: '🔇',
+    body: "Find a quiet room or corner away from classroom noise. The room doesn't need to be silent, but background noise should be minimal. A library, corridor, or empty classroom works well."
   },
   {
-    id: 2,
-    question: "What equipment do you need?",
-    options: [
-      "A laptop and a quiet room.",
-      "An Android smartphone and standard wired headphones.",
-      "An iPad and Bluetooth headphones."
-    ],
-    answer: 1
+    num: 2,
+    title: 'Check the Device',
+    icon: '📱',
+    body: "Use a smartphone or tablet with a working headphone jack or Bluetooth headphone connection. Make sure the volume is set to exactly 60–70% — not too loud, not too quiet. Test the sound yourself first."
   },
   {
-    id: 3,
-    question: "During the test, if the child does not raise their hand within 3 seconds, what should you do?",
-    options: [
-      "Tap 'Not Heard'.",
-      "Tap 'Heard'.",
-      "Point to their ear to remind them."
-    ],
-    answer: 0
+    num: 3,
+    title: 'Use the Right Headphones',
+    icon: '🎧',
+    body: "Use over-ear or in-ear headphones that fully cover or sit inside the child's ears. Do not use open-back or speaker mode. The child must wear headphones for accurate results."
   },
   {
-    id: 4,
-    question: "Is it okay if there is a lot of background noise?",
-    options: [
-      "Yes, it doesn't matter.",
-      "No, you should find a reasonably quiet corner or room.",
-      "You must test them outside."
-    ],
-    answer: 1
+    num: 4,
+    title: 'Explain to the Child',
+    icon: '👋',
+    body: "Tell the child: 'You will hear some sounds — like birds, ocean waves, and water. Whenever you hear a sound, raise your hand or say YES. If you don't hear anything, stay quiet.' Do a practice round first."
   },
   {
-    id: 5,
-    question: "What does an 'Amber / Refer' result mean?",
+    num: 5,
+    title: 'Run the Test',
+    icon: '▶️',
+    body: "Click 'Start Test' on the HearWise screen. The test will play sounds for the left ear first (5 levels), then the right ear (5 levels). Record the child's response for each level accurately."
+  },
+  {
+    num: 6,
+    title: 'Record Results Honestly',
+    icon: '✏️',
+    body: "Mark PASS only if the child clearly responds to the sound. If the child seems unsure, does not respond, or looks confused, mark REFER. It is better to over-refer than under-refer."
+  },
+  {
+    num: 7,
+    title: 'Download and Share the Report',
+    icon: '📄',
+    body: "After the test, click 'Download PDF Report'. Share it with the child's parents. If the result is REFER, also share the link to the HearWise Audiologist Directory."
+  }
+];
+
+const quizQuestions = [
+  {
+    q: "What volume level should you set the device to before starting a HearWise test?",
+    options: ["30-40%", "60-70%", "100%", "Any volume"],
+    correct: 1
+  },
+  {
+    q: "Which type of headphones should you use?",
+    options: ["Phone speakers", "Open-back headphones", "Over-ear or in-ear headphones", "Earbuds without ear tips"],
+    correct: 2
+  },
+  {
+    q: "If a child seems unsure whether they heard a sound, what should you mark?",
+    options: ["PASS", "REFER", "Skip that level", "Repeat the sound 5 times"],
+    correct: 1
+  },
+  {
+    q: "How many total sound levels does a full HearWise test have?",
+    options: ["5", "8", "10", "12"],
+    correct: 2
+  },
+  {
+    q: "What should you do after a child receives a REFER result?",
     options: [
-      "The child definitely has permanent hearing loss.",
-      "The child failed the test and has to repeat a grade.",
-      "A possible hearing concern was detected and an audiologist should evaluate the child."
+      "Re-test immediately", 
+      "Ignore it", 
+      "Download the PDF report and share with parents + refer to an audiologist", 
+      "Send them back to class"
     ],
-    answer: 2
+    correct: 2
   }
 ];
 
 export default function TeacherTraining() {
-  const navigate = useNavigate();
-  const { lang } = useSession();
-  const [scrollProgress, setScrollProgress] = useState(0);
-  const [answers, setAnswers] = useState<Record<number, number>>({});
-  const [showResults, setShowResults] = useState(false);
-  const [score, setScore] = useState(0);
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
+  
+  // Quiz State
+  const [currentQ, setCurrentQ] = useState(0);
+  const [answers, setAnswers] = useState<number[]>([]);
+  const [showResult, setShowResult] = useState(false);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const totalScroll = document.documentElement.scrollTop;
-      const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-      const scroll = `${totalScroll / windowHeight}`;
-      setScrollProgress(Number(scroll) * 100);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  const handleAnswer = (idx: number) => {
+    const newAnswers = [...answers];
+    newAnswers[currentQ] = idx;
+    setAnswers(newAnswers);
 
-  const handleAnswer = (qId: number, answerIdx: number) => {
-    setAnswers(prev => ({ ...prev, [qId]: answerIdx }));
-  };
-
-  const submitQuiz = () => {
-    let currentScore = 0;
-    QUIZ_QUESTIONS.forEach(q => {
-      if (answers[q.id] === q.answer) currentScore++;
-    });
-    setScore(currentScore);
-    setShowResults(true);
-
-    if (currentScore >= 4) {
-      confetti({
-        particleCount: 100,
-        spread: 70,
-        origin: { y: 0.6 }
-      });
+    if (currentQ < quizQuestions.length - 1) {
+      setTimeout(() => setCurrentQ(currentQ + 1), 600);
+    } else {
+      setTimeout(() => setShowResult(true), 600);
     }
   };
 
+  const calculateScore = () => {
+    return answers.reduce((score, answer, idx) => {
+      return score + (answer === quizQuestions[idx].correct ? 1 : 0);
+    }, 0);
+  };
+
+  const score = calculateScore();
+
+  const downloadGuide = () => {
+    const doc = new jsPDF();
+    doc.setFontSize(22);
+    doc.text("HearWise Teacher Guide", 20, 20);
+    
+    doc.setFontSize(12);
+    let y = 40;
+    steps.forEach((step) => {
+      doc.setFont("helvetica", "bold");
+      doc.text(`${step.num}. ${step.title}`, 20, y);
+      doc.setFont("helvetica", "normal");
+      
+      const splitText = doc.splitTextToSize(step.body, 170);
+      doc.text(splitText, 20, y + 7);
+      
+      y += 15 + (splitText.length * 5);
+      if (y > 270) {
+        doc.addPage();
+        y = 20;
+      }
+    });
+
+    doc.save("HearWise_Teacher_Guide.pdf");
+  };
+
   return (
-    <PageWrapper title="Teacher Training" backPath="/">
-      {/* Progress Bar */}
-      <div className="fixed top-0 left-0 h-1 bg-teal-500 z-50 transition-all duration-150" style={{ width: `${scrollProgress}%` }} />
-
-      <div className="bg-[#000b1d] min-h-screen text-slate-300 py-12 px-4 md:px-8 pb-32">
-        <div className="max-w-3xl mx-auto space-y-20">
-          
-          <div className="text-center space-y-4">
-            <h1 className="text-4xl md:text-5xl font-black text-white tracking-tight">Teacher Training Guide</h1>
-            <p className="text-lg text-teal-400">Learn how to conduct a HearWise hearing screening in 10 minutes</p>
+    <PageWrapper title="Teacher Training" showBack={true} backTo="/">
+      <div className="min-h-screen bg-slate-50 pb-20">
+        
+        {/* Section 1: Video */}
+        <div className="bg-slate-900 pt-24 pb-16 px-6 relative overflow-hidden">
+          <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+          <div className="max-w-4xl mx-auto relative z-10">
+            <h1 className="text-4xl md:text-5xl font-black text-white text-center mb-4 font-['Syne']">
+              Watch Before You Start — 3 Minute Training Video
+            </h1>
+            <p className="text-slate-400 text-center text-lg mb-12">
+              Complete Teacher Training — How to Use HearWise
+            </p>
+            
+            <VideoCard 
+              thumbnailColor="bg-gradient-to-br from-teal-800 to-slate-900"
+              title="Complete Teacher Training — How to Use HearWise"
+              description="Watch this once before conducting your first hearing test. Covers setup, test flow, and interpreting results."
+              duration="3:20"
+              youtubeId="PLACEHOLDER_TRAINING_VIDEO"
+              onClick={() => setIsVideoModalOpen(true)}
+            />
           </div>
+        </div>
 
-          {/* MODULE 1 */}
-          <section className="space-y-6">
-            <h2 className="text-3xl font-bold text-white flex items-center gap-3">
-              <span className="w-10 h-10 rounded-xl bg-teal-500/20 text-teal-400 flex items-center justify-center text-lg">1</span>
-              Welcome, Teacher! 👩‍🏫
-            </h2>
-            <div className="glass-panel p-6 sm:p-8 rounded-3xl bg-white/5 border border-white/10 text-lg leading-relaxed">
-              <p className="mb-6">
-                You are about to make a real difference in a child's life. This guide will teach you everything you need to know to conduct a HearWise hearing screening. The entire process takes about 5–10 minutes per child, and you need no prior medical knowledge. Just follow the steps carefully.
-              </p>
-              <ul className="space-y-3 font-medium">
-                <li className="flex items-center gap-3"><CheckCircle2 className="text-emerald-400 w-6 h-6" /> No medical training required</li>
-                <li className="flex items-center gap-3"><CheckCircle2 className="text-emerald-400 w-6 h-6" /> Works on any Android smartphone</li>
-                <li className="flex items-center gap-3"><CheckCircle2 className="text-emerald-400 w-6 h-6" /> Children find it fun and engaging</li>
-                <li className="flex items-center gap-3"><CheckCircle2 className="text-emerald-400 w-6 h-6" /> Results are instant and automatic</li>
-                <li className="flex items-center gap-3"><CheckCircle2 className="text-emerald-400 w-6 h-6" /> You can screen 50 children per hour</li>
-              </ul>
+        {/* Section 2: Step-by-Step Guide */}
+        <div className="max-w-4xl mx-auto px-6 mt-20">
+          <FadeInSection delay={0.1}>
+            <div className="text-center mb-12">
+              <h2 className="hw-section-title text-slate-900">How to Conduct a HearWise Hearing Test</h2>
+              <p className="text-slate-500 text-lg">Follow these 7 steps carefully before starting any child's test.</p>
             </div>
-          </section>
-
-          {/* MODULE 2 */}
-          <section className="space-y-6">
-            <h2 className="text-3xl font-bold text-white flex items-center gap-3">
-              <span className="w-10 h-10 rounded-xl bg-teal-500/20 text-teal-400 flex items-center justify-center text-lg">2</span>
-              What You Need
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="glass-panel p-6 rounded-2xl bg-white/5 border border-white/10 flex items-center gap-4">
-                <Smartphone className="w-10 h-10 text-cyan-400 shrink-0" />
-                <span className="font-bold text-white">One Android smartphone (charged &gt;50%)</span>
-              </div>
-              <div className="glass-panel p-6 rounded-2xl bg-white/5 border border-white/10 flex items-center gap-4">
-                <Headphones className="w-10 h-10 text-pink-400 shrink-0" />
-                <span className="font-bold text-white">Standard wired headphones (3.5mm jack)</span>
-              </div>
-              <div className="glass-panel p-6 rounded-2xl bg-white/5 border border-white/10 flex items-center gap-4">
-                <ClipboardList className="w-10 h-10 text-emerald-400 shrink-0" />
-                <span className="font-bold text-white">Student list with names and ages</span>
-              </div>
-              <div className="glass-panel p-6 rounded-2xl bg-white/5 border border-white/10 flex items-center gap-4">
-                <VolumeX className="w-10 h-10 text-orange-400 shrink-0" />
-                <span className="font-bold text-white">A reasonably quiet room or corner</span>
-              </div>
-              <div className="glass-panel p-6 rounded-2xl bg-white/5 border border-white/10 flex items-center gap-4 sm:col-span-2">
-                <Clock className="w-10 h-10 text-blue-400 shrink-0" />
-                <span className="font-bold text-white">5–10 minutes per student</span>
-              </div>
-            </div>
-            <div className="bg-amber-900/30 border border-amber-500/30 rounded-2xl p-6 flex gap-4 mt-6">
-              <AlertTriangle className="w-8 h-8 text-amber-500 shrink-0" />
-              <p className="text-amber-100 font-medium">
-                The room does not need to be completely silent, but avoid loud ongoing noise like a running fan directly next to the student or a noisy classroom next door.
-              </p>
-            </div>
-          </section>
-
-          {/* MODULE 3 */}
-          <section className="space-y-6">
-            <h2 className="text-3xl font-bold text-white flex items-center gap-3">
-              <span className="w-10 h-10 rounded-xl bg-teal-500/20 text-teal-400 flex items-center justify-center text-lg">3</span>
-              Step by Step Guide
-            </h2>
-            <div className="space-y-4">
-              {[
-                { title: 'Open the HearWise App', desc: 'Open the HearWise app on your smartphone. Make sure the device is connected to the internet at least once to sync any previous results. The app works offline — data will sync later.' },
-                { title: 'Create a New Session', desc: 'Tap "New Screening Session". Enter your school name and your name as the teacher. This will be saved with all results.' },
-                { title: 'Seat the Student Correctly', desc: 'Have the student sit comfortably in a chair facing away from any windows or distractions. Make sure they are calm and not anxious. Explain that this is not a test they can pass or fail — it is just a check-up.' },
-                { title: 'Put On the Headphones', desc: 'Place the headphones on the student. Make sure: RIGHT ear cup is on the RIGHT ear (look for R). LEFT ear cup on LEFT. Cable is not tangled.' },
-                { title: 'Complete the Headphone Check', desc: 'The app will play a brief check tone in each ear. Ask the student: "Did you hear that? Which ear?" This confirms the headphones are working correctly.' },
-                { title: 'Practice Round', desc: 'The app runs a practice round. Tell the student: "Every time you hear a sound — raise your hand. If you hear it in your right ear, raise your right hand. Left ear, left hand." Let them do 2-3 practice responses.' },
-                { title: 'Run the Hearing Test', desc: 'The test will start automatically. For each sound, tap "Heard" if the student raises their hand, "Not Heard" if they do not respond after 3 seconds. Do NOT prompt or gesture to the student.' },
-                { title: 'View and Share Results', desc: 'Results appear immediately. Green = Pass. Amber = Refer. Download the PDF report and send it to the parent. All results save automatically.' },
-              ].map((step, i) => (
-                <div key={i} className="glass-panel p-6 rounded-2xl bg-white/5 border border-white/10 flex gap-6">
-                  <div className="w-12 h-12 rounded-full bg-teal-500/20 text-teal-400 flex items-center justify-center font-bold text-xl shrink-0 mt-1">
-                    {i + 1}
+            
+            <div className="space-y-6">
+              {steps.map((step, idx) => (
+                <div key={idx} className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 flex gap-6 hover:shadow-md transition-shadow">
+                  <div className="flex-shrink-0 w-16 h-16 rounded-full bg-teal-50 text-3xl flex items-center justify-center border border-teal-100">
+                    {step.icon}
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-white mb-2">{step.title}</h3>
-                    <p className="text-slate-400 leading-relaxed">{step.desc}</p>
+                    <h3 className="text-xl font-bold text-slate-900 mb-2 font-['Syne'] flex items-center gap-2">
+                      <span className="text-teal-600">Step {step.num}:</span> {step.title}
+                    </h3>
+                    <p className="text-slate-600 leading-relaxed">
+                      {step.body}
+                    </p>
                   </div>
                 </div>
               ))}
             </div>
-          </section>
 
-          {/* MODULE 4 */}
-          <section className="space-y-6">
-            <h2 className="text-3xl font-bold text-white flex items-center gap-3">
-              <span className="w-10 h-10 rounded-xl bg-teal-500/20 text-teal-400 flex items-center justify-center text-lg">4</span>
-              Do's and Don'ts
-            </h2>
-            <div className="grid sm:grid-cols-2 gap-6">
-              <div className="glass-panel p-6 rounded-2xl bg-emerald-900/20 border border-emerald-500/30">
-                <h3 className="text-xl font-bold text-emerald-400 mb-4 flex items-center gap-2">✅ DO</h3>
-                <ul className="space-y-3 text-slate-300">
-                  <li>• Keep the room reasonably quiet</li>
-                  <li>• Speak calmly and reassuringly</li>
-                  <li>• Wait a full 3 seconds before marking 'Not Heard'</li>
-                  <li>• Test both ears for every child</li>
-                  <li>• Download and share the report</li>
-                </ul>
-              </div>
-              <div className="glass-panel p-6 rounded-2xl bg-rose-900/20 border border-rose-500/30">
-                <h3 className="text-xl font-bold text-rose-400 mb-4 flex items-center gap-2">❌ DON'T</h3>
-                <ul className="space-y-3 text-slate-300">
-                  <li>• Don't tell the child whether they passed or failed during the test</li>
-                  <li>• Don't gesture or give visual cues</li>
-                  <li>• Don't test a sick child</li>
-                  <li>• Don't share results with other students</li>
-                  <li>• Don't skip the practice round</li>
-                </ul>
-              </div>
+            {/* Section 4: Download Guide */}
+            <div className="mt-10 flex justify-center">
+              <button 
+                onClick={downloadGuide}
+                className="flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white px-8 py-4 rounded-xl font-bold transition-all shadow-lg shadow-teal-600/20"
+              >
+                <FileDown size={20} />
+                Download Teacher Guide PDF
+              </button>
             </div>
-          </section>
+          </FadeInSection>
+        </div>
 
-          {/* MODULE 5 - QUIZ */}
-          <section className="space-y-6">
-            <h2 className="text-3xl font-bold text-white flex items-center gap-3">
-              <span className="w-10 h-10 rounded-xl bg-teal-500/20 text-teal-400 flex items-center justify-center text-lg">5</span>
-              Certification Quiz
-            </h2>
-            <p className="text-lg">Score 4/5 to receive your Certified Screener badge!</p>
+        {/* Section 3: Quick Quiz */}
+        <div className="max-w-3xl mx-auto px-6 mt-32">
+          <FadeInSection delay={0.2}>
+            <div className="bg-white rounded-3xl p-8 md:p-12 shadow-xl border border-slate-100">
+              <div className="text-center mb-10">
+                <h2 className="hw-section-title text-slate-900 !mb-2">Quick Knowledge Check</h2>
+                <p className="text-slate-500">Answer these 5 questions to confirm you are ready to conduct screenings.</p>
+              </div>
 
-            <div className="space-y-8">
-              {QUIZ_QUESTIONS.map((q, i) => (
-                <div key={q.id} className="glass-panel p-6 rounded-2xl bg-white/5 border border-white/10">
-                  <h3 className="text-lg font-bold text-white mb-4">{i + 1}. {q.question}</h3>
-                  <RadioGroup value={answers[q.id]?.toString()} onValueChange={v => handleAnswer(q.id, parseInt(v))} className="space-y-3">
-                    {q.options.map((opt, idx) => (
-                      <div key={idx} className="flex items-center space-x-3 bg-black/20 p-3 rounded-lg border border-white/5">
-                        <RadioGroupItem value={idx.toString()} id={`q${q.id}-opt${idx}`} />
-                        <Label htmlFor={`q${q.id}-opt${idx}`} className="cursor-pointer font-normal text-base w-full">{opt}</Label>
-                      </div>
-                    ))}
-                  </RadioGroup>
+              {!showResult ? (
+                <div>
+                  <div className="mb-8">
+                    <div className="flex justify-between text-sm font-bold text-teal-600 mb-2">
+                      <span>Question {currentQ + 1} of {quizQuestions.length}</span>
+                    </div>
+                    <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                      <div 
+                        className="bg-teal-500 h-full transition-all duration-500" 
+                        style={{ width: `${((currentQ + 1) / quizQuestions.length) * 100}%` }}
+                      ></div>
+                    </div>
+                  </div>
+
+                  <h3 className="text-xl md:text-2xl font-bold text-slate-800 mb-6 leading-relaxed">
+                    {quizQuestions[currentQ].q}
+                  </h3>
+
+                  <div className="space-y-3">
+                    {quizQuestions[currentQ].options.map((opt, idx) => {
+                      const isSelected = answers[currentQ] === idx;
+                      const isCorrect = quizQuestions[currentQ].correct === idx;
+                      const showFeedback = answers[currentQ] !== undefined;
+
+                      let btnClass = "w-full text-left px-6 py-4 rounded-xl border-2 transition-all font-medium text-slate-700 ";
+                      
+                      if (!showFeedback) {
+                        btnClass += "border-slate-200 hover:border-teal-500 hover:bg-teal-50";
+                      } else if (isCorrect) {
+                        btnClass += "border-emerald-500 bg-emerald-50 text-emerald-800";
+                      } else if (isSelected && !isCorrect) {
+                        btnClass += "border-rose-500 bg-rose-50 text-rose-800";
+                      } else {
+                        btnClass += "border-slate-200 opacity-50";
+                      }
+
+                      return (
+                        <button
+                          key={idx}
+                          disabled={showFeedback}
+                          onClick={() => handleAnswer(idx)}
+                          className={btnClass}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span>{opt}</span>
+                            {showFeedback && isCorrect && <CheckCircle2 className="text-emerald-600" />}
+                            {showFeedback && isSelected && !isCorrect && <XCircle className="text-rose-600" />}
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
-              ))}
-
-              {!showResults ? (
-                <Button 
-                  size="lg" 
-                  className="w-full h-14 text-lg font-bold bg-teal-600 hover:bg-teal-500 text-white rounded-2xl"
-                  onClick={submitQuiz}
-                  disabled={Object.keys(answers).length < 5}
-                >
-                  Submit Answers
-                </Button>
               ) : (
-                <motion.div 
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className={`p-8 rounded-3xl border-2 text-center space-y-4 ${score >= 4 ? 'bg-emerald-900/30 border-emerald-500/50' : 'bg-rose-900/30 border-rose-500/50'}`}
-                >
-                  {score >= 4 ? (
+                <div className="text-center py-10 animate-fade-in">
+                  {score === 5 ? (
                     <>
-                      <Award className="w-20 h-20 text-yellow-400 mx-auto" />
-                      <h3 className="text-3xl font-black text-white">HearWise Certified Screener 🏆</h3>
-                      <p className="text-lg text-emerald-400 font-bold">You scored {score}/5!</p>
-                      <p className="text-slate-300">You are fully prepared to conduct hearing screenings. Thank you for your dedication!</p>
+                      <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-emerald-100 text-emerald-500 mb-6">
+                        <CheckCircle2 size={48} />
+                      </div>
+                      <h3 className="text-3xl font-black text-slate-900 mb-4">🎉 Excellent!</h3>
+                      <p className="text-lg text-slate-600 mb-8">You are ready to conduct HearWise screenings.</p>
+                      <div className="inline-block bg-emerald-500 text-white px-6 py-2 rounded-full font-bold uppercase tracking-wider text-sm">
+                        Certified Ready
+                      </div>
+                    </>
+                  ) : score >= 3 ? (
+                    <>
+                      <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-amber-100 text-amber-500 mb-6">
+                        <AlertCircle size={48} />
+                      </div>
+                      <h3 className="text-3xl font-black text-slate-900 mb-4">👍 Good!</h3>
+                      <p className="text-lg text-slate-600 mb-8">You scored {score}/5. Review the steps above and try again.</p>
+                      <button onClick={() => { setShowResult(false); setCurrentQ(0); setAnswers([]); }} className="text-teal-600 font-bold hover:underline">
+                        Retake Quiz
+                      </button>
                     </>
                   ) : (
                     <>
-                      <h3 className="text-3xl font-black text-white">Please Review and Try Again</h3>
-                      <p className="text-lg text-rose-400 font-bold">You scored {score}/5.</p>
-                      <p className="text-slate-300">You need 4/5 to be certified. Please read through the guide again.</p>
-                      <Button variant="outline" className="mt-4 border-white/20" onClick={() => { setShowResults(false); setAnswers({}); setScore(0); }}>
+                      <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-rose-100 text-rose-500 mb-6">
+                        <XCircle size={48} />
+                      </div>
+                      <h3 className="text-3xl font-black text-slate-900 mb-4">📖 Keep Learning</h3>
+                      <p className="text-lg text-slate-600 mb-8">You scored {score}/5. Please read the guide carefully and retake the quiz.</p>
+                      <button onClick={() => { setShowResult(false); setCurrentQ(0); setAnswers([]); }} className="text-teal-600 font-bold hover:underline">
                         Retake Quiz
-                      </Button>
+                      </button>
                     </>
                   )}
-                </motion.div>
+                </div>
               )}
             </div>
-          </section>
-
+          </FadeInSection>
         </div>
+
       </div>
+      
+      <VideoModal 
+        isOpen={isVideoModalOpen} 
+        onClose={() => setIsVideoModalOpen(false)} 
+        youtubeId="PLACEHOLDER_TRAINING_VIDEO" 
+      />
     </PageWrapper>
   );
 }

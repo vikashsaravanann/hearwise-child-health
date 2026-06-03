@@ -1,13 +1,13 @@
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
-interface EarResult {
+export interface EarResult {
   level: number;
   frequency: string;
   result: 'pass' | 'refer';
 }
 
-interface ReportData {
+export interface ReportData {
   childName: string;
   age: string;
   schoolName: string;
