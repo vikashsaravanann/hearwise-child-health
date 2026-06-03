@@ -30,5 +30,5 @@ node_modules
 # Firebase cache
 .firebase/
 
-docs
-docs/
+# docs
+# docs/

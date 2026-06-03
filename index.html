@@ -12,6 +12,7 @@
           var decoded = l.search.slice(1).split('&').map(function(s) {
             return s.replace(/~and~/g, '&')
           }).join('?');
+          window.history.replaceState(null, null,
               l.pathname.slice(0, l.pathname.endsWith('/') ? -1 : undefined) + decoded + l.hash
           );
         }
