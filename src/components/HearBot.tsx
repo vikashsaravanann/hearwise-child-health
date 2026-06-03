@@ -177,7 +177,7 @@ export default function HearBot() {
             onClick={() => setOpen(true)}
             className="relative w-16 h-16 rounded-full shadow-2xl shadow-teal-500/40 overflow-hidden border-2 border-teal-400/50 bg-[#020817]"
           >
-            <img src="/owl-mascot.png" alt="HearBot" className="w-full h-full object-cover" />
+            <img src={`${import.meta.env.BASE_URL}owl-mascot.png`} alt="HearBot" className="w-full h-full object-cover" />
             <span className="absolute inset-0 rounded-full animate-ping bg-teal-400/20 pointer-events-none" />
             <span className="absolute bottom-1 right-1 w-3 h-3 rounded-full bg-teal-400 border-2 border-[#020817]" />
           </motion.button>
@@ -210,7 +210,7 @@ export default function HearBot() {
             {/* Header */}
             <div className="relative z-10 flex items-center gap-3 px-5 py-4 border-b border-white/5">
               <div className="relative w-11 h-11 rounded-full overflow-hidden border border-teal-400/30 flex-shrink-0">
-                <img src="/owl-mascot.png" alt="HearBot" className="w-full h-full object-cover" />
+                <img src={`${import.meta.env.BASE_URL}owl-mascot.png`} alt="HearBot" className="w-full h-full object-cover" />
                 <span className="absolute bottom-0.5 right-0.5 w-2.5 h-2.5 rounded-full bg-teal-400 border border-black" />
               </div>
               <div className="flex-1 min-w-0">
@@ -236,7 +236,7 @@ export default function HearBot() {
                 >
                   {msg.role === 'bot' && (
                     <div className="w-7 h-7 rounded-full overflow-hidden flex-shrink-0 mt-0.5 border border-teal-400/20">
-                      <img src="/owl-mascot.png" alt="bot" className="w-full h-full object-cover" />
+                      <img src={`${import.meta.env.BASE_URL}owl-mascot.png`} alt="bot" className="w-full h-full object-cover" />
                     </div>
                   )}
                   <div className={`max-w-[78%] flex flex-col gap-1 ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
@@ -258,7 +258,7 @@ export default function HearBot() {
               {loading && (
                 <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="flex gap-2.5">
                   <div className="w-7 h-7 rounded-full overflow-hidden flex-shrink-0 border border-teal-400/20">
-                    <img src="/owl-mascot.png" alt="bot" className="w-full h-full object-cover" />
+                    <img src={`${import.meta.env.BASE_URL}owl-mascot.png`} alt="bot" className="w-full h-full object-cover" />
                   </div>
                   <div className="px-4 py-3 rounded-2xl rounded-tl-sm bg-white/5 border border-white/10 flex items-center gap-1.5">
                     {[0, 1, 2].map(i => (

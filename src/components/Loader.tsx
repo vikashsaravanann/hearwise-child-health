@@ -17,7 +17,7 @@ export default function Loader({ fullscreen = false, text = 'LOADING' }: LoaderP
         className="w-10 h-10"
       >
         <img
-          src="/owl-mascot.png"
+          src={`${import.meta.env.BASE_URL}owl-mascot.png`}
           alt="HearWise"
           className="w-full h-full object-contain"
           onError={e => {

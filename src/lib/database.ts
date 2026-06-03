@@ -430,13 +430,9 @@ export async function syncPendingResults(): Promise<{ synced: number }> {
     try {
       const { synced: itemSynced, error: syncError } = await syncOnePendingResult(item);
       if (itemSynced) synced += 1;
-      else if (syncError) {
-        toast.error(`Sync failed: ${syncError.message || 'Unknown error'}`);
-      }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown sync error';
       console.error('Result sync failed:', error);
-      toast.error(`Sync failed: ${errorMessage}`);
       item.status = 'failed';
       item.lastError = errorMessage;
       item.nextRetryAt = Date.now() + getRetryDelayMs((item.attempts || 0) + 1);
