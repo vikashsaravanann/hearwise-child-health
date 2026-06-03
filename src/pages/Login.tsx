@@ -161,16 +161,16 @@ export default function Login() {
         initial={{ opacity: 0, y: 20 }}
         animate={mounted ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.6, ease: 'easeOut' }}
-        className="relative w-full max-w-md z-10 flex flex-col items-center"
+        className="relative w-full max-w-3xl z-10 flex flex-col items-center"
       >
-        <div className="relative w-full rounded-2xl bg-[#0f111a] border-t-[3px] border-indigo-500 px-8 py-10 shadow-[0_10px_40px_-10px_rgba(99,102,241,0.15)] flex flex-col">
+        <div className="relative w-full rounded-2xl bg-[#0f111a] border-t-[3px] border-indigo-500 px-12 py-16 shadow-[0_10px_40px_-10px_rgba(99,102,241,0.15)] flex flex-col">
           
-          <div className="text-center mb-8">
-            <div className="mb-6 flex justify-center">
+          <div className="text-center mb-10">
+            <div className="mb-8 flex justify-center">
               <WaveformBars />
             </div>
-            <h1 className="text-2xl font-bold text-white mb-2 tracking-wide">Access HearWise</h1>
-            <p className="text-[#8e95a5] text-[13px] px-2 leading-relaxed">
+            <h1 className="text-5xl font-black text-white mb-4 tracking-wide">Access HearWise</h1>
+            <p className="text-[#8e95a5] text-xl px-2 leading-relaxed">
               Secure entry for school administrators and clinical staff.
             </p>
           </div>

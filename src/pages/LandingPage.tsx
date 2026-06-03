@@ -124,7 +124,7 @@ export default function LandingPage() {
               <img src={owlMascot} alt="Logo" className="w-7 h-7 object-contain" />
             </div>
             <span className="text-xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-white/70">
-              HearWise
+              HEARWISE TECHNOLOGIES
             </span>
           </div>
           

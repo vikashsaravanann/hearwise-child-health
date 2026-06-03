@@ -10,21 +10,6 @@ export default function Loader({ fullscreen = false, text = 'LOADING' }: LoaderP
 
   const content = (
     <div className="flex flex-col items-center justify-center gap-5">
-      {/* HearWise owl logo */}
-      <motion.div
-        animate={{ opacity: [0.6, 1, 0.6] }}
-        transition={{ duration: 2, repeat: Infinity }}
-        className="w-10 h-10"
-      >
-        <img
-          src={`${import.meta.env.BASE_URL}owl-mascot.png`}
-          alt="HearWise"
-          className="w-full h-full object-contain"
-          onError={e => {
-            (e.target as HTMLImageElement).style.display = 'none';
-          }}
-        />
-      </motion.div>
 
       {/* 3-dot loader */}
       <div className="flex items-center gap-2">

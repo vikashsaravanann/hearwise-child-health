@@ -76,47 +76,6 @@ export default function PageWrapper({
       <div className="relative z-10 pt-20 pb-24 px-4">
         {children}
       </div>
-
-      {/* Bottom Navigation */}
-      <BottomNav />
-    </div>
-  );
-}
-
-/** Bottom navigation bar for mobile — 5 main destinations */
-function BottomNav() {
-  const navigate = useNavigate();
-  const { lang } = useSession();
-  const path = window.location.pathname;
-
-  const items = [
-    { icon: '🏠', label: lang === 'ta' ? 'முகப்பு' : 'Home', to: '/' },
-    { icon: '🎮', label: lang === 'ta' ? 'விளையாட்டு' : 'Games', to: '/games' },
-    { icon: '🌊', label: lang === 'ta' ? 'சோதனை' : 'Test', to: '/ocean-levels' },
-    { icon: '🏆', label: lang === 'ta' ? 'பதக்கம்' : 'Trophies', to: '/my-trophies' },
-    { icon: '📊', label: lang === 'ta' ? 'அறிக்கை' : 'Report', to: '/my-report' },
-  ];
-
-  return (
-    <div className="fixed bottom-0 left-0 right-0 z-30 flex justify-around items-center py-2 px-2"
-      style={{ background: 'rgba(0,60,120,0.95)', backdropFilter: 'blur(12px)', borderTop: '1px solid rgba(255,255,255,0.2)' }}>
-      {items.map((item) => {
-        const isActive = path === item.to || (item.to !== '/' && path.startsWith(item.to));
-        return (
-          <button
-            key={item.to}
-            onClick={() => navigate(item.to)}
-            className={`flex flex-col items-center gap-0.5 px-3 py-1 rounded-2xl transition-all ${
-              isActive ? 'bg-white/25 scale-110' : 'hover:bg-white/10'
-            }`}
-          >
-            <span className="text-2xl" style={{ filter: isActive ? 'drop-shadow(0 0 6px rgba(255,255,255,0.8))' : 'none' }}>
-              {item.icon}
-            </span>
-            <span className={`text-xs font-bold ${isActive ? 'text-white' : 'text-white/60'}`}>{item.label}</span>
-          </button>
-        );
-      })}
     </div>
   );
 }

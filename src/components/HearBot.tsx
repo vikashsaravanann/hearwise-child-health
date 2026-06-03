@@ -198,7 +198,7 @@ export default function HearBot() {
               </div>
               <div className="flex-1 min-w-0">
                 <div className="text-white font-black text-sm uppercase tracking-widest">HEARBOT</div>
-                <div className="text-teal-400 text-xs uppercase tracking-wider">ONLINE · HEARWISE AI</div>
+                <div className="text-white/70 text-xs uppercase tracking-wider">ONLINE · HEARWISE AI</div>
               </div>
               <button
                 onClick={() => setOpen(false)}
@@ -265,7 +265,7 @@ export default function HearBot() {
                   <button
                     key={q}
                     onClick={() => sendMessage(q)}
-                    className="px-3 py-1.5 rounded-full border border-teal-500/30 bg-teal-500/5 text-teal-400 text-xs font-semibold hover:bg-teal-500/15 transition-all uppercase tracking-wider"
+                    className="px-3 py-1.5 rounded-full border border-white/30 bg-white/5 text-white text-xs font-semibold hover:bg-white/15 transition-all uppercase tracking-wider"
                   >
                     {q}
                   </button>
