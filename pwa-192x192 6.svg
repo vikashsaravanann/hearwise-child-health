@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0d2137"/>
+      <stop offset="100%" style="stop-color:#000b1d"/>
+    </linearGradient>
+    <linearGradient id="wave" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#14b8a6"/>
+      <stop offset="100%" style="stop-color:#06b6d4"/>
+    </linearGradient>
+  </defs>
+  <rect width="192" height="192" rx="36" fill="url(#bg)"/>
+  <!-- Ear icon -->
+  <path d="M96 48c-22 0-40 18-40 40 0 14 7 26 18 34v12c0 8 6 14 14 14s14-6 14-14v-8c14-4 24-17 24-32 0-22-18-40-40-40zm-16 40c0-8.8 7.2-16 16-16s16 7.2 16 16-7.2 16-16 16c-8.8 0-16-7.2-16-16z" fill="#14b8a6" opacity="0.85"/>
+  <!-- Wave lines -->
+  <path d="M48 138 Q64 124 80 138 Q96 152 112 138 Q128 124 144 138" stroke="url(#wave)" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.7"/>
+  <path d="M52 148 Q68 136 84 148 Q100 160 116 148 Q132 136 148 148" stroke="url(#wave)" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.5"/>
+</svg>

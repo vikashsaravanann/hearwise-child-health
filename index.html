@@ -3,24 +3,41 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>HearWise</title>
+    <title>HearWise — India's First School Hearing Screening Platform</title>
+    
+    <script type="text/javascript">
+      // GitHub Pages SPA redirect handler
+      (function(l) {
+        if (l.search[1] === '/') {
+          var decoded = l.search.slice(1).split('&').map(function(s) {
+            return s.replace(/~and~/g, '&')
+          }).join('?');
+              l.pathname.slice(0, l.pathname.endsWith('/') ? -1 : undefined) + decoded + l.hash
+          );
+        }
+      }(window.location))
+    </script>
+
     <link rel="icon" type="image/png" href="/hearwise-child-health/owl-mascot.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <script type="module" crossorigin src="/hearwise-child-health/assets/index-BtszxsmT.js"></script>
-    <link rel="modulepreload" crossorigin href="/hearwise-child-health/assets/router-CooTeSgm.js">
-    <link rel="modulepreload" crossorigin href="/hearwise-child-health/assets/ui-DxHzpFgT.js">
-    <link rel="modulepreload" crossorigin href="/hearwise-child-health/assets/charts-2gcD1qLF.js">
-    <link rel="modulepreload" crossorigin href="/hearwise-child-health/assets/supabase-DFdX1Aey.js">
-    <link rel="stylesheet" crossorigin href="/hearwise-child-health/assets/index-MlwqkxHb.css">
+    <script type="module" crossorigin src="/assets/index-cwNLv3Gb.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/router-CwYRw2Dy.js">
+    <link rel="modulepreload" crossorigin href="/assets/ui-CaZNHlsb.js">
+    <link rel="modulepreload" crossorigin href="/assets/charts-Ch4D_6c5.js">
+    <link rel="modulepreload" crossorigin href="/assets/supabase-DFdX1Aey.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-MlwqkxHb.css">
   </head>
   <body>
     <div id="root"></div>
     <script>
-      console.log("Index.html loaded");
+      console.log("App Entry Point Init");
       window.onerror = function(msg, url, line) {
-        document.body.innerHTML += '<div style="color:red;padding:20px;background:white;z-index:9999;position:fixed;top:0;">Error: ' + msg + '</div>';
+        var errDiv = document.createElement('div');
+        errDiv.style.cssText = 'color:white;padding:20px;background:red;position:fixed;top:0;left:0;right:0;z-index:99999;font-family:sans-serif;';
+        errDiv.innerHTML = '<b>Runtime Error:</b> ' + msg + '<br><small>' + url + ' L:' + line + '</small>';
+        document.body.appendChild(errDiv);
       };
     </script>
   </body>
