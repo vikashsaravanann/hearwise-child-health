@@ -32,7 +32,6 @@ import TestimonialsSection from '@/components/TestimonialsSection';
 
 import OceanBackground from '@/components/OceanBackground';
 import VideoCard from '@/components/VideoCard';
-import VideoModal from '@/components/VideoModal';
 
 // Animated Bubble Component for the original dark theme
 const Bubble = ({ size, delay, left }: { size: number, delay: number, left: string }) => (
@@ -63,14 +62,6 @@ export default function LandingPage() {
   const { user, isAdmin, signOut } = useAuth();
   const [scrolled, setScrolled] = useState(false);
   
-  // Video Modal State
-  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
-  const [currentVideoId, setCurrentVideoId] = useState('');
-
-  const openVideo = (youtubeId: string) => {
-    setCurrentVideoId(youtubeId);
-    setIsVideoModalOpen(true);
-  };
 
   // Show blocked message when redirected from dashboard (non-admin tried to access)
   useEffect(() => {
@@ -139,42 +130,42 @@ export default function LandingPage() {
           <div className="flex items-center gap-4">
             <Button 
               variant="ghost" 
-              className="hidden sm:flex text-white/70 hover:text-white hover:bg-white/10"
+              className="hidden sm:flex text-white/70 hover:text-white hover:bg-white/10 uppercase tracking-widest text-xs font-semibold"
               onClick={() => {
                 document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
               }}
             >
-              Features
+              FEATURES
             </Button>
             <Button 
               variant="ghost" 
-              className="hidden sm:flex text-white/70 hover:text-white hover:bg-white/10"
+              className="hidden sm:flex text-white/70 hover:text-white hover:bg-white/10 uppercase tracking-widest text-xs font-semibold"
               onClick={() => navigate('/about')}
             >
-              About HearWise Technologies
+              ABOUT HEARWISE TECHNOLOGIES
             </Button>
             <Button 
               variant="ghost" 
-              className="hidden sm:flex text-white/70 hover:text-white hover:bg-white/10"
+              className="hidden sm:flex text-white/70 hover:text-white hover:bg-white/10 uppercase tracking-widest text-xs font-semibold"
               onClick={() => navigate('/hearing-health')}
             >
-              HearWise Health Operations
+              HEARWISE HEALTH OPERATIONS
             </Button>
             {!user ? (
               <>
                 <Button 
                   variant="ghost" 
-                  className="hidden sm:flex text-white/70 hover:text-white hover:bg-white/10"
+                  className="hidden sm:flex text-white/70 hover:text-white hover:bg-white/10 uppercase tracking-widest text-xs font-semibold"
                   onClick={() => navigate('/onboarding')}
                 >
-                  Register School
+                  REGISTER SCHOOL
                 </Button>
                 <Button 
                   variant="outline" 
-                  className="hidden sm:flex text-teal-400 border-teal-500 hover:bg-teal-500/10"
+                  className="hidden sm:flex text-teal-400 border-teal-500 hover:bg-teal-500/10 uppercase tracking-widest text-xs font-semibold"
                   onClick={() => navigate('/login')}
                 >
-                  Sign In
+                  SIGN IN
                 </Button>
               </>
             ) : (
@@ -182,26 +173,26 @@ export default function LandingPage() {
                 {isAdmin && (
                   <Button 
                     variant="ghost" 
-                    className="hidden sm:flex text-teal-400 hover:bg-teal-500/10"
+                    className="hidden sm:flex text-teal-400 hover:bg-teal-500/10 uppercase tracking-widest text-xs font-semibold"
                     onClick={() => navigate('/admin')}
                   >
-                    Admin Panel
+                    DASHBOARD
                   </Button>
                 )}
                 <div className="hidden sm:flex items-center gap-3 ml-2">
                   <div className="w-8 h-8 rounded-full bg-teal-500 text-slate-900 flex items-center justify-center font-bold">
                     {user.email?.charAt(0).toUpperCase() || 'U'}
                   </div>
-                  <Button 
-                    variant="ghost" 
-                    className="text-white/70 hover:text-red-400 hover:bg-red-400/10"
-                    onClick={async () => {
-                      await signOut()
-                      navigate('/login')
-                    }}
-                  >
-                    Sign Out
-                  </Button>
+                    <Button 
+                      variant="ghost" 
+                      className="text-white/70 hover:text-red-400 hover:bg-red-400/10 uppercase tracking-widest text-xs font-semibold"
+                      onClick={async () => {
+                        await signOut()
+                        navigate('/login')
+                      }}
+                    >
+                      SIGN OUT
+                    </Button>
                 </div>
               </>
             )}
@@ -330,37 +321,44 @@ export default function LandingPage() {
           {/* Videos Section */}
           <section className="mt-24 mb-10">
             <div className="text-center mb-12">
-              <h2 className="text-4xl font-black mb-4">See HearWise in Action</h2>
-              <p className="text-white/60">Watch how HearWise is changing lives in schools across Tamil Nadu</p>
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-teal-500/30 bg-teal-500/10 text-teal-400 text-xs font-semibold uppercase tracking-widest mb-4">
+                <span className="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse" />
+                WATCH & LEARN
+              </div>
+              <h2 className="text-4xl font-black mb-4 uppercase tracking-wider">SEE HEARWISE IN ACTION</h2>
+              <p className="text-white/60 uppercase tracking-widest text-sm">WATCH HOW HEARWISE IS CHANGING LIVES IN SCHOOLS ACROSS TAMIL NADU</p>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <VideoCard 
-                thumbnailColor="bg-gradient-to-br from-teal-800 to-slate-900"
-                title="What is HearWise? — 60 Second Overview"
-                description="Learn how HearWise helps school teachers screen children for hearing loss in just 2 minutes."
-                duration="1:02"
-                youtubeId="PLACEHOLDER_VIDEO_1"
-                icon="👂"
-                onClick={() => openVideo('PLACEHOLDER_VIDEO_1')}
+              <VideoCard
+                title="WHAT IS HEARWISE? — 60 SECOND EXPLAINER"
+                description="Discover how HearWise is transforming childhood hearing screening across India's schools with just a smartphone and headphones."
+                duration="1:00 MIN"
+                category="OVERVIEW"
+                icon="🦉"
+                gradientFrom="#0d4f6e"
+                gradientTo="#0d7c5e"
+                stats={[{ label: 'CHILDREN/HOUR', value: '50+' }, { label: 'COST', value: '₹0' }, { label: 'SETUP', value: '0 MIN' }]}
               />
-              <VideoCard 
-                thumbnailColor="bg-gradient-to-br from-blue-800 to-slate-900"
-                title="How to Conduct a Hearing Test — Teacher Guide"
-                description="Step-by-step walkthrough of how any school teacher can run the HearWise hearing test."
-                duration="3:45"
-                youtubeId="PLACEHOLDER_VIDEO_2"
-                icon="🏫"
-                onClick={() => openVideo('PLACEHOLDER_VIDEO_2')}
+              <VideoCard
+                title="HOW TO CONDUCT THE HEARING TEST — TEACHER GUIDE"
+                description="A step-by-step walkthrough for school teachers on how to set up the test, put on headphones correctly, and record accurate results."
+                duration="3:30 MIN"
+                category="TEACHER TRAINING"
+                icon="🎧"
+                gradientFrom="#1a0550"
+                gradientTo="#0d4f6e"
+                stats={[{ label: 'STEPS', value: '5' }, { label: 'DIFFICULTY', value: 'EASY' }, { label: 'TRAINING', value: '3 MIN' }]}
               />
-              <VideoCard 
-                thumbnailColor="bg-gradient-to-br from-purple-800 to-slate-900"
-                title="Why Early Detection Changes Everything"
-                description="Hear from experts about how detecting hearing loss early transforms a child's future."
-                duration="4:12"
-                youtubeId="PLACEHOLDER_VIDEO_3"
-                icon="🧒"
-                onClick={() => openVideo('PLACEHOLDER_VIDEO_3')}
+              <VideoCard
+                title="WHY EARLY DETECTION CHANGES A CHILD'S LIFE"
+                description="Real stories and science behind why detecting hearing loss before age 5 leads to a 90% better outcome in language development."
+                duration="4:00 MIN"
+                category="IMPACT STORY"
+                icon="❤️"
+                gradientFrom="#0d4f0d"
+                gradientTo="#0d4f6e"
+                stats={[{ label: 'BETTER OUTCOME', value: '90%' }, { label: 'IDEAL AGE', value: '<5 YRS' }, { label: 'IMPACT', value: 'LIFELONG' }]}
               />
             </div>
           </section>
@@ -868,12 +866,6 @@ export default function LandingPage() {
         }
         .animate-pulse-glow { animation: pulse-glow 8s infinite alternate ease-in-out; }
       `}</style>
-      {/* Video Modal */}
-      <VideoModal 
-        isOpen={isVideoModalOpen} 
-        onClose={() => setIsVideoModalOpen(false)} 
-        youtubeId={currentVideoId} 
-      />
     </div>
   );
 }

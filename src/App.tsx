@@ -10,6 +10,8 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { RequireAuth, RequireAdmin } from "@/components/ProtectedRoute";
 import OfflineBadge from "@/components/OfflineBadge";
 import PWAInstallPrompt from "@/components/PWAInstallPrompt";
+import SWUpdatePrompt from "@/components/SWUpdatePrompt";
+import PWADevPreview from "@/components/PWADevPreview";
 import LanguageToggle from "@/components/LanguageToggle";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import FloatingChatButton from "@/components/FloatingChatButton";
@@ -164,6 +166,8 @@ const App = () => (
           <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '')}>
             <FloatingChatButton />
             <PWAInstallPrompt />
+            <SWUpdatePrompt />
+            <PWADevPreview />
             <Suspense fallback={<PageLoadingSkeleton />}>
               <InnerRoutes />
             </Suspense>

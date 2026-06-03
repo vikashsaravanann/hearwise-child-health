@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import PageWrapper from '@/components/shared/PageWrapper';
 import FadeInSection from '@/components/FadeInSection';
 import VideoCard from '@/components/VideoCard';
-import VideoModal from '@/components/VideoModal';
 import { jsPDF } from 'jspdf';
 import { 
   FileDown, CheckCircle2, AlertCircle, XCircle 
@@ -87,8 +86,7 @@ const quizQuestions = [
 ];
 
 export default function TeacherTraining() {
-  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
-  
+
   // Quiz State
   const [currentQ, setCurrentQ] = useState(0);
   const [answers, setAnswers] = useState<number[]>([]);
@@ -154,13 +152,15 @@ export default function TeacherTraining() {
               Complete Teacher Training — How to Use HearWise
             </p>
             
-            <VideoCard 
-              thumbnailColor="bg-gradient-to-br from-teal-800 to-slate-900"
-              title="Complete Teacher Training — How to Use HearWise"
-              description="Watch this once before conducting your first hearing test. Covers setup, test flow, and interpreting results."
-              duration="3:20"
-              youtubeId="PLACEHOLDER_TRAINING_VIDEO"
-              onClick={() => setIsVideoModalOpen(true)}
+            <VideoCard
+              title="HOW TO CONDUCT THE HEARING TEST — TEACHER GUIDE"
+              description="Watch this once before conducting your first hearing test. Covers device setup, headphone placement, test flow, and how to interpret results."
+              duration="3:30 MIN"
+              category="TEACHER TRAINING"
+              icon="🎧"
+              gradientFrom="#1a0550"
+              gradientTo="#0d4f6e"
+              stats={[{ label: 'STEPS', value: '5' }, { label: 'DIFFICULTY', value: 'EASY' }, { label: 'TRAINING TIME', value: '3 MIN' }]}
             />
           </div>
         </div>
@@ -310,11 +310,6 @@ export default function TeacherTraining() {
 
       </div>
       
-      <VideoModal 
-        isOpen={isVideoModalOpen} 
-        onClose={() => setIsVideoModalOpen(false)} 
-        youtubeId="PLACEHOLDER_TRAINING_VIDEO" 
-      />
     </PageWrapper>
   );
 }

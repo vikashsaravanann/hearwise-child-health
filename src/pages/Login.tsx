@@ -1,317 +1,304 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { supabase } from '../lib/supabase';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { z } from 'zod';
-import { supabase } from '@/lib/supabase';
-import { useAuth } from '@/contexts/AuthContext';
-import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
-import { Mail, Smartphone, ArrowRight, CheckCircle2, ShieldCheck, Activity } from 'lucide-react';
 
-const FloatingParticles = () => {
-  return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+type Tab = 'google' | 'email';
+
+export default function Login() {
+  const navigate = useNavigate();
+  const [tab, setTab] = useState<Tab>('email');
+  const [email, setEmail] = useState('');
+  const [otp, setOtp] = useState(['', '', '', '', '', '']);
+  const [step, setStep] = useState<'input' | 'otp'>('input');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => { setMounted(true); }, []);
+
+  // Animated waveform bars
+  const WaveformBars = () => (
+    <div className="flex items-end gap-0.5 h-8">
       {[...Array(20)].map((_, i) => (
         <motion.div
           key={i}
-          className="absolute rounded-full bg-indigo-500/20"
-          style={{
-            width: Math.random() * 8 + 4,
-            height: Math.random() * 8 + 4,
-            left: `${Math.random() * 100}%`,
-            top: `${Math.random() * 100}%`,
-          }}
-          animate={{
-            y: [0, -40, 0],
-            x: [0, Math.random() * 20 - 10, 0],
-            opacity: [0, 1, 0],
-          }}
-          transition={{
-            duration: Math.random() * 3 + 2,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: Math.random() * 2,
-          }}
+          className="w-1 rounded-full bg-teal-500/40"
+          animate={{ height: ['4px', `${8 + Math.sin(i) * 16}px`, '4px'] }}
+          transition={{ duration: 1.2 + i * 0.08, repeat: Infinity, delay: i * 0.06 }}
         />
       ))}
     </div>
   );
-};
 
-const AudioWaveform = () => {
-  return (
-    <div className="flex items-center justify-center gap-1 h-12 mb-8">
-      {[...Array(12)].map((_, i) => (
-        <motion.div
-          key={i}
-          className="w-1.5 bg-indigo-500/80 rounded-full"
-          animate={{
-            height: [12, Math.random() * 32 + 16, 12],
-          }}
-          transition={{
-            duration: Math.random() * 0.5 + 0.5,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: i * 0.1,
-          }}
-        />
-      ))}
+  // Floating grid dots background
+  const GridBg = () => (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      <div
+        className="absolute inset-0 opacity-[0.04]"
+        style={{
+          backgroundImage: 'radial-gradient(circle, #14b8a6 1px, transparent 1px)',
+          backgroundSize: '32px 32px'
+        }}
+      />
+      <motion.div
+        className="absolute top-1/4 left-1/4 w-80 h-80 rounded-full bg-teal-500/5 blur-[100px]"
+        animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
+        transition={{ duration: 6, repeat: Infinity }}
+      />
+      <motion.div
+        className="absolute bottom-1/4 right-1/4 w-60 h-60 rounded-full bg-cyan-500/5 blur-[80px]"
+        animate={{ scale: [1.2, 1, 1.2], opacity: [0.2, 0.4, 0.2] }}
+        transition={{ duration: 8, repeat: Infinity, delay: 3 }}
+      />
     </div>
   );
-};
 
-export default function Login() {
-  const [activeTab, setActiveTab] = useState<'google' | 'email' | 'mobile'>('google');
-  const [email, setEmail] = useState('');
-  const [otp, setOtp] = useState('');
-  const [phone, setPhone] = useState('');
-  const [step, setStep] = useState<'request' | 'verify'>('request');
-  const [isLoading, setIsLoading] = useState(false);
-  const [errorMsg, setErrorMsg] = useState('');
-  const [successMsg, setSuccessMsg] = useState('');
-  const [countdown, setCountdown] = useState(0);
-
-  const navigate = useNavigate();
-  const { user } = useAuth();
-
-  useEffect(() => {
-    if (user) {
-      navigate('/dashboard', { replace: true });
+  function handleOtpChange(val: string, idx: number) {
+    const next = [...otp];
+    next[idx] = val.replace(/\D/g, '').slice(-1);
+    setOtp(next);
+    if (val && idx < 5) {
+      const el = document.getElementById(`otp-${idx + 1}`);
+      el?.focus();
     }
-  }, [user, navigate]);
+  }
 
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (countdown > 0) {
-      timer = setTimeout(() => setCountdown(c => c - 1), 1000);
+  function handleOtpKeyDown(e: React.KeyboardEvent, idx: number) {
+    if (e.key === 'Backspace' && !otp[idx] && idx > 0) {
+      const el = document.getElementById(`otp-${idx - 1}`);
+      el?.focus();
     }
-    return () => clearTimeout(timer);
-  }, [countdown]);
+  }
 
-  const handleGoogleSignIn = async () => {
-    setIsLoading(true);
-    setErrorMsg('');
-    try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: window.location.origin + '/auth/callback'
-        }
-      });
-      if (error) throw error;
-    } catch (err: unknown) {
-      const error = err as Error;
-      setErrorMsg(error.message || 'Google sign-in failed.');
-      setIsLoading(false);
-    }
-  };
+  async function handleGoogleLogin() {
+    setLoading(true); setError('');
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: `${window.location.origin}/auth/callback` }
+    });
+    if (error) { setError(error.message); setLoading(false); }
+  }
 
-  const handleEmailRequest = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setErrorMsg('');
-    setSuccessMsg('');
-    try {
-      z.string().email('Please enter a valid email address').parse(email);
-      setIsLoading(true);
-      const { error } = await supabase.auth.signInWithOtp({ email });
-      if (error) throw error;
-      setSuccessMsg(`✅ Code sent to ${email}`);
-      setStep('verify');
-      setCountdown(60);
-    } catch (err: unknown) {
-      const error = err as { errors?: { message: string }[], message: string };
-      setErrorMsg(error.errors ? error.errors[0].message : error.message);
-    } finally {
-      setIsLoading(false);
+  async function handleEmailSend() {
+    if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+      setError('Please enter a valid email address.'); return;
     }
-  };
+    setLoading(true); setError('');
+    const { error } = await supabase.auth.signInWithOtp({ email });
+    if (error) { setError(error.message); }
+    else { setStep('otp'); }
+    setLoading(false);
+  }
 
-  const handleEmailVerify = async (val: string) => {
-    setOtp(val);
-    if (val.length === 6) {
-      setIsLoading(true);
-      setErrorMsg('');
-      try {
-        const { error } = await supabase.auth.verifyOtp({ email, token: val, type: 'email' });
-        if (error) throw error;
-        window.location.href = '/auth/callback';
-      } catch (err: unknown) {
-        setErrorMsg('Invalid or expired code. Please try again.');
-        setOtp('');
-      } finally {
-        setIsLoading(false);
-      }
-    }
-  };
+  async function handleEmailVerify() {
+    const code = otp.join('');
+    if (code.length < 6) { setError('Enter the complete 6-digit code.'); return; }
+    setLoading(true); setError('');
+    const { error } = await supabase.auth.verifyOtp({ email, token: code, type: 'email' });
+    if (error) { setError(error.message); }
+    else { navigate('/auth/callback'); }
+    setLoading(false);
+  }
 
-  const handleMobileRequest = (e: React.FormEvent) => {
-    e.preventDefault();
-    setErrorMsg('');
-    setSuccessMsg('');
-    try {
-      z.string().length(10, 'Enter exactly 10 digits').regex(/^[6-9]\d{9}$/, 'Enter a valid Indian mobile number').parse(phone);
-      setSuccessMsg('📱 SMS OTP requires Twilio setup. Please use Email OTP or Google Sign-In for now.');
-    } catch (err: unknown) {
-      const error = err as { errors?: { message: string }[], message: string };
-      setErrorMsg(error.errors ? error.errors[0].message : 'Invalid mobile number.');
-    }
-  };
+  const adminEmail = import.meta.env.VITE_ADMIN_EMAIL as string;
+  const tabs: { id: Tab; label: string }[] = [
+    { id: 'google', label: 'GOOGLE' },
+    { id: 'email', label: 'EMAIL OTP' },
+  ];
 
   return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center relative overflow-hidden font-['DM_Sans']">
-      
-      {/* Background Gradients */}
-      <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] rounded-full bg-indigo-900/40 blur-[120px] mix-blend-screen pointer-events-none"></div>
-      <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] rounded-full bg-purple-900/30 blur-[120px] mix-blend-screen pointer-events-none"></div>
-      
-      <FloatingParticles />
+    <div className="min-h-screen bg-black flex items-center justify-center px-4 relative">
+      <GridBg />
 
-      <motion.div 
-        initial={{ opacity: 0, y: 30, scale: 0.95 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-        className="w-full max-w-md relative z-10 mx-4"
+      {/* Main card */}
+      <motion.div
+        initial={{ opacity: 0, y: 30, scale: 0.96 }}
+        animate={mounted ? { opacity: 1, y: 0, scale: 1 } : {}}
+        transition={{ duration: 0.6, ease: 'easeOut' }}
+        className="relative w-full max-w-md z-10"
       >
-        <div className="backdrop-blur-xl bg-white/[0.03] border border-white/[0.05] shadow-2xl rounded-3xl p-8 relative overflow-hidden">
-          
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-500"></div>
+        {/* Glow behind card */}
+        <div className="absolute -inset-px rounded-3xl bg-gradient-to-b from-teal-500/20 to-transparent blur-sm" />
 
+        <div className="relative rounded-3xl border border-[#1a1a1a] bg-[#0a0a0a] p-8 shadow-2xl">
+
+          {/* Logo + Title */}
           <div className="text-center mb-8">
-            <AudioWaveform />
-            <h1 className="text-3xl font-bold text-white mb-2 font-['Syne'] tracking-tight">Access HearWise</h1>
-            <p className="text-slate-400">Secure entry for school administrators and clinical staff.</p>
+            <motion.div
+              animate={{ y: [0, -4, 0] }}
+              transition={{ duration: 3, repeat: Infinity }}
+              className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-teal-500 to-cyan-500 shadow-lg shadow-teal-500/30 mb-4"
+            >
+              <span className="text-2xl">🦉</span>
+            </motion.div>
+            <h1 className="text-2xl font-black text-white uppercase tracking-widest">HEARWISE</h1>
+            <div className="flex justify-center mt-2 mb-1">
+              <WaveformBars />
+            </div>
+            <p className="text-gray-500 text-xs uppercase tracking-widest">SECURE ACCESS PORTAL</p>
           </div>
 
-          {errorMsg && (
-            <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="p-3 mb-6 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl text-sm text-center">
-              {errorMsg}
-            </motion.div>
-          )}
-          {successMsg && (
-            <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="p-3 mb-6 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-xl text-sm text-center">
-              {successMsg}
-            </motion.div>
-          )}
-
-          <div className="flex bg-white/[0.03] p-1 rounded-2xl mb-8 border border-white/[0.05]">
-            <button
-              onClick={() => { setActiveTab('google'); setStep('request'); setErrorMsg(''); setSuccessMsg(''); }}
-              className={`flex-1 py-2.5 rounded-xl text-sm font-medium transition-all ${activeTab === 'google' ? 'bg-white/10 text-white shadow-lg' : 'text-slate-400 hover:text-white'}`}
-            >
-              Google
-            </button>
-            <button
-              onClick={() => { setActiveTab('email'); setStep('request'); setErrorMsg(''); setSuccessMsg(''); }}
-              className={`flex-1 py-2.5 rounded-xl text-sm font-medium transition-all ${activeTab === 'email' ? 'bg-white/10 text-white shadow-lg' : 'text-slate-400 hover:text-white'}`}
-            >
-              Email
-            </button>
-            <button
-              onClick={() => { setActiveTab('mobile'); setStep('request'); setErrorMsg(''); setSuccessMsg(''); }}
-              className={`flex-1 py-2.5 rounded-xl text-sm font-medium transition-all ${activeTab === 'mobile' ? 'bg-white/10 text-white shadow-lg' : 'text-slate-400 hover:text-white'}`}
-            >
-              Mobile
-            </button>
-          </div>
-
-          {activeTab === 'google' && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+          {/* Tab switcher */}
+          <div className="flex rounded-xl border border-[#1a1a1a] bg-[#111111] p-1 mb-6 gap-1">
+            {tabs.map(t => (
               <button
-                onClick={handleGoogleSignIn}
-                disabled={isLoading}
-                className="w-full py-4 px-4 bg-white hover:bg-slate-50 text-slate-900 rounded-2xl font-bold flex items-center justify-center gap-3 transition-all transform active:scale-[0.98] disabled:opacity-70"
+                key={t.id}
+                onClick={() => { setTab(t.id); setStep('input'); setError(''); setOtp(['','','','','','']); }}
+                className={`flex-1 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all duration-200 ${
+                  tab === t.id
+                    ? 'bg-teal-500 text-black shadow-lg shadow-teal-500/30'
+                    : 'text-gray-500 hover:text-gray-300'
+                }`}
               >
-                <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google logo" className="w-6 h-6" />
-                <span>Continue with Google</span>
+                {t.label}
               </button>
-              <div className="flex items-center gap-2 justify-center text-slate-500 text-sm mt-6">
-                <ShieldCheck size={16} /> <span>Enterprise-grade encryption</span>
-              </div>
-            </motion.div>
-          )}
+            ))}
+          </div>
 
-          {activeTab === 'email' && step === 'request' && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
-              <form onSubmit={handleEmailRequest} className="space-y-4">
-                <div>
-                  <div className="relative">
-                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={20} />
-                    <input
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="admin@school.edu.in"
-                      className="w-full bg-white/[0.03] border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
-                      required
-                    />
-                  </div>
+          {/* Error */}
+          <AnimatePresence>
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                className="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs text-center uppercase tracking-wide"
+              >
+                {error}
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Tab content */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={tab + step}
+              initial={{ opacity: 0, x: 10 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -10 }}
+              transition={{ duration: 0.2 }}
+            >
+
+              {/* GOOGLE TAB */}
+              {tab === 'google' && (
+                <div className="space-y-4">
+                  <p className="text-gray-500 text-xs text-center uppercase tracking-widest mb-6">
+                    SIGN IN WITH YOUR GOOGLE ACCOUNT
+                  </p>
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={handleGoogleLogin}
+                    disabled={loading}
+                    className="w-full py-4 rounded-xl border border-[#2a2a2a] bg-[#111111] text-white font-bold text-sm flex items-center justify-center gap-3 hover:border-teal-500/50 hover:bg-teal-500/5 transition-all disabled:opacity-50"
+                  >
+                    {loading ? (
+                      <div className="w-5 h-5 border-2 border-teal-400 border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      <>
+                        <svg width="20" height="20" viewBox="0 0 24 24">
+                          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                        </svg>
+                        CONTINUE WITH GOOGLE
+                      </>
+                    )}
+                  </motion.button>
+                  <p className="text-gray-600 text-xs text-center">
+                    ADMIN ACCESS REQUIRES {adminEmail ? adminEmail.split('@')[0].toUpperCase() + '@...' : 'AUTHORISED EMAIL'}
+                  </p>
                 </div>
-                <button
-                  type="submit"
-                  disabled={isLoading || !email}
-                  className="w-full py-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-2xl font-bold flex items-center justify-center gap-2 transition-all transform active:scale-[0.98] disabled:opacity-50"
-                >
-                  {isLoading ? 'Sending Code...' : 'Send Magic Code'}
-                  {!isLoading && <ArrowRight size={18} />}
-                </button>
-              </form>
-            </motion.div>
-          )}
+              )}
 
-          {activeTab === 'email' && step === 'verify' && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6 flex flex-col items-center">
-              <p className="text-slate-300 text-center text-sm">Enter the 6-digit code sent to <br/><span className="text-white font-bold">{email}</span></p>
-              
-              <InputOTP maxLength={6} value={otp} onChange={handleEmailVerify}>
-                <InputOTPGroup className="gap-2">
-                  {[...Array(6)].map((_, i) => (
-                    <InputOTPSlot key={i} index={i} className="w-12 h-14 bg-white/[0.03] border-white/10 text-white text-xl rounded-xl" />
-                  ))}
-                </InputOTPGroup>
-              </InputOTP>
-
-              <div className="text-center w-full">
-                {countdown > 0 ? (
-                  <p className="text-sm text-slate-500">Resend code in {countdown}s</p>
-                ) : (
-                  <button onClick={handleEmailRequest} className="text-sm text-indigo-400 hover:text-indigo-300 transition-colors">Resend Code</button>
-                )}
-                <button onClick={() => { setStep('request'); setOtp(''); setSuccessMsg(''); setErrorMsg(''); }} className="block mx-auto mt-4 text-sm text-slate-500 hover:text-white transition-colors">Change Email</button>
-              </div>
-            </motion.div>
-          )}
-
-          {activeTab === 'mobile' && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
-              <form onSubmit={handleMobileRequest} className="space-y-4">
-                <div>
-                  <div className="relative flex items-center">
-                    <span className="absolute left-4 text-slate-400 font-medium">+91</span>
-                    <input
-                      type="tel"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0,10))}
-                      placeholder="98765 43210"
-                      className="w-full bg-white/[0.03] border border-white/10 rounded-2xl py-4 pl-14 pr-4 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all tracking-wider"
-                      required
-                    />
-                  </div>
+              {/* EMAIL TAB — STEP: INPUT */}
+              {tab === 'email' && step === 'input' && (
+                <div className="space-y-4">
+                  <p className="text-gray-500 text-xs text-center uppercase tracking-widest mb-4">
+                    ENTER YOUR EMAIL — WE'LL SEND A 6-DIGIT CODE
+                  </p>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && handleEmailSend()}
+                    placeholder="YOUR EMAIL ADDRESS"
+                    className="w-full px-4 py-4 rounded-xl bg-[#111111] border border-[#222222] text-white text-sm placeholder-gray-600 focus:outline-none focus:border-teal-500 transition-colors"
+                  />
+                  <motion.button
+                    whileHover={{ scale: 1.01 }}
+                    whileTap={{ scale: 0.99 }}
+                    onClick={handleEmailSend}
+                    disabled={loading}
+                    className="w-full py-4 rounded-xl bg-gradient-to-r from-teal-500 to-cyan-500 text-black font-black text-sm uppercase tracking-widest hover:opacity-90 transition-opacity disabled:opacity-50 shadow-lg shadow-teal-500/30"
+                  >
+                    {loading ? (
+                      <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin mx-auto" />
+                    ) : 'SEND VERIFICATION CODE →'}
+                  </motion.button>
                 </div>
-                <button
-                  type="submit"
-                  className="w-full py-4 bg-white/5 border border-white/10 hover:bg-white/10 text-white rounded-2xl font-bold flex items-center justify-center gap-2 transition-all transform active:scale-[0.98]"
-                >
-                  Request SMS OTP
-                </button>
-              </form>
-            </motion.div>
-          )}
+              )}
 
-        </div>
-        
-        <div className="mt-8 text-center text-slate-500 text-sm flex items-center justify-center gap-4">
-          <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
-          <span>&bull;</span>
-          <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
+              {/* EMAIL TAB — STEP: OTP */}
+              {tab === 'email' && step === 'otp' && (
+                <div className="space-y-4">
+                  <p className="text-gray-500 text-xs text-center uppercase tracking-widest mb-2">
+                    CODE SENT TO
+                  </p>
+                  <p className="text-teal-400 text-sm text-center font-black uppercase tracking-wider mb-6">
+                    {email}
+                  </p>
+                  <div className="flex gap-2 justify-center">
+                    {otp.map((val, idx) => (
+                      <input
+                        key={idx}
+                        id={`otp-${idx}`}
+                        type="text"
+                        inputMode="numeric"
+                        maxLength={1}
+                        value={val}
+                        onChange={e => handleOtpChange(e.target.value, idx)}
+                        onKeyDown={e => handleOtpKeyDown(e, idx)}
+                        className="w-11 h-14 rounded-xl bg-[#111111] border border-[#222222] text-white text-xl font-black text-center focus:outline-none focus:border-teal-500 transition-colors"
+                      />
+                    ))}
+                  </div>
+                  <motion.button
+                    whileHover={{ scale: 1.01 }}
+                    whileTap={{ scale: 0.99 }}
+                    onClick={handleEmailVerify}
+                    disabled={loading}
+                    className="w-full py-4 rounded-xl bg-gradient-to-r from-teal-500 to-cyan-500 text-black font-black text-sm uppercase tracking-widest hover:opacity-90 transition-opacity disabled:opacity-50 shadow-lg shadow-teal-500/30"
+                  >
+                    {loading ? (
+                      <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin mx-auto" />
+                    ) : 'VERIFY & SIGN IN →'}
+                  </motion.button>
+                  <button
+                    onClick={() => { setStep('input'); setOtp(['','','','','','']); setError(''); }}
+                    className="w-full text-gray-500 text-xs uppercase tracking-widest hover:text-gray-300 transition-colors py-2"
+                  >
+                    ← CHANGE EMAIL
+                  </button>
+                </div>
+              )}
+
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Footer */}
+          <div className="mt-8 pt-6 border-t border-[#1a1a1a] text-center">
+            <p className="text-gray-600 text-xs uppercase tracking-widest">
+              INDIA'S FIRST SCHOOL HEARING SCREENING PLATFORM
+            </p>
+            <div className="flex justify-center gap-4 mt-3">
+              <span className="text-gray-700 text-xs">🦉 HEARWISE TECHNOLOGIES</span>
+              <span className="text-gray-700 text-xs">CHENNAI, INDIA 🇮🇳</span>
+            </div>
+          </div>
+
         </div>
       </motion.div>
     </div>

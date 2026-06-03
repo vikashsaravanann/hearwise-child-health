@@ -26,13 +26,15 @@ export default defineConfig({
       manifest: {
         name: 'HearWise — School Hearing Screening',
         short_name: 'HearWise',
-        description: 'India\'s first mobile school hearing screening platform',
-        theme_color: '#14b8a6',
-        background_color: '#020617',
+        description: 'India\'s first mobile school hearing screening platform. Gamified ocean-themed hearing tests for children.',
+        theme_color: '#0d2137',
+        background_color: '#000b1d',
         display: 'standalone',
+        display_override: ['window-controls-overlay', 'standalone', 'browser'],
         orientation: 'portrait',
         start_url: '/',
         scope: '/',
+        id: '/',
         icons: [
           { src: 'pwa-192x192.png', sizes: '192x192', type: 'image/png' },
           { src: 'pwa-512x512.png', sizes: '512x512', type: 'image/png' },
@@ -40,7 +42,45 @@ export default defineConfig({
         ],
         categories: ['health', 'education', 'medical'],
         lang: 'en',
-        screenshots: []
+        screenshots: [
+          {
+            src: 'pwa-screenshot-landing.png',
+            sizes: '1200x2029',
+            type: 'image/png',
+            form_factor: 'narrow',
+            label: 'HearWise Landing Page'
+          },
+          {
+            src: 'pwa-screenshot-login.png',
+            sizes: '1200x2029',
+            type: 'image/png',
+            form_factor: 'narrow',
+            label: 'HearWise Login'
+          },
+          {
+            src: 'pwa-screenshot-about.png',
+            sizes: '1200x2029',
+            type: 'image/png',
+            form_factor: 'narrow',
+            label: 'About HearWise'
+          }
+        ],
+        shortcuts: [
+          {
+            name: 'Take a Hearing Test',
+            short_name: 'Test',
+            description: 'Start a new hearing screening session',
+            url: '/setup',
+            icons: [{ src: 'pwa-192x192.png', sizes: '192x192' }]
+          },
+          {
+            name: 'Dashboard',
+            short_name: 'Dashboard',
+            description: 'View screening analytics and reports',
+            url: '/admin',
+            icons: [{ src: 'pwa-192x192.png', sizes: '192x192' }]
+          }
+        ]
       },
       devOptions: { enabled: true }
     })

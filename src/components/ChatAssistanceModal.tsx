@@ -119,36 +119,58 @@ export default function ChatAssistanceModal({ isOpen, onClose }: ChatAssistanceM
     setIsTyping(true);
 
     try {
-      // Basic system prompt for HearWise
-      const systemPrompt = `You are Ollie, an owl AI assistant for 'HearWise', India's first mobile-based school hearing screening platform. 
+      // Enhanced system prompt with full information about HearWise Technologies
+      const systemPrompt = `You are Ollie (🦉), an AI owl assistant for 'HearWise Technologies', India's first mobile-based school hearing screening platform. 
 Role: ${role}
 Language: ${lang === 'ta' ? 'Tamil' : 'English'}
-Features: Hearing tests (ocean theme for kids), Admin dashboard for tracking, Learning hub.
-Troubleshooting: If headphones are not working, ask the user to check Bluetooth connection or volume. If a student fails, recommend a clinical referral.
-Keep responses concise, friendly, and use emojis like 🦉 or 🌊. Translate to Tamil if language is Tamil.`;
 
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
+ABOUT HEARWISE TECHNOLOGIES:
+- Mission: To detect hearing loss in every Indian child before it silently robs them of their education, communication, and confidence.
+- Vision: A future where every school in India has access to professional-grade hearing screening technology at zero cost to students and teachers.
+- The Problem: Over 18 million children in India suffer from some form of hearing impairment. Most are never diagnosed before age 10. Traditional audiological tests cost ₹2,000-₹5,000 and require specialist equipment (Audiometer).
+- The Solution: HearWise uses pure tone audiometry via the Web Audio API with calibrated headphone frequencies. It takes 3 minutes per child, is free for schools, and only requires a smartphone and standard headphones.
+- Founder: Vikash Saravanan, an entrepreneur from Chennai, Tamil Nadu.
+
+FEATURES & WORKFLOW:
+- Register School: Any school can register and start screening.
+- Hearing Test: 5-level test per ear using nature sounds (ocean waves, bird calls, water drops). The left ear is tested first.
+- Instant Results: Pass/Fail result is generated instantly. If failed, an automatic referral to an audiologist is made and a PDF report is created.
+- Offline Capability: Works fully offline via PWA.
+
+TROUBLESHOOTING:
+- If headphones are not working, check Bluetooth or volume.
+- If a child fails the screening, recommend a clinical referral to an ENT or audiologist within 2 weeks.
+
+INSTRUCTIONS:
+Keep responses concise, friendly, and use emojis like 🦉, 🌊, or 🎧. Translate to Tamil if language is Tamil. Answer all questions about HearWise accurately based on the information above.`;
+
+      const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': import.meta.env.VITE_ANTHROPIC_API_KEY || '',
-          'anthropic-version': '2023-06-01',
-          'anthropic-dangerous-direct-browser-access': 'true' // Allow browser access
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          model: 'claude-3-5-sonnet-20240620',
-          max_tokens: 300,
-          system: systemPrompt,
-          messages: [{ role: 'user', content: text }]
+          systemInstruction: {
+            role: 'system',
+            parts: [{ text: systemPrompt }]
+          },
+          contents: [{
+            role: 'user',
+            parts: [{ text }]
+          }],
+          generationConfig: {
+            maxOutputTokens: 300
+          }
         })
       });
 
       if (!response.ok) {
-        throw new Error('Failed to fetch from Anthropic');
+        throw new Error('Failed to fetch from Gemini');
       }
 
       const data = await response.json();
-      const responseText = data.content?.[0]?.text || "Hoot! Something went wrong.";
+      const responseText = data.candidates?.[0]?.content?.parts?.[0]?.text || "Hoot! Something went wrong.";
 
       const ollieMessage: Message = {
         id: (Date.now() + 1).toString(),

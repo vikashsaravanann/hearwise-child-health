@@ -1,206 +1,228 @@
-import React from 'react';
-import PageWrapper from '@/components/shared/PageWrapper';
-import FadeInSection from '@/components/FadeInSection';
-import { Activity, Ear, Headphones, AlertTriangle, CheckCircle2, ShieldCheck, Gamepad2, Hospital, IndianRupee, Clock, Zap } from 'lucide-react';
+import { motion } from 'framer-motion';
+import VideoCard from '../components/VideoCard';
 
 export default function HearingHealthPage() {
   return (
-    <PageWrapper title="HearWise Health Operations" showBack={true} backTo="/">
-      <div className="min-h-screen bg-slate-50 pb-20">
-        
-        {/* Section 1: Hero */}
-        <FadeInSection delay={0.1}>
-          <div className="relative bg-gradient-to-br from-indigo-900 via-slate-900 to-indigo-950 py-24 px-6 overflow-hidden">
-            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
-            <div className="max-w-5xl mx-auto text-center relative z-10">
-              <h1 className="text-4xl md:text-6xl font-black text-white mb-6 font-['Syne'] tracking-tight">
-                HearWise Health Operations
-              </h1>
-              <p className="text-xl md:text-2xl text-indigo-100 max-w-3xl mx-auto leading-relaxed">
-                Comprehensive Hearing Care and Assessment Protocol for pediatric screening.
-              </p>
-            </div>
+    <div className="min-h-screen bg-[#020817] relative overflow-hidden">
+      {/* Animated gradient orbs */}
+      <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-teal-500/10 rounded-full blur-[120px] animate-pulse pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-cyan-500/8 rounded-full blur-[100px] animate-pulse pointer-events-none" style={{ animationDelay: '2s' }} />
+      <div className="absolute top-1/2 left-0 w-[300px] h-[300px] bg-blue-600/6 rounded-full blur-[80px] animate-pulse pointer-events-none" style={{ animationDelay: '4s' }} />
+
+      <div
+        className="absolute inset-0 pointer-events-none opacity-[0.03]"
+        style={{
+          backgroundImage: `linear-gradient(rgba(20,184,166,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(20,184,166,0.5) 1px, transparent 1px)`,
+          backgroundSize: '60px 60px'
+        }}
+      />
+
+      <section className="relative pt-28 pb-16 px-6 text-center z-10">
+        <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-400 text-xs font-semibold uppercase tracking-widest mb-6">
+            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+            COMPLETE HEARING HEALTH RESOURCE
           </div>
-        </FadeInSection>
+          <h1 className="text-5xl md:text-7xl font-black text-white mb-6 leading-tight">
+            HEARWISE{' '}
+            <span className="bg-gradient-to-r from-cyan-400 to-teal-400 bg-clip-text text-transparent">
+              HEALTH
+            </span>
+            <br />OPERATIONS
+          </h1>
+          <p className="text-slate-400 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed">
+            Everything you need to understand childhood hearing health — from what hearing loss is,
+            to how HearWise's test works, to what to do when a child fails the screening.
+          </p>
+        </motion.div>
+      </section>
 
-        <div className="max-w-6xl mx-auto px-6 space-y-24 mt-16">
-          
-          {/* Section 2: Hearing Loss Info Cards */}
-          <FadeInSection delay={0.2}>
-            <div className="text-center mb-12">
-              <h2 className="hw-section-title">Types of Hearing Loss</h2>
-            </div>
-            <div className="grid md:grid-cols-3 gap-8">
-              <div className="hw-card hw-card-accent-blue">
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="p-3 bg-blue-100 text-blue-600 rounded-xl"><Ear size={24} /></div>
-                  <h3 className="text-xl font-bold text-slate-900 font-['Syne']">Conductive</h3>
-                </div>
-                <p className="text-slate-600">
-                  Occurs when sound waves cannot travel efficiently through the outer ear canal to the eardrum and the tiny bones of the middle ear. Often temporary and medically treatable.
-                </p>
-              </div>
-              <div className="hw-card hw-card-accent-teal">
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="p-3 bg-teal-100 text-teal-600 rounded-xl"><Activity size={24} /></div>
-                  <h3 className="text-xl font-bold text-slate-900 font-['Syne']">Sensorineural</h3>
-                </div>
-                <p className="text-slate-600">
-                  Occurs when there is damage to the inner ear (cochlea) or to the nerve pathways from the inner ear to the brain. Typically permanent and requires hearing aids or cochlear implants.
-                </p>
-              </div>
-              <div className="hw-card hw-card-accent-amber">
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="p-3 bg-amber-100 text-amber-600 rounded-xl"><Headphones size={24} /></div>
-                  <h3 className="text-xl font-bold text-slate-900 font-['Syne']">Mixed</h3>
-                </div>
-                <p className="text-slate-600">
-                  A combination of both conductive and sensorineural hearing loss. There is damage in the outer or middle ear and in the inner ear or auditory nerve.
-                </p>
-              </div>
-            </div>
-          </FadeInSection>
+      <section className="relative z-10 px-6 py-16 max-w-6xl mx-auto text-center" id="health-video-container">
+        <VideoCard
+          title="WHAT IS CHILDHOOD HEARING LOSS? — EXPLAINED SIMPLY"
+          description="A clear, parent-friendly explanation of what hearing loss is, why it happens in children, and why early detection changes everything."
+          duration="2:45 MIN"
+          category="HEALTH EDUCATION"
+          icon="🧠"
+          gradientFrom="#4a0d20"
+          gradientTo="#0d2a5e"
+          stats={[{ label: 'TYPES', value: '3' }, { label: 'CHILDREN AFFECTED', value: '18M+' }, { label: 'DETECTION AGE', value: '7 YRS' }]}
+        />
+      </section>
 
-          {/* Section 3: Process Flow Stepper */}
-          <FadeInSection delay={0.3}>
-            <div className="text-center mb-12">
-              <h2 className="hw-section-title">Screening Protocol</h2>
-            </div>
-            <div className="max-w-3xl mx-auto space-y-4">
-              <div className="hw-step">
-                <div className="hw-step-number">1</div>
-                <div>
-                  <h4 className="font-bold text-slate-900">Gamified Tone Check</h4>
-                  <p className="text-slate-600 text-sm">Initial environment check and basic tone response calibration.</p>
-                </div>
+      <section className="relative z-10 px-6 py-16 max-w-6xl mx-auto">
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
+          <h2 className="text-3xl font-black text-white uppercase tracking-wider">
+            TYPES OF <span className="text-cyan-400">HEARING LOSS</span>
+          </h2>
+          <p className="text-slate-500 text-sm uppercase tracking-widest mt-2">KNOW WHAT YOU ARE SCREENING FOR</p>
+        </motion.div>
+        <div className="grid md:grid-cols-3 gap-6">
+          {[
+            {
+              type: 'CONDUCTIVE', icon: '👂',
+              color: 'border-yellow-500/30 bg-yellow-500/5 hover:bg-yellow-500/10',
+              badge: 'text-yellow-400 border-yellow-500/30 bg-yellow-500/10',
+              desc: 'Caused by problems in the outer or middle ear — earwax blockage, fluid behind the eardrum, ear infections, or perforated eardrum. Often treatable.',
+              signs: ['Muffled speech', 'Ear pain or pressure', 'Asking to repeat often', 'Speaking louder than normal'],
+              treatable: 'OFTEN TREATABLE',
+            },
+            {
+              type: 'SENSORINEURAL', icon: '🧠',
+              color: 'border-red-500/30 bg-red-500/5 hover:bg-red-500/10',
+              badge: 'text-red-400 border-red-500/30 bg-red-500/10',
+              desc: 'Caused by damage to the inner ear (cochlea) or auditory nerve. This is permanent. Early detection is critical to manage it with hearing aids before school age.',
+              signs: ['Cannot hear high-pitched sounds', 'Difficulty hearing in noise', 'Ringing or buzzing', 'Balance issues'],
+              treatable: 'PERMANENT — NEEDS AID',
+            },
+            {
+              type: 'MIXED', icon: '🔀',
+              color: 'border-purple-500/30 bg-purple-500/5 hover:bg-purple-500/10',
+              badge: 'text-purple-400 border-purple-500/30 bg-purple-500/10',
+              desc: 'A combination of both conductive and sensorineural loss. Requires a full audiological evaluation to determine the extent of each component.',
+              signs: ['All conductive signs', 'All sensorineural signs', 'Affects both ears unevenly', 'Severe overall impact'],
+              treatable: 'PARTIAL TREATMENT',
+            },
+          ].map((card, i) => (
+            <motion.div
+              key={card.type}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.15 }}
+              whileHover={{ y: -6 }}
+              className={`rounded-2xl border p-8 transition-all duration-300 ${card.color}`}
+            >
+              <div className="text-4xl mb-4">{card.icon}</div>
+              <div className={`inline-block px-3 py-1 rounded-full border text-xs font-black uppercase tracking-widest mb-4 ${card.badge}`}>
+                {card.treatable}
               </div>
-              <div className="hw-step">
-                <div className="hw-step-number">2</div>
-                <div>
-                  <h4 className="font-bold text-slate-900">Threshold Mapping</h4>
-                  <p className="text-slate-600 text-sm">Systematic testing across multiple frequencies (500Hz to 8000Hz) at varying decibels.</p>
-                </div>
-              </div>
-              <div className="hw-step">
-                <div className="hw-step-number">3</div>
-                <div>
-                  <h4 className="font-bold text-slate-900">Ocean Adventure Play</h4>
-                  <p className="text-slate-600 text-sm">Interactive interface keeps children engaged, ensuring accurate audiometric responses.</p>
-                </div>
-              </div>
-              <div className="hw-step">
-                <div className="hw-step-number">4</div>
-                <div>
-                  <h4 className="font-bold text-slate-900">Instant Report Generation</h4>
-                  <p className="text-slate-600 text-sm">Automated analysis of results against WHO pediatric standards.</p>
-                </div>
-              </div>
-              <div className="hw-step">
-                <div className="hw-step-number">5</div>
-                <div>
-                  <h4 className="font-bold text-slate-900">Expert Referral Pipeline</h4>
-                  <p className="text-slate-600 text-sm">Direct connection to specialized audiologists for flagged cases.</p>
-                </div>
-              </div>
-            </div>
-          </FadeInSection>
-
-          {/* Section 4: Warning Signs Checklist */}
-          <FadeInSection delay={0.4}>
-            <div className="hw-card bg-indigo-50 border-indigo-100">
-              <div className="flex items-center gap-3 mb-8 justify-center">
-                <AlertTriangle className="text-amber-500" size={32} />
-                <h2 className="hw-section-title !mb-0">Warning Signs</h2>
-              </div>
-              <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-                {[
-                  "Turns TV or device volume too high",
-                  "Frequently asks others to repeat ('what?')",
-                  "Misunderstands questions or directions",
-                  "Delayed speech and language development",
-                  "Watches faces intently when listening",
-                  "Complains of ear pain, noises, or ringing",
-                  "Speaks differently than peers",
-                  "Struggles academically despite effort"
-                ].map((sign, i) => (
-                  <div key={i} className="flex items-start gap-3 bg-white p-4 rounded-xl shadow-sm border border-slate-100">
-                    <CheckCircle2 className="text-indigo-600 shrink-0 mt-0.5" size={20} />
-                    <span className="text-slate-700 font-medium">{sign}</span>
+              <h3 className="text-white font-black text-xl uppercase tracking-wider mb-3">{card.type}</h3>
+              <p className="text-slate-400 text-sm leading-relaxed mb-5">{card.desc}</p>
+              <div className="space-y-2">
+                {card.signs.map(s => (
+                  <div key={s} className="flex items-center gap-2 text-slate-400 text-xs">
+                    <span className="w-1.5 h-1.5 rounded-full bg-teal-400 flex-shrink-0" />
+                    {s}
                   </div>
                 ))}
               </div>
-            </div>
-          </FadeInSection>
-
-          {/* Section 5: Benefits of Early Detection */}
-          <FadeInSection delay={0.5}>
-            <div className="grid md:grid-cols-2 gap-12 items-center">
-              <div>
-                <h2 className="text-3xl font-bold text-slate-900 mb-6 font-['Syne']">The Power of Early Detection</h2>
-                <p className="text-lg text-slate-600 mb-6 leading-relaxed">
-                  Catching hearing loss early isn't just about restoring sound; it's about unlocking a child's full potential. Early intervention directly correlates with significantly improved outcomes in crucial developmental areas.
-                </p>
-                <ul className="space-y-4">
-                  <li className="flex items-center gap-3 text-slate-700 font-medium">
-                    <ShieldCheck className="text-teal-600" size={24} /> Accelerated Speech & Language Development
-                  </li>
-                  <li className="flex items-center gap-3 text-slate-700 font-medium">
-                    <ShieldCheck className="text-teal-600" size={24} /> Enhanced Academic Performance
-                  </li>
-                  <li className="flex items-center gap-3 text-slate-700 font-medium">
-                    <ShieldCheck className="text-teal-600" size={24} /> Better Social & Emotional Integration
-                  </li>
-                </ul>
-              </div>
-              <div className="relative rounded-3xl overflow-hidden shadow-2xl h-80 bg-slate-200">
-                <img src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=2000&auto=format&fit=crop" alt="Happy child" className="w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-indigo-900/20 mix-blend-multiply"></div>
-              </div>
-            </div>
-          </FadeInSection>
-
-          {/* Section 6: Feature Comparison Table */}
-          <FadeInSection delay={0.6}>
-            <div className="text-center mb-12">
-              <h2 className="hw-section-title">Why HearWise?</h2>
-            </div>
-            <div className="bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-slate-50 border-b border-slate-200">
-                    <th className="p-6 font-semibold text-slate-500 w-1/3">Feature</th>
-                    <th className="p-6 font-bold text-indigo-700 w-1/3 bg-indigo-50/50">HearWise Platform</th>
-                    <th className="p-6 font-semibold text-slate-500 w-1/3">Traditional Audiometry</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                  <tr>
-                    <td className="p-6 text-slate-600 font-medium">Experience</td>
-                    <td className="p-6 bg-indigo-50/30 text-slate-900 font-bold flex items-center gap-2"><Gamepad2 size={18} className="text-indigo-600" /> Gamified & Engaging</td>
-                    <td className="p-6 text-slate-500 flex items-center gap-2"><Hospital size={18} /> Clinical & Intimidating</td>
-                  </tr>
-                  <tr>
-                    <td className="p-6 text-slate-600 font-medium">Accessibility</td>
-                    <td className="p-6 bg-indigo-50/30 text-slate-900 font-bold flex items-center gap-2"><Zap size={18} className="text-indigo-600" /> Mobile & Anywhere</td>
-                    <td className="p-6 text-slate-500 flex items-center gap-2"><Hospital size={18} /> Requires Hospital Visit</td>
-                  </tr>
-                  <tr>
-                    <td className="p-6 text-slate-600 font-medium">Speed</td>
-                    <td className="p-6 bg-indigo-50/30 text-slate-900 font-bold flex items-center gap-2"><Clock size={18} className="text-indigo-600" /> Instant Results</td>
-                    <td className="p-6 text-slate-500 flex items-center gap-2"><Clock size={18} /> Slow Scheduling</td>
-                  </tr>
-                  <tr>
-                    <td className="p-6 text-slate-600 font-medium">Cost</td>
-                    <td className="p-6 bg-indigo-50/30 text-slate-900 font-bold flex items-center gap-2"><IndianRupee size={18} className="text-indigo-600" /> Free for Schools</td>
-                    <td className="p-6 text-slate-500 flex items-center gap-2"><IndianRupee size={18} /> Highly Expensive</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </FadeInSection>
-
+            </motion.div>
+          ))}
         </div>
-      </div>
-    </PageWrapper>
+      </section>
+
+      <section className="relative z-10 px-6 py-16 max-w-5xl mx-auto">
+        <div className="rounded-3xl border border-orange-500/20 bg-orange-500/5 p-10">
+          <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}>
+            <h2 className="text-3xl font-black text-white uppercase tracking-wider mb-2">
+              ⚠ WARNING SIGNS IN <span className="text-orange-400">CHILDREN</span>
+            </h2>
+            <p className="text-slate-400 text-sm mb-8 uppercase tracking-widest">IF A CHILD SHOWS THESE SIGNS, SCREEN THEM IMMEDIATELY</p>
+            <div className="grid md:grid-cols-2 gap-4">
+              {[
+                'Does not respond when called by name from behind',
+                'Frequently asks "What?" or "Can you repeat that?"',
+                'Turns the TV or phone volume unusually high',
+                'Speaks louder than other children of the same age',
+                'Misunderstands instructions or appears inattentive',
+                'Delayed speech development compared to peers',
+                'Complains of ringing, buzzing, or sounds in the ear',
+                'Performs better when facing the teacher directly',
+                'Struggles to hear in noisy classroom environments',
+                'Becomes withdrawn, frustrated, or avoids group activities',
+              ].map((sign, i) => (
+                <motion.div
+                  key={sign}
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.05 }}
+                  className="flex items-start gap-3 p-3 rounded-xl bg-white/5 border border-white/5"
+                >
+                  <span className="text-orange-400 font-black text-sm mt-0.5 flex-shrink-0">
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
+                  <span className="text-slate-300 text-sm leading-relaxed">{sign}</span>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      <section className="relative z-10 px-6 py-16 max-w-5xl mx-auto">
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
+          <h2 className="text-3xl font-black text-white uppercase tracking-wider">
+            HOW THE <span className="text-teal-400">HEARWISE TEST</span> WORKS
+          </h2>
+        </motion.div>
+        <div className="space-y-4">
+          {[
+            { step: '01', title: 'REGISTER THE CHILD', desc: 'Teacher enters the child\'s name, age, class, school and ear being tested. Takes 20 seconds.', icon: '📋' },
+            { step: '02', title: 'PUT ON THE HEADPHONES', desc: 'The child wears standard 3.5mm stereo headphones. No specialist equipment needed — any school can do this.', icon: '🎧' },
+            { step: '03', title: 'LISTEN TO NATURE SOUNDS', desc: 'HearWise plays ocean waves, bird calls, water drops, and wind chimes — child-friendly sounds across 5 frequency levels per ear.', icon: '🌊' },
+            { step: '04', title: 'TEACHER RECORDS RESPONSE', desc: 'Teacher taps Pass or Fail for each level as the child responds. Left ear tested first (5 levels), then right ear (5 levels).', icon: '✅' },
+            { step: '05', title: 'RESULT + REFERRAL', desc: 'Instant pass/fail result generated. Failed tests trigger automatic referral to a nearby audiologist. PDF report created for parents.', icon: '📊' },
+          ].map((item, i) => (
+            <motion.div
+              key={item.step}
+              initial={{ opacity: 0, x: i % 2 === 0 ? -30 : 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1 }}
+              className="flex items-center gap-6 p-6 rounded-2xl border border-teal-500/20 bg-teal-500/5 hover:bg-teal-500/10 transition-all"
+            >
+              <div className="text-3xl w-12 flex-shrink-0 text-center">{item.icon}</div>
+              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-teal-400 to-cyan-500 flex items-center justify-center text-black font-black text-sm flex-shrink-0">
+                {item.step}
+              </div>
+              <div>
+                <div className="text-white font-black text-sm uppercase tracking-wider mb-1">{item.title}</div>
+                <div className="text-slate-400 text-sm leading-relaxed">{item.desc}</div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      <section className="relative z-10 px-6 py-16 max-w-5xl mx-auto">
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-10">
+          <h2 className="text-3xl font-black text-white uppercase tracking-wider">
+            HEARWISE VS <span className="text-red-400">TRADITIONAL</span> SCREENING
+          </h2>
+        </motion.div>
+        <div className="overflow-x-auto rounded-2xl border border-white/10">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-white/10 bg-white/5">
+                <th className="text-left p-5 text-slate-400 text-xs uppercase tracking-widest font-semibold">CRITERIA</th>
+                <th className="text-center p-5 text-teal-400 text-xs uppercase tracking-widest font-black">HEARWISE ✓</th>
+                <th className="text-center p-5 text-red-400 text-xs uppercase tracking-widest font-semibold">TRADITIONAL ✗</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                ['Cost per child', '₹0 (Free)', '₹2,000 – ₹5,000'],
+                ['Equipment needed', 'Any smartphone + headphones', 'Audiometer (₹50,000+)'],
+                ['Who can conduct', 'Any school teacher', 'Trained audiologist only'],
+                ['Time per child', '3 minutes', '45–60 minutes'],
+                ['Location', 'Any school, any village', 'Hospital or clinic only'],
+                ['Result availability', 'Instant', '2–7 days'],
+                ['Language support', 'English + Tamil + Hindi', 'English only'],
+                ['Works offline', 'Yes (PWA)', 'No'],
+                ['Report for parents', 'Automatic PDF', 'Manual, extra cost'],
+              ].map(([criteria, hearwise, traditional], i) => (
+                <tr key={criteria} className={`border-b border-white/5 ${i % 2 === 0 ? 'bg-white/2' : ''} hover:bg-teal-500/5 transition-colors`}>
+                  <td className="p-5 text-slate-300 text-sm font-medium">{criteria}</td>
+                  <td className="p-5 text-center text-teal-300 text-sm font-semibold">{hearwise}</td>
+                  <td className="p-5 text-center text-slate-500 text-sm">{traditional}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
   );
 }
