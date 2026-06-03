@@ -9,7 +9,6 @@ import { SessionProvider } from "@/contexts/SessionContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { RequireAuth, RequireAdmin } from "@/components/ProtectedRoute";
 import OfflineBadge from "@/components/OfflineBadge";
-import PWAInstallPrompt from "@/components/PWAInstallPrompt";
 import SWUpdatePrompt from "@/components/SWUpdatePrompt";
 import LanguageToggle from "@/components/LanguageToggle";
 import ProtectedRoute from "@/components/ProtectedRoute";
@@ -164,7 +163,6 @@ const App = () => (
           <LanguageToggle />
           <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '')}>
             <HearBot />
-            <PWAInstallPrompt />
             <SWUpdatePrompt />
             <Suspense fallback={<Loader fullscreen text="LOADING" />}>
               <InnerRoutes />
