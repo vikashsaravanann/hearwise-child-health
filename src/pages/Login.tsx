@@ -17,14 +17,15 @@ export default function Login() {
 
   useEffect(() => { setMounted(true); }, []);
 
-  // Static Purple Waveform Bars matching screenshot precisely
+  // Animated Purple Waveform Bars matching screenshot precisely
   const WaveformBars = () => (
     <div className="flex items-center justify-center gap-1 h-8">
       {[12, 20, 14, 18, 12, 16, 12, 24, 14, 18, 12].map((h, i) => (
-        <div
+        <motion.div
           key={i}
           className="w-1.5 rounded-full bg-[#6366f1]"
-          style={{ height: `${h}px` }}
+          animate={{ height: [h * 0.4, h, h * 0.4] }}
+          transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut', delay: i * 0.1 }}
         />
       ))}
     </div>
@@ -32,8 +33,23 @@ export default function Login() {
 
   // Deep purple/blue starry background perfectly matching the screenshot
   const StarBg = () => (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      <img src={`${import.meta.env.BASE_URL}space-bg.png`} alt="background" className="w-full h-full object-cover" />
+    <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ background: 'radial-gradient(circle at 50% 0%, #151532 0%, #070710 100%)' }}>
+      {/* Subtle floating stars */}
+      {[...Array(30)].map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute rounded-full bg-indigo-500"
+          style={{
+            top: `${Math.random() * 100}%`,
+            left: `${Math.random() * 100}%`,
+            width: Math.random() > 0.8 ? '3px' : '1.5px',
+            height: Math.random() > 0.8 ? '3px' : '1.5px',
+            boxShadow: '0 0 10px 2px rgba(99, 102, 241, 0.4)'
+          }}
+          animate={{ opacity: [0.1, 0.6, 0.1] }}
+          transition={{ duration: 3 + Math.random() * 4, repeat: Infinity }}
+        />
+      ))}
     </div>
   );
 

@@ -188,10 +188,7 @@ export default function HearBot() {
             style={{ height: '540px' }}
           >
             {/* Background */}
-            <div className="absolute inset-0 pointer-events-none">
-              <img src={`${import.meta.env.BASE_URL}space-bg.png`} alt="background" className="w-full h-full object-cover opacity-80" />
-              <div className="absolute inset-0 bg-black/40" />
-            </div>
+            <div className="absolute inset-0 bg-black" />
 
             {/* Header */}
             <div className="relative z-10 flex items-center gap-3 px-5 py-4 border-b border-white/5">
@@ -230,7 +227,7 @@ export default function HearBot() {
                       className={`px-4 py-3 rounded-2xl text-sm leading-relaxed ${
                         msg.role === 'user'
                           ? 'bg-gradient-to-br from-teal-500 to-cyan-500 text-black font-semibold rounded-tr-sm'
-                          : 'bg-white/5 border border-white/10 text-slate-200 rounded-tl-sm'
+                          : 'bg-[#111] border border-[#333] text-white rounded-tl-sm'
                       }`}
                     >
                       {msg.text}
