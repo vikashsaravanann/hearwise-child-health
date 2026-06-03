@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
-import { motion } from 'react-serif'; // Framer motion is imported as motion from framer-motion
-import { motion as framerMotion } from 'framer-motion';
+import { motion as framerMotion, motion } from 'framer-motion';
 import { 
   X, BarChart, Ear, School, CheckCircle, Telescope, Globe2, Gamepad2, Target, 
   Settings, Headphones, Waves, ClipboardList, Rocket, Heart, Code, 

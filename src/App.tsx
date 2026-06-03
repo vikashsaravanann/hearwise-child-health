@@ -1,3 +1,4 @@
+import React, { Suspense } from 'react';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes, useLocation, Link } from "react-router-dom";
 import { SpeedInsights } from "@vercel/speed-insights/react";
@@ -6,48 +7,54 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { SessionProvider } from "@/contexts/SessionContext";
 import OfflineBadge from "@/components/OfflineBadge";
+import LanguageToggle from "@/components/LanguageToggle";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import FloatingChatButton from "@/components/FloatingChatButton";
+import PageLoadingSkeleton from "@/components/PageLoadingSkeleton";
+import LoginPage from "./pages/LoginPage";
 import LandingPage from "./pages/LandingPage";
-import SessionSetupPage from "./pages/SessionSetupPage";
-import StudentEntryPage from "./pages/StudentEntryPage";
-import HeadphoneCheckPage from "./pages/HeadphoneCheckPage";
-import OceanLevelSelectPage from "./pages/OceanLevelSelectPage";
-import OceanTestPage from "./pages/OceanTestPage";
-import LevelResultPage from "./pages/LevelResultPage";
-import SessionSummaryPage from "./pages/SessionSummaryPage";
-import AnimatedDashboardPage from "./pages/AnimatedDashboardPage";
-import GamesPage from "./pages/Games";
-import TrophiesPage from "./pages/Trophies";
-import EarCarePage from "./pages/EarCare";
-import EducationPage from "./pages/Education";
-import LearnPage from "./pages/Learn";
-import SoundExplorerPage from "./pages/SoundExplorer";
-import MyReportPage from "./pages/MyReport";
-import HeadphoneSafetyPage from "./pages/HeadphoneSafety";
-import NoiseAwarenessPage from "./pages/NoiseAwareness";
-import SelfCheckPage from "./pages/SelfCheck";
-import BookAppointmentPage from "./pages/BookAppointment";
-import LeaderboardPage from "./pages/Leaderboard";
-import HelpPage from "./pages/Help";
-import AboutPage from "./pages/AboutPage";
-import NotFound from "./pages/NotFound";
-import AdminLoginPage from "./pages/AdminLoginPage";
-import AdminLayout from "./components/AdminLayout";
-import AdminGuard from "./components/AdminGuard";
-import AdminOverviewPage from "./pages/admin/AdminOverviewPage";
-import AdminAnalyticsPage from "./pages/admin/AdminAnalyticsPage";
-import AdminSchoolsPage from "./pages/admin/AdminSchoolsPage";
-import AdminTeachersPage from "./pages/admin/AdminTeachersPage";
-import AdminStudentsPage from "./pages/admin/AdminStudentsPage";
-import AdminSessionsPage from "./pages/admin/AdminSessionsPage";
-import AdminReferralsPage from "./pages/admin/AdminReferralsPage";
-import AdminLoginsPage from "./pages/admin/AdminLoginsPage";
-import AdminSettingsPage from "./pages/admin/AdminSettingsPage";
-import AdminExportPage from "./pages/admin/AdminExportPage";
-import AboutDeveloperPage from "./pages/admin/AboutDeveloperPage";
-import PracticeRoundPage from "./pages/PracticeRoundPage";
-import ActiveTestPage from "./pages/ActiveTestPage";
-import ResultsPage from "./pages/ResultsPage";
-import ThankYouPage from "./pages/ThankYouPage";
+
+const SessionSetupPage = React.lazy(() => import("./pages/SessionSetupPage"));
+const StudentEntryPage = React.lazy(() => import("./pages/StudentEntryPage"));
+const HeadphoneCheckPage = React.lazy(() => import("./pages/HeadphoneCheckPage"));
+const OceanLevelSelectPage = React.lazy(() => import("./pages/OceanLevelSelectPage"));
+const OceanTestPage = React.lazy(() => import("./pages/OceanTestPage"));
+const LevelResultPage = React.lazy(() => import("./pages/LevelResultPage"));
+const SessionSummaryPage = React.lazy(() => import("./pages/SessionSummaryPage"));
+const AnimatedDashboardPage = React.lazy(() => import("./pages/AnimatedDashboardPage"));
+const GamesPage = React.lazy(() => import("./pages/Games"));
+const TrophiesPage = React.lazy(() => import("./pages/Trophies"));
+const EarCarePage = React.lazy(() => import("./pages/EarCare"));
+const EducationPage = React.lazy(() => import("./pages/Education"));
+const LearnPage = React.lazy(() => import("./pages/Learn"));
+const SoundExplorerPage = React.lazy(() => import("./pages/SoundExplorer"));
+const MyReportPage = React.lazy(() => import("./pages/MyReport"));
+const HeadphoneSafetyPage = React.lazy(() => import("./pages/HeadphoneSafety"));
+const NoiseAwarenessPage = React.lazy(() => import("./pages/NoiseAwareness"));
+const SelfCheckPage = React.lazy(() => import("./pages/SelfCheck"));
+const BookAppointmentPage = React.lazy(() => import("./pages/BookAppointment"));
+const LeaderboardPage = React.lazy(() => import("./pages/Leaderboard"));
+const HelpPage = React.lazy(() => import("./pages/Help"));
+const AboutPage = React.lazy(() => import("./pages/AboutPage"));
+const NotFound = React.lazy(() => import("./pages/NotFound"));
+const AdminLoginPage = React.lazy(() => import("./pages/AdminLoginPage"));
+const AdminLayout = React.lazy(() => import("./components/AdminLayout"));
+const AdminGuard = React.lazy(() => import("./components/AdminGuard"));
+const AdminOverviewPage = React.lazy(() => import("./pages/admin/AdminOverviewPage"));
+const AdminAnalyticsPage = React.lazy(() => import("./pages/admin/AdminAnalyticsPage"));
+const AdminSchoolsPage = React.lazy(() => import("./pages/admin/AdminSchoolsPage"));
+const AdminTeachersPage = React.lazy(() => import("./pages/admin/AdminTeachersPage"));
+const AdminStudentsPage = React.lazy(() => import("./pages/admin/AdminStudentsPage"));
+const AdminSessionsPage = React.lazy(() => import("./pages/admin/AdminSessionsPage"));
+const AdminReferralsPage = React.lazy(() => import("./pages/admin/AdminReferralsPage"));
+const AdminLoginsPage = React.lazy(() => import("./pages/admin/AdminLoginsPage"));
+const AdminSettingsPage = React.lazy(() => import("./pages/admin/AdminSettingsPage"));
+const AdminExportPage = React.lazy(() => import("./pages/admin/AdminExportPage"));
+const AboutDeveloperPage = React.lazy(() => import("./pages/admin/AboutDeveloperPage"));
+const PracticeRoundPage = React.lazy(() => import("./pages/PracticeRoundPage"));
+const ActiveTestPage = React.lazy(() => import("./pages/ActiveTestPage"));
+const ResultsPage = React.lazy(() => import("./pages/ResultsPage"));
+const ThankYouPage = React.lazy(() => import("./pages/ThankYouPage"));
 
 const queryClient = new QueryClient();
 
@@ -58,36 +65,42 @@ const App = () => (
         <Toaster />
         <Sonner />
         <OfflineBadge />
+        <LanguageToggle />
         <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '')}>
-          <Routes>
+          <FloatingChatButton />
+          <Suspense fallback={<PageLoadingSkeleton />}>
+            <Routes>
             <Route path="/" element={<LandingPage />} />
-            <Route path="/setup" element={<SessionSetupPage />} />
-            <Route path="/student-entry" element={<StudentEntryPage />} />
-            <Route path="/headphone-check" element={<HeadphoneCheckPage />} />
-            <Route path="/ocean-levels" element={<OceanLevelSelectPage />} />
-            <Route path="/ocean-test/:level" element={<OceanTestPage />} />
-            <Route path="/level-result/:level" element={<LevelResultPage />} />
-            <Route path="/session-summary" element={<SessionSummaryPage />} />
-            <Route path="/dashboard" element={<AnimatedDashboardPage />} />
-            <Route path="/games" element={<GamesPage />} />
-            <Route path="/trophies" element={<TrophiesPage />} />
-            <Route path="/ear-care" element={<EarCarePage />} />
-            <Route path="/education" element={<EducationPage />} />
-            <Route path="/learn" element={<LearnPage />} />
-            <Route path="/sound-explorer" element={<SoundExplorerPage />} />
-            <Route path="/my-report" element={<MyReportPage />} />
-            <Route path="/headphone-safety" element={<HeadphoneSafetyPage />} />
-            <Route path="/noise-awareness" element={<NoiseAwarenessPage />} />
-            <Route path="/self-check" element={<SelfCheckPage />} />
-            <Route path="/book-appointment" element={<BookAppointmentPage />} />
-            <Route path="/leaderboard" element={<LeaderboardPage />} />
-            <Route path="/help" element={<HelpPage />} />
-            <Route path="/about" element={<AboutPage />} />
+            <Route path="/login" element={<LoginPage />} />
 
-            <Route path="/practice" element={<PracticeRoundPage />} />
-            <Route path="/active-test" element={<ActiveTestPage />} />
-            <Route path="/results" element={<ResultsPage />} />
-            <Route path="/thank-you" element={<ThankYouPage />} />
+            {/* Protected App Routes */}
+            <Route path="/setup" element={<ProtectedRoute><SessionSetupPage /></ProtectedRoute>} />
+            <Route path="/student-entry" element={<ProtectedRoute><StudentEntryPage /></ProtectedRoute>} />
+            <Route path="/headphone-check" element={<ProtectedRoute><HeadphoneCheckPage /></ProtectedRoute>} />
+            <Route path="/ocean-levels" element={<ProtectedRoute><OceanLevelSelectPage /></ProtectedRoute>} />
+            <Route path="/ocean-test/:level" element={<ProtectedRoute><OceanTestPage /></ProtectedRoute>} />
+            <Route path="/level-result/:level" element={<ProtectedRoute><LevelResultPage /></ProtectedRoute>} />
+            <Route path="/session-summary" element={<ProtectedRoute><SessionSummaryPage /></ProtectedRoute>} />
+            <Route path="/dashboard" element={<ProtectedRoute><AnimatedDashboardPage /></ProtectedRoute>} />
+            <Route path="/games" element={<ProtectedRoute><GamesPage /></ProtectedRoute>} />
+            <Route path="/trophies" element={<ProtectedRoute><TrophiesPage /></ProtectedRoute>} />
+            <Route path="/ear-care" element={<ProtectedRoute><EarCarePage /></ProtectedRoute>} />
+            <Route path="/education" element={<ProtectedRoute><EducationPage /></ProtectedRoute>} />
+            <Route path="/learn" element={<ProtectedRoute><LearnPage /></ProtectedRoute>} />
+            <Route path="/sound-explorer" element={<ProtectedRoute><SoundExplorerPage /></ProtectedRoute>} />
+            <Route path="/my-report" element={<ProtectedRoute><MyReportPage /></ProtectedRoute>} />
+            <Route path="/headphone-safety" element={<ProtectedRoute><HeadphoneSafetyPage /></ProtectedRoute>} />
+            <Route path="/noise-awareness" element={<ProtectedRoute><NoiseAwarenessPage /></ProtectedRoute>} />
+            <Route path="/self-check" element={<ProtectedRoute><SelfCheckPage /></ProtectedRoute>} />
+            <Route path="/book-appointment" element={<ProtectedRoute><BookAppointmentPage /></ProtectedRoute>} />
+            <Route path="/leaderboard" element={<ProtectedRoute><LeaderboardPage /></ProtectedRoute>} />
+            <Route path="/help" element={<ProtectedRoute><HelpPage /></ProtectedRoute>} />
+            <Route path="/about" element={<ProtectedRoute><AboutPage /></ProtectedRoute>} />
+
+            <Route path="/practice" element={<ProtectedRoute><PracticeRoundPage /></ProtectedRoute>} />
+            <Route path="/active-test" element={<ProtectedRoute><ActiveTestPage /></ProtectedRoute>} />
+            <Route path="/results" element={<ProtectedRoute><ResultsPage /></ProtectedRoute>} />
+            <Route path="/thank-you" element={<ProtectedRoute><ThankYouPage /></ProtectedRoute>} />
 
             {/* Admin: standalone login page */}
             <Route path="/admin/login" element={<AdminLoginPage />} />
@@ -118,6 +131,7 @@ const App = () => (
             {/* keep catch-all last */}
             <Route path="*" element={<NotFound />} />
           </Routes>
+          </Suspense>
         </BrowserRouter>
         <SpeedInsights />
       </SessionProvider>

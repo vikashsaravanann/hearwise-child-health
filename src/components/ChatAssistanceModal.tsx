@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { X, Send, User, Sparkles, GraduationCap, Users, Mic, Volume2, ShieldCheck, Activity } from 'lucide-react';
 import mascot from '@/assets/owl-mascot.png';
 import { motion, AnimatePresence } from 'framer-motion';
+import { toast } from 'sonner';
 
 interface ChatAssistanceModalProps {
   isOpen: boolean;
@@ -103,7 +104,7 @@ export default function ChatAssistanceModal({ isOpen, onClose }: ChatAssistanceM
 
   if (!isOpen) return null;
 
-  const handleSend = (text: string, isFromPreset = false) => {
+  const handleSend = async (text: string, isFromPreset = false) => {
     if (!text.trim()) return;
 
     const userMessage: Message = {
@@ -117,21 +118,37 @@ export default function ChatAssistanceModal({ isOpen, onClose }: ChatAssistanceM
     setInputValue('');
     setIsTyping(true);
 
-    setTimeout(() => {
-      let response = MOCK_ANSWERS[text];
-      let responseText = response ? (lang === 'ta' ? response.ta : response.en) : "";
-      
-      if (!responseText) {
-        if (role === 'student') {
-          responseText = lang === 'ta' 
-            ? "ஹூட்! இது ஒரு சுவாரஸ்யமான கேள்வி. நான் இன்னும் இதைப் பற்றி கற்றுக் கொண்டிருக்கிறேன்!" 
-            : "Hoot! That's an interesting question. I'm still learning about that. Try asking about whales or ear facts!";
-        } else {
-          responseText = lang === 'ta'
-            ? "மன்னிக்கவும், இப்போதைக்கு என்னிடம் அந்தத் தகவல் இல்லை. தயவுசெய்து எங்களைத் தொடர்பு கொள்ளவும்."
-            : "I don't have that specific information right now. Please check our documentation or contact support.";
-        }
+    try {
+      // Basic system prompt for HearWise
+      const systemPrompt = `You are Ollie, an owl AI assistant for 'HearWise', India's first mobile-based school hearing screening platform. 
+Role: ${role}
+Language: ${lang === 'ta' ? 'Tamil' : 'English'}
+Features: Hearing tests (ocean theme for kids), Admin dashboard for tracking, Learning hub.
+Troubleshooting: If headphones are not working, ask the user to check Bluetooth connection or volume. If a student fails, recommend a clinical referral.
+Keep responses concise, friendly, and use emojis like 🦉 or 🌊. Translate to Tamil if language is Tamil.`;
+
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': import.meta.env.VITE_ANTHROPIC_API_KEY || '',
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true' // Allow browser access
+        },
+        body: JSON.stringify({
+          model: 'claude-3-5-sonnet-20240620',
+          max_tokens: 300,
+          system: systemPrompt,
+          messages: [{ role: 'user', content: text }]
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch from Anthropic');
       }
+
+      const data = await response.json();
+      const responseText = data.content?.[0]?.text || "Hoot! Something went wrong.";
 
       const ollieMessage: Message = {
         id: (Date.now() + 1).toString(),
@@ -140,10 +157,24 @@ export default function ChatAssistanceModal({ isOpen, onClose }: ChatAssistanceM
         role,
         isTamil: lang === 'ta'
       };
-
       setMessages(prev => [...prev, ollieMessage]);
+    } catch (err) {
+      console.error(err);
+      // Fallback to MOCK_ANSWERS if API fails
+      const fallback = MOCK_ANSWERS[text];
+      const responseText = fallback ? (lang === 'ta' ? fallback.ta : fallback.en) : (lang === 'ta' ? "மன்னிக்கவும், என் தொடர்பு துண்டிக்கப்பட்டது." : "Hoot! I'm having trouble connecting right now.");
+      
+      const ollieMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        sender: 'ollie',
+        text: responseText,
+        role,
+        isTamil: lang === 'ta'
+      };
+      setMessages(prev => [...prev, ollieMessage]);
+    } finally {
       setIsTyping(false);
-    }, 1000);
+    }
   };
 
   const handleSoundCheck = () => {

@@ -1,4 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 import {
   createLocalSchool,
   createLocalSession,
@@ -427,12 +428,17 @@ export async function syncPendingResults(): Promise<{ synced: number }> {
     if (!isItemEligibleForRetry(item)) continue;
 
     try {
-      const { synced: itemSynced } = await syncOnePendingResult(item);
+      const { synced: itemSynced, error: syncError } = await syncOnePendingResult(item);
       if (itemSynced) synced += 1;
+      else if (syncError) {
+        toast.error(`Sync failed: ${syncError.message || 'Unknown error'}`);
+      }
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown sync error';
       console.error('Result sync failed:', error);
+      toast.error(`Sync failed: ${errorMessage}`);
       item.status = 'failed';
-      item.lastError = error instanceof Error ? error.message : 'Unknown sync error';
+      item.lastError = errorMessage;
       item.nextRetryAt = Date.now() + getRetryDelayMs((item.attempts || 0) + 1);
     }
   }
@@ -487,7 +493,7 @@ async function syncOnePendingResult(item: PendingResultItem) {
     item.status = 'failed';
     item.lastError = error.message;
     item.nextRetryAt = Date.now() + getRetryDelayMs(item.attempts);
-    return { synced: false as const };
+    return { synced: false as const, error };
   }
 
   item.synced = true;
@@ -498,11 +504,8 @@ async function syncOnePendingResult(item: PendingResultItem) {
 }
 
 function getRetryDelayMs(attempts: number): number {
-  const base = 2000;
-  const max = 5 * 60 * 1000;
-  const delay = Math.min(max, base * Math.pow(2, Math.max(0, attempts - 1)));
   const jitter = Math.floor(Math.random() * 500);
-  return delay + jitter;
+  return Math.min(1000 * Math.pow(2, attempts) + jitter, 30000);
 }
 
 function isItemEligibleForRetry(item: PendingResultItem): boolean {

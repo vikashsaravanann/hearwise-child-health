@@ -108,7 +108,6 @@ export default function LandingPage() {
           </div>
           
           <div className="flex items-center gap-4">
-            <LanguageToggle />
             <Button 
               variant="ghost" 
               className="hidden sm:flex text-white/70 hover:text-white hover:bg-white/10"
@@ -178,9 +177,9 @@ export default function LandingPage() {
                   size="lg" 
                   variant="outline"
                   className="h-14 px-8 rounded-2xl border-white/20 bg-white/5 hover:bg-white/10 text-white/70 font-bold text-lg backdrop-blur-sm transition-all"
-                  onClick={() => setShowAbout(true)}
+                  onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
                 >
-                  Learn More
+                  {t('learnMore', lang)}
                 </Button>
               </div>
 
@@ -239,55 +238,112 @@ export default function LandingPage() {
             </motion.div>
           </section>
 
-          {/* About Section */}
-          <section id="about" className="mt-32">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="p-8 md:p-12 rounded-[3rem] bg-gradient-to-br from-cyan-500/10 to-blue-600/10 border border-white/10 backdrop-blur-xl flex flex-col md:flex-row items-center gap-10"
-            >
-              <div className="flex-1">
-                <h2 className="text-4xl font-black mb-6">Our Mission & Vision</h2>
-                <div className="space-y-6 text-white/70 leading-relaxed">
-                  <p>
-                    <strong className="text-white">HearWise</strong> is dedicated to bridging the gap in childhood hearing healthcare across India. 
-                    In a country with over 1.5 million schools, early detection of hearing impairment is crucial for a child's academic and social development.
-                  </p>
-                  <p>
-                    Our platform utilizes <strong className="text-cyan-400">Pure Tone Audiometry (PTA)</strong> principles gamified for children, 
-                    allowing teachers and health workers to screen up to 50 children per hour with clinical-grade accuracy using just a smartphone and calibrated headphones.
-                  </p>
-                </div>
-                <div className="flex flex-wrap gap-3 mt-8">
-                  <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-xs font-bold text-cyan-400 flex items-center gap-2">
-                    <CheckCircle2 className="w-3 h-3" /> Early Detection
-                  </span>
-                  <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-xs font-bold text-pink-400 flex items-center gap-2">
-                    <CheckCircle2 className="w-3 h-3" /> Rural Reach
-                  </span>
-                  <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-xs font-bold text-emerald-400 flex items-center gap-2">
-                    <CheckCircle2 className="w-3 h-3" /> Clinical Accuracy
-                  </span>
-                </div>
-              </div>
-              
-              <div
-                className="group relative flex flex-col items-center justify-center w-56 h-56 shrink-0"
+          {/* Features Section */}
+          <section id="features" className="mt-32">
+            <div className="text-center mb-16">
+              <h2 className="text-5xl font-black mb-6">{t('features', lang)} & Roadmap</h2>
+              <p className="text-xl text-white/60 max-w-3xl mx-auto italic">{t('ourSlogan', lang)}</p>
+            </div>
+
+            <div className="grid lg:grid-cols-2 gap-10">
+              {/* Mission & Vision */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="p-10 rounded-[3rem] bg-gradient-to-br from-cyan-500/10 to-blue-600/10 border border-white/10 backdrop-blur-xl space-y-8"
               >
-                <div className="absolute inset-0 bg-cyan-500/20 rounded-full blur-2xl group-hover:bg-cyan-500/40 transition-all" />
-                <div className="relative w-full h-full rounded-full border-2 border-cyan-500/50 bg-[#000b1d] flex flex-col items-center justify-center gap-2 transition-transform group-hover:scale-105 overflow-hidden">
-                  <div className="absolute inset-0 opacity-20 group-hover:opacity-30 transition-opacity">
-                    <img src={owlMascot} alt="" className="w-full h-full object-cover" />
-                  </div>
-                  <div className="relative z-10 flex flex-col items-center justify-center gap-2">
-                    <img src={owlMascot} alt="About" className="w-14 h-14 object-contain mb-1 drop-shadow-[0_0_15px_rgba(0,225,255,0.5)]" />
-                    <span className="text-sm font-black text-white uppercase tracking-tighter">About Project</span>
-                    <div className="text-[10px] text-white/40 uppercase font-bold">v2.0 Ocean Edition</div>
-                  </div>
+                <div>
+                  <h3 className="text-3xl font-black mb-4 flex items-center gap-3"><Target className="w-8 h-8 text-cyan-400" /> {t('ourMission', lang)}</h3>
+                  <p className="text-lg text-white/70 leading-relaxed">{t('ourMissionDesc', lang)}</p>
                 </div>
+                <div className="h-px bg-white/10 w-full" />
+                <div>
+                  <h3 className="text-3xl font-black mb-4 flex items-center gap-3"><Sparkles className="w-8 h-8 text-pink-400" /> {t('ourVision', lang)}</h3>
+                  <p className="text-lg text-white/70 leading-relaxed">{t('ourVisionDesc', lang)}</p>
+                </div>
+              </motion.div>
+
+              {/* About Us */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.2 }}
+                className="p-10 rounded-[3rem] bg-white/5 border border-white/10 backdrop-blur-xl"
+              >
+                <h3 className="text-3xl font-black mb-6 flex items-center gap-3"><Users className="w-8 h-8 text-emerald-400" /> {t('aboutUs', lang)}</h3>
+                <ul className="space-y-4 text-white/70 text-lg">
+                  <li className="flex items-start gap-3"><CheckCircle2 className="w-6 h-6 text-emerald-400 shrink-0" /> Built by HearWise Technologies Pvt. Ltd.</li>
+                  <li className="flex items-start gap-3"><CheckCircle2 className="w-6 h-6 text-emerald-400 shrink-0" /> Team of healthcare technologists, audiologists, and education experts.</li>
+                  <li className="flex items-start gap-3"><CheckCircle2 className="w-6 h-6 text-emerald-400 shrink-0" /> Focused on India's government schools and underserved communities.</li>
+                  <li className="flex items-start gap-3"><CheckCircle2 className="w-6 h-6 text-emerald-400 shrink-0" /> Developed with clinical safety and child-friendliness at the core.</li>
+                </ul>
+              </motion.div>
+
+              {/* What We Have Built */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="p-10 rounded-[3rem] bg-[#001c3d] border border-cyan-500/20"
+              >
+                <h3 className="text-3xl font-black mb-6 text-white">{t('whatWeBuilt', lang)}</h3>
+                <ul className="space-y-3 text-white/70">
+                  {['Mobile-first school hearing screening platform', 'Bilingual (English + Tamil) child-friendly interface', '5-level hearing test per ear with nature sounds', 'Offline-first data sync with retry logic', 'Admin dashboard with analytics', 'AI chatbot assistant (HearBot)', 'Learning Hub with interactive games and health education', 'Clinical-safe readiness gating and practice rounds', 'Parent-friendly result guidance', 'Deployed on Vercel with Supabase backend'].map((item, i) => (
+                    <li key={i} className="flex items-start gap-2"><CheckCircle2 className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" /> {item}</li>
+                  ))}
+                </ul>
+              </motion.div>
+
+              {/* Roadmap */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.2 }}
+                className="p-10 rounded-[3rem] bg-[#001c3d] border border-pink-500/20"
+              >
+                <h3 className="text-3xl font-black mb-6 text-white">{t('whatWeWillDo', lang)}</h3>
+                <ul className="space-y-3 text-white/70">
+                  {['Tighten Supabase Row Level Security (RLS) to role-scoped policies', 'Add server-side sync endpoint with payload validation', 'Audiologist referral network integration', 'Automated parent notification via SMS/WhatsApp', 'AI-powered audiogram analysis', 'Multi-school district dashboard', 'Integration with national health databases (NHP)', 'Wearable device support'].map((item, i) => (
+                    <li key={i} className="flex items-start gap-2"><ArrowRight className="w-5 h-5 text-pink-400 shrink-0 mt-0.5" /> {item}</li>
+                  ))}
+                </ul>
+              </motion.div>
+            </div>
+
+            {/* Platform Benefits */}
+            <div className="mt-20">
+              <h3 className="text-4xl font-black mb-10 text-center">{t('platformBenefits', lang)}</h3>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                {[
+                  { title: 'Early Detection', desc: 'Detect hearing loss before it affects learning and development.', icon: <Sparkles className="w-6 h-6 text-yellow-400" /> },
+                  { title: 'Accessible', desc: 'Works on any smartphone with standard headphones.', icon: <Headphones className="w-6 h-6 text-cyan-400" /> },
+                  { title: 'Scalable', desc: 'Can screen entire schools in a single day quickly.', icon: <Users className="w-6 h-6 text-emerald-400" /> },
+                  { title: 'Bilingual', desc: 'English and Tamil for true regional inclusivity.', icon: <BookOpen className="w-6 h-6 text-pink-400" /> },
+                  { title: 'Offline-First', desc: 'Works seamlessly in areas with poor internet connectivity.', icon: <Zap className="w-6 h-6 text-orange-400" /> },
+                  { title: 'Clinical-Safe', desc: 'Readiness gating and validated audiometry protocols.', icon: <Shield className="w-6 h-6 text-blue-400" /> },
+                  { title: 'Data-Driven', desc: 'Powerful dashboard with analytics for health administrators.', icon: <BarChart className="w-6 h-6 text-purple-400" /> },
+                  { title: 'Parent-Friendly', desc: 'Actionable result guidance in English and Tamil.', icon: <Heart className="w-6 h-6 text-rose-400" /> },
+                ].map((benefit, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.1 }}
+                    className="p-6 rounded-3xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
+                  >
+                    <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center mb-4">
+                      {benefit.icon}
+                    </div>
+                    <h4 className="font-bold text-lg mb-2">{benefit.title}</h4>
+                    <p className="text-sm text-white/50 leading-relaxed">{benefit.desc}</p>
+                  </motion.div>
+                ))}
               </div>
-            </motion.div>
+            </div>
           </section>
 
           {/* The Journey Section - Hearing Test Info */}

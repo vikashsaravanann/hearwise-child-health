@@ -111,8 +111,40 @@ export function playTone(
 }
 
 export function playSampleTone(): Promise<void> {
-  return playTone(1000, 'left', 1.5);
+  return new Promise((resolve) => {
+    const ctx = getAudioContext();
+    const frequencies = [440, 554, 659]; // A4, C#5, E5
+    const noteDuration = 0.2;
+    const gap = 0.05;
+    const startTime = ctx.currentTime;
+
+    frequencies.forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, startTime);
+      
+      const noteStart = startTime + i * (noteDuration + gap);
+      const noteEnd = noteStart + noteDuration;
+
+      gain.gain.setValueAtTime(0, noteStart);
+      gain.gain.linearRampToValueAtTime(0.5, noteStart + 0.05);
+      gain.gain.linearRampToValueAtTime(0.5, noteEnd - 0.05);
+      gain.gain.linearRampToValueAtTime(0, noteEnd);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start(noteStart);
+      osc.stop(noteEnd);
+
+      if (i === frequencies.length - 1) {
+        osc.onended = () => resolve();
+      }
+    });
+  });
 }
 
-export const TEST_FREQUENCIES = [500, 1000, 2000, 4000] as const;
+export const TEST_FREQUENCIES = [500, 1000, 2000, 4000, 8000] as const;
 export type TestFrequency = typeof TEST_FREQUENCIES[number];

@@ -83,9 +83,9 @@ export default function HeadphoneCheckPage() {
               onClick={() => {
                 // Placeholder for Bluetooth connection logic
                 if ('bluetooth' in navigator) {
-                  (navigator as any).bluetooth.requestDevice({ acceptAllDevices: true })
+                  (navigator as unknown as { bluetooth: { requestDevice: (options: { acceptAllDevices: boolean }) => Promise<void> } }).bluetooth.requestDevice({ acceptAllDevices: true })
                     .then(() => toast({ title: 'Bluetooth Connected' }))
-                    .catch((e: any) => console.log(e));
+                    .catch((e: unknown) => console.log(e));
                 } else {
                   toast({ title: 'Bluetooth not supported on this browser', variant: 'destructive' });
                 }

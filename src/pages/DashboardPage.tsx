@@ -87,7 +87,7 @@ export default function DashboardPage() {
       setStats(s);
       setSessions(sess);
       // Format trend for recharts
-      const formattedTrend = t.map((item: any) => ({
+      const formattedTrend = t.map((item: { month: string, normal: number, mild: number, refer: number }) => ({
         name: item.month.slice(5),
         Normal: item.normal,
         Mild: item.mild,
@@ -112,7 +112,7 @@ export default function DashboardPage() {
       toast({ title: t('loginFailed', lang), description: message, variant: 'destructive' });
     } finally {
       setLoginLoading(false);
-    }, 800); // simulate network request for effect
+    }
   };
 
   const handleLogout = () => {
@@ -384,6 +384,7 @@ export default function DashboardPage() {
                 </div>
               </CardContent>
             </Card>
+          )}
 
           {/* Filter & Sessions */}
           <div className="mt-6">

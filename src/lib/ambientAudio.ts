@@ -2,12 +2,12 @@ let ctx: AudioContext | null = null;
 let waveSource: AudioBufferSourceNode | null = null;
 let waveLfo: OscillatorNode | null = null;
 let masterGain: GainNode | null = null;
-let bubbleTimer: any = null;
-let birdTimer: any = null;
+let bubbleTimer: ReturnType<typeof setTimeout> | null = null;
+let birdTimer: ReturnType<typeof setTimeout> | null = null;
 
 function getContext(): AudioContext | null {
   if (typeof window === 'undefined') return null;
-  const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+  const AudioContextClass = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
   if (!AudioContextClass) return null;
   
   if (!ctx) {

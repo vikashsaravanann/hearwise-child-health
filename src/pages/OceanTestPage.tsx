@@ -26,13 +26,25 @@ export default function OceanTestPage() {
   const [showParticles, setShowParticles] = useState(false);
   const [showBubbleGame, setShowBubbleGame] = useState(false);
 
-  const soundTests: SoundTest[] = [
-    { id: 1, frequency: '250Hz', ear: 'right', intensity: 'Loud' },
-    { id: 2, frequency: '500Hz', ear: 'left', intensity: 'Medium' },
-    { id: 3, frequency: '1000Hz', ear: 'right', intensity: 'Medium' },
-    { id: 4, frequency: '2000Hz', ear: 'left', intensity: 'Soft' },
-    { id: 5, frequency: '4000Hz', ear: 'right', intensity: 'Medium' },
-  ];
+  const soundTests = React.useMemo(() => {
+    const freqs = ['500Hz', '1000Hz', '2000Hz', '4000Hz', '8000Hz'];
+    const tests: SoundTest[] = [];
+    let id = 1;
+    
+    // 5 per ear
+    freqs.forEach((freq) => {
+      tests.push({ id: id++, frequency: freq, ear: 'left', intensity: 'Medium' });
+      tests.push({ id: id++, frequency: freq, ear: 'right', intensity: 'Medium' });
+    });
+    
+    // Fisher-Yates shuffle
+    for (let i = tests.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [tests[i], tests[j]] = [tests[j], tests[i]];
+    }
+    
+    return tests;
+  }, []);
 
   const [hasPlayedSound, setHasPlayedSound] = useState(false);
 
@@ -42,7 +54,7 @@ export default function OceanTestPage() {
   // Synthesize audio
   const playSynthesizedSound = (freq: number, ear: 'left' | 'right') => {
     try {
-      const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+      const AudioContext = window.AudioContext || (window as unknown as { webkitAudioContext: typeof window.AudioContext }).webkitAudioContext;
       const ctx = new AudioContext();
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
