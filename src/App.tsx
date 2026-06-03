@@ -9,6 +9,7 @@ import { SessionProvider } from "@/contexts/SessionContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { RequireAuth, RequireAdmin } from "@/components/ProtectedRoute";
 import OfflineBadge from "@/components/OfflineBadge";
+import PWAInstallPrompt from "@/components/PWAInstallPrompt";
 import LanguageToggle from "@/components/LanguageToggle";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import FloatingChatButton from "@/components/FloatingChatButton";
@@ -16,6 +17,7 @@ import PageLoadingSkeleton from "@/components/PageLoadingSkeleton";
 import LandingPage from "./pages/LandingPage";
 import { AnimatePresence } from 'framer-motion';
 import PageTransition from '@/components/PageTransition';
+import PWAInstallPrompt from '@/components/PWAInstallPrompt';
 
 const LoginPage = React.lazy(() => import("./pages/Login"));
 const AuthCallback = React.lazy(() => import("./pages/AuthCallback"));
@@ -160,10 +162,12 @@ const App = () => (
           <LanguageToggle />
           <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '')}>
             <FloatingChatButton />
+            <PWAInstallPrompt />
             <Suspense fallback={<PageLoadingSkeleton />}>
               <InnerRoutes />
             </Suspense>
           </BrowserRouter>
+          <PWAInstallPrompt />
           <SpeedInsights />
         </SessionProvider>
       </TooltipProvider>

@@ -1,0 +1,1 @@
+if('serviceWorker' in navigator) navigator.serviceWorker.register('/hearwise-child-health/dev-sw.js?dev-sw', { scope: '/hearwise-child-health/', type: 'classic' })
