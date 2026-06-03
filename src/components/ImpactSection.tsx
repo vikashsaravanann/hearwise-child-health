@@ -10,10 +10,10 @@ export default function ImpactSection() {
     <section className="w-full py-16 px-4">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-4xl md:text-5xl font-black mb-4 font-['Syne']">
+          <h2 className="text-4xl md:text-5xl font-black mb-4">
             Our Impact — Growing Every Day
           </h2>
-          <p className="text-lg text-slate-400 font-['DM_Sans']">
+          <p className="text-lg text-slate-400">
             Real numbers, updated live from every school using HearWise
           </p>
         </div>

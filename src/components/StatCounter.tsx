@@ -40,10 +40,10 @@ export default function StatCounter({ value, label, icon, suffix = '' }: StatCou
   return (
     <div ref={ref} className="flex flex-col items-center justify-center p-6 bg-slate-900 border border-slate-800 rounded-2xl shadow-lg hover:border-teal-500/30 hover:shadow-teal-900/20 transition-all text-center">
       <div className="text-4xl mb-4 opacity-90">{icon}</div>
-      <div className="flex items-baseline justify-center font-['Syne'] text-5xl md:text-[3.5rem] font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-emerald-300 mb-2">
+      <div className="flex items-baseline justify-center text-5xl md:text-[3.5rem] font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-emerald-300 mb-2">
         {count.toLocaleString()}{suffix}
       </div>
-      <div className="font-['DM_Sans'] text-slate-400 text-sm md:text-base font-medium">
+      <div className="text-slate-400 text-sm md:text-base font-medium">
         {label}
       </div>
     </div>

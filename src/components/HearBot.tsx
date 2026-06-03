@@ -146,6 +146,7 @@ export default function HearBot() {
 
       setMessages(prev => [...prev, { id: (Date.now() + 1).toString(), role: 'bot', text: reply, time: getTime() }]);
     } catch (err: any) {
+      console.error("HearBot API Error:", err);
       if (err.message === 'MISSING_API_KEY') {
         setMessages(prev => [...prev, {
           id: (Date.now() + 1).toString(),
@@ -157,7 +158,7 @@ export default function HearBot() {
         setMessages(prev => [...prev, {
           id: (Date.now() + 1).toString(),
           role: 'bot',
-          text: "I'm having trouble connecting right now. Please check your internet and try again.",
+          text: `I'm having trouble connecting right now. Error: ${err.message || 'Unknown network error'}`,
           time: getTime(),
         }]);
       }
