@@ -62,7 +62,7 @@ export default function SchoolOnboarding() {
   const handleNext = () => setStep(s => Math.min(4, s + 1));
   const handleBack = () => setStep(s => Math.max(1, s - 1));
 
-  const updateForm = (key: keyof typeof formData, value: any) => {
+  const updateForm = (key: keyof typeof formData, value: unknown) => {
     setFormData(prev => ({ ...prev, [key]: value }));
   };
 
@@ -103,11 +103,11 @@ export default function SchoolOnboarding() {
 
       if (error) throw error;
       setIsSuccess(true);
-    } catch (err: any) {
-      console.error(err);
+    } catch (error: unknown) {
+      console.error(error);
       toast({
         title: "Registration Failed",
-        description: err.message || "Please check your connection and try again.",
+        description: error instanceof Error ? error.message : "Please check your connection and try again.",
         variant: "destructive"
       });
     } finally {

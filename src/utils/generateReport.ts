@@ -119,7 +119,7 @@ export function generateReport(result: ScreeningResult) {
     }
   });
 
-  const finalY = (doc as any).lastAutoTable.finalY + 10;
+  const finalY = (doc as unknown as { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 10;
   
   doc.setFontSize(12);
   doc.setFont("helvetica", "bold");
