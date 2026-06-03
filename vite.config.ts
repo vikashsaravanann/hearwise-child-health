@@ -3,8 +3,10 @@ import react from '@vitejs/plugin-react-swc'
 import path from 'path'
 import { VitePWA } from 'vite-plugin-pwa'
 
+const isGitHubPages = process.env.GITHUB_PAGES === 'true';
+
 export default defineConfig({
-  base: process.env.VERCEL === '1' ? '/' : '/hearwise-child-health/',
+  base: isGitHubPages ? '/hearwise-child-health/' : '/',
   plugins: [
     react(),
     VitePWA({

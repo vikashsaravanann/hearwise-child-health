@@ -10,9 +10,10 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:gh": "GITHUB_PAGES=true vite build",
     "preview": "vite preview",
     "lint": "eslint .",
-    "predeploy": "npm run build",
+    "predeploy": "npm run build:gh",
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
