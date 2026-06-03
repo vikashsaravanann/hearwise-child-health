@@ -32,6 +32,7 @@ import TestimonialsSection from '@/components/TestimonialsSection';
 
 import OceanBackground from '@/components/OceanBackground';
 import VideoCard from '@/components/VideoCard';
+import { toast } from 'sonner';
 
 // Animated Bubble Component for the original dark theme
 const Bubble = ({ size, delay, left }: { size: number, delay: number, left: string }) => (
@@ -832,8 +833,116 @@ export default function LandingPage() {
         </div>
       </main>
 
+      {/* ── PWA Dev Tools Section ─────────────────────── */}
+      {import.meta.env.DEV && (
+        <section className="relative mt-24 mx-auto max-w-4xl px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="rounded-3xl border border-amber-500/20 bg-gradient-to-br from-[#0d1a0d] via-[#0d1520] to-[#1a0d00] overflow-hidden shadow-2xl shadow-amber-900/10"
+          >
+            {/* Header bar */}
+            <div className="flex items-center gap-3 px-8 py-5 border-b border-amber-500/15 bg-amber-500/5">
+              <span className="text-2xl">🛠️</span>
+              <div>
+                <h3 className="text-amber-400 font-black text-sm uppercase tracking-widest">PWA Dev Tools</h3>
+                <p className="text-amber-400/50 text-xs uppercase tracking-wider">Development Mode · Active</p>
+              </div>
+              <span className="ml-auto flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20">
+                <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+                <span className="text-green-400 text-[10px] uppercase font-bold tracking-wider">Live</span>
+              </span>
+            </div>
+
+            {/* Body */}
+            <div className="px-8 py-8 grid md:grid-cols-3 gap-6">
+
+              {/* Install Prompt */}
+              <div className="rounded-2xl border border-teal-500/20 bg-teal-500/5 p-5 flex flex-col gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-teal-500/15 border border-teal-500/20 flex items-center justify-center text-xl">📲</div>
+                  <div>
+                    <div className="text-white font-black text-xs uppercase tracking-widest">Install Prompt</div>
+                    <div className="text-teal-400/60 text-[10px] uppercase tracking-wide">PWA Install</div>
+                  </div>
+                </div>
+                <p className="text-slate-400 text-xs leading-relaxed">
+                  Simulates the browser's <strong className="text-white">"Add to Home Screen"</strong> native install dialog. Tests the PWA install flow on Android and desktop Chrome. Triggers <code className="text-teal-300 text-[10px] bg-teal-500/10 px-1 rounded">beforeinstallprompt</code> event.
+                </p>
+                <button
+                  onClick={() => {
+                    const event = new Event('beforeinstallprompt');
+                    (event as any).prompt = async () => {};
+                    (event as any).userChoice = Promise.resolve({ outcome: 'accepted' });
+                    window.dispatchEvent(event);
+                  }}
+                  className="mt-auto w-full py-3 rounded-xl bg-teal-500/15 border border-teal-500/30 text-teal-300 text-xs font-black uppercase tracking-widest hover:bg-teal-500/25 transition-all active:scale-95"
+                >
+                  📲 Show Install Prompt
+                </button>
+              </div>
+
+              {/* Update Prompt */}
+              <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-5 flex flex-col gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-500/20 flex items-center justify-center text-xl">🔄</div>
+                  <div>
+                    <div className="text-white font-black text-xs uppercase tracking-widest">Update Prompt</div>
+                    <div className="text-emerald-400/60 text-[10px] uppercase tracking-wide">Service Worker</div>
+                  </div>
+                </div>
+                <p className="text-slate-400 text-xs leading-relaxed">
+                  Simulates a <strong className="text-white">Service Worker update</strong> being available. Shows the SW update banner asking users to reload for the latest version. Fires a custom <code className="text-emerald-300 text-[10px] bg-emerald-500/10 px-1 rounded">sw:simulate-update</code> event.
+                </p>
+                <button
+                  onClick={() => window.dispatchEvent(new CustomEvent('sw:simulate-update'))}
+                  className="mt-auto w-full py-3 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs font-black uppercase tracking-widest hover:bg-emerald-500/25 transition-all active:scale-95"
+                >
+                  🔄 Show Update Prompt
+                </button>
+              </div>
+
+              {/* Offline Toast */}
+              <div className="rounded-2xl border border-blue-500/20 bg-blue-500/5 p-5 flex flex-col gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-blue-500/15 border border-blue-500/20 flex items-center justify-center text-xl">📶</div>
+                  <div>
+                    <div className="text-white font-black text-xs uppercase tracking-widest">Offline Toast</div>
+                    <div className="text-blue-400/60 text-[10px] uppercase tracking-wide">PWA Cache</div>
+                  </div>
+                </div>
+                <p className="text-slate-400 text-xs leading-relaxed">
+                  Shows the <strong className="text-white">"Ready to work offline"</strong> success notification. Confirms that the PWA is fully cached via Workbox and can be used in areas with <strong className="text-white">no internet connection</strong> — critical for rural Indian schools.
+                </p>
+                <button
+                  onClick={() => toast.success('✅ HearWise is cached and ready to work offline!', {
+                    description: 'All assets are stored locally. The app works without internet.',
+                    duration: 4000,
+                  })}
+                  className="mt-auto w-full py-3 rounded-xl bg-blue-500/15 border border-blue-500/30 text-blue-300 text-xs font-black uppercase tracking-widest hover:bg-blue-500/25 transition-all active:scale-95"
+                >
+                  📶 Show Offline Toast
+                </button>
+              </div>
+
+            </div>
+
+            {/* Footer note */}
+            <div className="px-8 py-4 border-t border-white/5 flex items-center justify-between">
+              <p className="text-slate-600 text-[10px] uppercase tracking-widest">
+                🔒 Dev only · Hidden in production builds
+              </p>
+              <p className="text-slate-600 text-[10px] uppercase tracking-widest">
+                HearWise PWA v2.0 · Workbox + Vite PWA
+              </p>
+            </div>
+          </motion.div>
+        </section>
+      )}
+
       {/* Footer - Now with the same dark theme */}
-      <footer className="relative mt-40 pb-20 border-t border-white/5">
+      <footer className="relative mt-16 pb-20 border-t border-white/5">
         <div className="relative z-10 max-w-7xl mx-auto px-6 py-12 text-center">
           <div className="flex items-center justify-center gap-3 mb-6 opacity-40 grayscale hover:opacity-100 transition-opacity">
             <img src={owlMascot} alt="Logo" className="w-8 h-8 object-contain" />

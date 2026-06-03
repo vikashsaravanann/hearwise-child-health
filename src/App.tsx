@@ -11,7 +11,6 @@ import { RequireAuth, RequireAdmin } from "@/components/ProtectedRoute";
 import OfflineBadge from "@/components/OfflineBadge";
 import PWAInstallPrompt from "@/components/PWAInstallPrompt";
 import SWUpdatePrompt from "@/components/SWUpdatePrompt";
-import PWADevPreview from "@/components/PWADevPreview";
 import LanguageToggle from "@/components/LanguageToggle";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import HearBot from "@/components/HearBot";
@@ -167,7 +166,6 @@ const App = () => (
             <HearBot />
             <PWAInstallPrompt />
             <SWUpdatePrompt />
-            <PWADevPreview />
             <Suspense fallback={<Loader fullscreen text="LOADING" />}>
               <InnerRoutes />
             </Suspense>
