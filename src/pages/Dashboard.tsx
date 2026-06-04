@@ -105,17 +105,36 @@ export default function Dashboard() {
               <span className="text-teal-400 font-black text-base tracking-tight"> TECHNOLOGIES</span>
             </div>
           </div>
-          <div className="hidden sm:flex items-center gap-2 text-slate-400 text-sm font-medium">
-            <span className="w-2 h-2 rounded-full bg-teal-400 animate-pulse" />
-            {now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
-            <span className="mx-2 text-white/10">|</span>
-            {now.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }).toUpperCase()}
+          <div className="hidden sm:flex items-center gap-3">
+            {/* Live Clock */}
+            <div className="flex items-center gap-3 px-5 py-2.5 rounded-2xl border border-teal-500/15 bg-teal-500/5 backdrop-blur-sm">
+              <span className="w-2 h-2 rounded-full bg-teal-400 animate-pulse flex-shrink-0" />
+              <div className="flex items-baseline gap-1">
+                <span className="text-white font-black text-lg tabular-nums tracking-tight"
+                  style={{ fontVariantNumeric: 'tabular-nums', fontFamily: "'Inter', monospace" }}>
+                  {now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true }).toUpperCase()}
+                </span>
+              </div>
+              <span className="w-px h-5 bg-white/10" />
+              <div className="text-slate-400 font-bold text-xs tracking-widest uppercase">
+                {now.toLocaleDateString('en-IN', { weekday: 'long' }).toUpperCase()}
+                {', '}
+                {now.getDate()}
+                {' '}
+                {now.toLocaleDateString('en-IN', { month: 'long' }).toUpperCase()}
+                {' '}
+                {now.getFullYear()}
+              </div>
+            </div>
           </div>
           <button
             onClick={() => { signOut(); navigate('/login'); }}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl border border-red-500/20 text-red-400 hover:bg-red-500/10 transition-all text-sm font-semibold"
+            className="flex items-center gap-2.5 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-red-900/30 to-rose-900/20 border border-red-500/25 text-red-300 hover:from-red-800/50 hover:to-rose-800/40 hover:border-red-400/40 hover:text-white transition-all text-sm font-bold tracking-wide shadow-lg shadow-red-900/20 group"
           >
-            <span>🚪</span> Sign Out
+            <svg className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+            SIGN OUT
           </button>
         </div>
       </header>
@@ -253,9 +272,9 @@ export default function Dashboard() {
           {/* 3 vertical photo cards — clean, upright, side by side */}
           <div className="grid grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
             {[
-              { src: `${BASE}img1.jpg`, alt: 'Vikash at Campus', label: 'Campus Life', sub: 'Coimbatore, Tamil Nadu' },
-              { src: `${BASE}profile4.jpeg`, alt: 'Vikash Saravanan', label: 'Vikash Saravanan', sub: 'Founder & CEO · HearWise Technologies', center: true },
-              { src: `${BASE}img3.jpg`, alt: 'Vikash at Work', label: 'Engineering Mode', sub: 'Building India\'s First Hearing Platform' },
+              { src: `${BASE}img1.jpg`, alt: 'Vikash at Campus' },
+              { src: `${BASE}profile4.jpeg`, alt: 'Vikash Saravanan', center: true },
+              { src: `${BASE}img3.jpg`, alt: 'Vikash at Work' },
             ].map((photo, i) => (
               <motion.div
                 key={i}
@@ -270,7 +289,7 @@ export default function Dashboard() {
                     : 'shadow-[0_20px_60px_rgba(0,0,0,0.5)] border border-white/8'
                 }`}
               >
-                {/* Photo — NO text overlay */}
+                {/* Photo — NO text inside or below */}
                 <div className="w-full aspect-[3/4] overflow-hidden">
                   <img
                     src={photo.src}
@@ -278,54 +297,71 @@ export default function Dashboard() {
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                   />
                 </div>
-                {/* Caption BELOW photo */}
-                <div className={`p-4 sm:p-5 ${
-                  photo.center ? 'bg-gradient-to-b from-cyan-950/40 to-[#05070f]' : 'bg-[#05070f]'
-                }`}>
-                  <div className={`font-black text-sm sm:text-base leading-tight ${
-                    photo.center ? 'text-white' : 'text-slate-200'
-                  }`}>{photo.label}</div>
-                  <div className="text-slate-500 text-xs mt-1 leading-snug font-medium">{photo.sub}</div>
-                </div>
               </motion.div>
             ))}
           </div>
+
+          {/* Unified caption block BELOW all 3 photos */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.5, duration: 0.7 }}
+            className="mt-8 text-center space-y-3"
+          >
+            <div className="inline-flex items-center gap-3 px-5 py-2 rounded-full border border-teal-500/20 bg-teal-500/5">
+              <span className="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse" />
+              <span className="text-teal-400 font-bold text-xs uppercase tracking-[0.3em]">Founder Profile</span>
+            </div>
+            <h3 className="text-2xl sm:text-3xl font-black text-white uppercase tracking-wide">
+              VIKASH SARAVANAN
+            </h3>
+            <p className="text-teal-400 font-bold text-sm uppercase tracking-widest">
+              CHIEF EXECUTIVE OFFICER &amp; FOUNDER — HEARWISE TECHNOLOGIES
+            </p>
+            <p className="text-slate-400 text-sm max-w-2xl mx-auto leading-relaxed font-medium">
+              B.Tech AI &amp; Data Science · Rathinam Technical Campus, Coimbatore · Prompt Engineer · Web Developer · AI Automation Architect
+            </p>
+          </motion.div>
         </Reveal>
 
         {/* ══════════════════════════════════════════════════════════
             ABOUT THE FOUNDER
         ══════════════════════════════════════════════════════════ */}
         <Reveal>
-          <div className="grid lg:grid-cols-12 gap-8">
+          <div className="grid lg:grid-cols-12 gap-6">
             {/* ── Bio Card ── */}
             <div className="lg:col-span-7 rounded-3xl border border-teal-500/10 bg-gradient-to-br from-teal-900/10 to-[#05070f] p-8 sm:p-12 relative overflow-hidden group hover:border-teal-500/20 transition-all">
               <div className="absolute top-0 right-0 w-80 h-80 bg-teal-500/5 rounded-full blur-[80px] pointer-events-none" />
               <div className="relative z-10 space-y-8">
                 <div>
-                  <p className="text-teal-400 font-bold text-xs uppercase tracking-[0.3em] mb-4">The Founder & CEO</p>
+                  <p className="text-teal-400 font-bold text-xs uppercase tracking-[0.3em] mb-4">The Founder &amp; CEO</p>
                   <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white leading-[1.1] mb-3">Vikash Saravanan</h2>
-                  <h3 className="text-lg sm:text-xl font-semibold text-cyan-400 mb-1">B.Tech AI &amp; Data Science Student</h3>
-                  <p className="text-slate-400 text-sm font-medium">Prompt Engineer · Web Developer · AI Automation Specialist</p>
+                  <h3 className="text-lg sm:text-xl font-bold text-cyan-400 mb-1">B.Tech Artificial Intelligence &amp; Data Science</h3>
+                  <p className="text-slate-300 text-sm font-semibold">Rathinam Technical Campus, Coimbatore · Batch 2024–2028</p>
+                  <p className="text-slate-400 text-sm mt-1 font-medium">AI Engineer · Prompt Engineer · Web Developer · Ethical Hacker · AI Automation Architect</p>
                 </div>
 
                 <div className="h-px bg-white/5" />
 
-                <div className="grid sm:grid-cols-2 gap-5">
+                <div className="grid sm:grid-cols-2 gap-4">
                   {[
-                    { icon: '📍', label: 'Location', val: 'Coimbatore, TN (Native: Karur)' },
-                    { icon: '🎓', label: 'Education', val: 'First-Year, AI & DS · 2024–2028' },
-                    { icon: '💼', label: 'Open For', val: 'Remote & Coimbatore Internships' },
-                    { icon: '🏆', label: 'Achievement', val: 'Meta PyTorch OpenEnv Finalist' },
-                    { icon: '🤖', label: 'Expertise', val: 'AI Agents, React, Python, n8n' },
-                    { icon: '🚀', label: 'Live Projects', val: 'HearWise · Traffic Vision AI' },
-                    { icon: '📜', label: 'Certifications', val: '15+ from Microsoft, Cisco, IIT' },
-                    { icon: '🌐', label: 'Languages', val: 'Tamil · English · Hindi' },
+                    { icon: '◉', label: 'Location', val: 'Coimbatore, Tamil Nadu, India (Native: Karur)' },
+                    { icon: '◎', label: 'Education', val: 'First-Year B.Tech AI & DS · 2024–2028 · Rathinam Technical Campus' },
+                    { icon: '▶', label: 'Availability', val: 'Open for Remote & Coimbatore-Based Internships' },
+                    { icon: '◆', label: 'Hackathon', val: 'Meta PyTorch OpenEnv — Hackathon Finalist' },
+                    { icon: '◈', label: 'Specialization', val: 'AI Automation · Prompt Engineering · Full-Stack Web Dev' },
+                    { icon: '◇', label: 'Live Projects', val: 'HearWise · Traffic Vision AI (YOLOv8) · Portfolio AI' },
+                    { icon: '◉', label: 'Certifications', val: '15+ Certified — Microsoft · Cisco · IIT Bombay · NPTEL · freeCodeCamp · LinkedIn Learning' },
+                    { icon: '◎', label: 'Known For', val: 'Ethical Hacking (CEH) · Data Analysis · AI Agents · n8n Workflows · Generative AI' },
+                    { icon: '▶', label: 'Languages Spoken', val: 'Tamil · English · Hindi' },
+                    { icon: '◆', label: 'Contact', val: 'vikash07052008@gmail.com · +91 93428 77474' },
                   ].map(item => (
                     <div key={item.label} className="flex items-start gap-3">
-                      <span className="text-base mt-0.5 flex-shrink-0">{item.icon}</span>
+                      <span className="text-teal-400 text-xs mt-1 flex-shrink-0 font-black">{item.icon}</span>
                       <div>
-                        <div className="text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-0.5">{item.label}</div>
-                        <div className="text-white text-sm font-semibold leading-snug">{item.val}</div>
+                        <div className="text-slate-500 text-[10px] font-black uppercase tracking-widest mb-0.5">{item.label}</div>
+                        <div className="text-white text-sm font-bold leading-snug">{item.val}</div>
                       </div>
                     </div>
                   ))}
@@ -333,42 +369,66 @@ export default function Dashboard() {
 
                 <div className="h-px bg-white/5" />
 
-                <div>
-                  <div className="text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-3">Mission Statement</div>
-                  <p className="text-slate-300 text-sm sm:text-base leading-relaxed font-normal">
-                    Ambitious first-year student actively building enterprise-grade AI automation systems. Bridging the gap between advanced machine learning and full-stack software architecture — engineering autonomous agents, developing robust React ecosystems, and delivering high-impact, production-ready solutions that solve real-world industry problems at scale.
+                <div className="space-y-4">
+                  <div className="text-slate-500 text-[10px] font-black uppercase tracking-widest">Professional Objective</div>
+                  <p className="text-white text-sm sm:text-base leading-relaxed font-semibold">
+                    Ambitious first-year AI & Data Science student at Rathinam Technical Campus, Coimbatore — actively engineering enterprise-grade AI automation systems that bridge advanced machine learning with full-stack software architecture.
+                  </p>
+                  <div className="text-slate-500 text-[10px] font-black uppercase tracking-widest mt-4">Specialization Deep-Dive</div>
+                  <p className="text-slate-300 text-sm leading-relaxed font-medium">
+                    Engineering autonomous AI agents · Developing robust React &amp; TypeScript ecosystems · Scraping &amp; analyzing complex datasets · Building offline-first mobile web apps · Creating n8n workflow automations · Delivering production-ready solutions that solve real-world industry problems at scale.
+                  </p>
+                  <div className="text-slate-500 text-[10px] font-black uppercase tracking-widest mt-4">Vision Statement</div>
+                  <p className="text-slate-300 text-sm leading-relaxed font-medium">
+                    Delivering high-impact, production-ready solutions that solve real-world industry problems at scale — with a deep commitment to making technology accessible, inclusive, and transformative for communities across India.
                   </p>
                 </div>
               </div>
             </div>
 
-            {/* ── Right Column ── */}
-            <div className="lg:col-span-5 flex flex-col gap-5">
-              {/* Skill badges */}
-              <div className="rounded-2xl border border-white/8 bg-white/[0.02] p-6 sm:p-8">
-                <div className="text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-4">Core Technologies</div>
-                <div className="flex flex-wrap gap-2">
-                  {['Python', 'React', 'TypeScript', 'Supabase', 'n8n', 'Framer Motion', 'Vite', 'Groq AI', 'Tailwind CSS', 'PostgreSQL', 'Cursor AI', 'Gemini API'].map(tech => (
-                    <span key={tech} className="px-3 py-1.5 rounded-xl border border-white/10 bg-white/5 text-slate-300 text-xs font-semibold hover:border-teal-500/30 hover:text-teal-300 transition-colors">{tech}</span>
-                  ))}
-                </div>
-              </div>
+            {/* ── Right Column — Rich Info ── */}
+            <div className="lg:col-span-5 flex flex-col gap-4">
 
-              {/* Achievement cards */}
+              {/* Headline stats */}
               {[
-                { icon: '🏆', title: 'Hackathon Finalist', sub: 'Meta PyTorch OpenEnv', color: 'border-blue-500/20 hover:border-blue-400/30 hover:bg-blue-900/10' },
-                { icon: '⚙️', title: '3+ Live Architectures', sub: 'Production-ready deployments on GitHub Pages & Supabase', color: 'border-emerald-500/20 hover:border-emerald-400/30 hover:bg-emerald-900/10' },
-                { icon: '🌟', title: '15+ Certifications', sub: 'Microsoft · Cisco · IIT Bombay · NPTEL', color: 'border-yellow-500/20 hover:border-yellow-400/30 hover:bg-yellow-900/10' },
+                {
+                  icon: '◆', title: 'HACKATHON FINALIST', color: 'border-blue-500/20 hover:border-blue-400/30 bg-blue-900/5',
+                  detail: 'Meta PyTorch OpenEnv Hackathon — Competed among top student developers across India, building a production AI application using PyTorch and modern LLM tooling.',
+                  tag: 'ACHIEVEMENT · 2024'
+                },
+                {
+                  icon: '◈', title: '3+ LIVE PRODUCTION ARCHITECTURES', color: 'border-emerald-500/20 hover:border-emerald-400/30 bg-emerald-900/5',
+                  detail: 'HearWise (school hearing screening platform deployed on GitHub Pages + Supabase Edge Functions) · Traffic Vision AI (YOLOv8 adaptive traffic management) · AI Portfolio with Grok/Gemini integration.',
+                  tag: 'PRODUCTION · LIVE'
+                },
+                {
+                  icon: '◉', title: '15+ PROFESSIONAL CERTIFICATIONS', color: 'border-yellow-500/20 hover:border-yellow-400/30 bg-yellow-900/5',
+                  detail: 'Certified Ethical Hacker (CEH) via LinkedIn Learning · Data Analysis with Python — freeCodeCamp · Microsoft Azure AI Fundamentals · Cisco Networking · IIT Bombay Data Science · NPTEL courses.',
+                  tag: 'CERTIFIED · VERIFIED'
+                },
+                {
+                  icon: '▶', title: 'AI AUTOMATION SPECIALIST', color: 'border-cyan-500/20 hover:border-cyan-400/30 bg-cyan-900/5',
+                  detail: 'Designs and deploys autonomous agent pipelines using n8n, Groq AI, Gemini API, and LangChain. Specialises in building no-code/low-code AI workflows that integrate with real-world APIs and databases.',
+                  tag: 'EXPERTISE · n8n · GROQ'
+                },
+                {
+                  icon: '◎', title: 'ETHICAL HACKER (CEH)', color: 'border-rose-500/20 hover:border-rose-400/30 bg-rose-900/5',
+                  detail: 'Holds a Certified Ethical Hacker certification. Proficient in penetration testing concepts, vulnerability assessment, and cybersecurity best practices for web applications.',
+                  tag: 'CYBERSECURITY · CEH'
+                },
               ].map((b) => (
                 <motion.div
                   key={b.title}
-                  whileHover={{ y: -3 }}
-                  className={`rounded-2xl border ${b.color} bg-white/[0.02] p-5 flex items-center gap-4 transition-all cursor-default`}
+                  whileHover={{ y: -2, scale: 1.01 }}
+                  className={`rounded-2xl border ${b.color} p-5 transition-all cursor-default`}
                 >
-                  <span className="text-3xl flex-shrink-0">{b.icon}</span>
-                  <div>
-                    <div className="text-white font-bold text-sm leading-tight">{b.title}</div>
-                    <div className="text-slate-500 text-xs font-medium mt-0.5 leading-snug">{b.sub}</div>
+                  <div className="flex items-start gap-3 mb-2">
+                    <span className="text-teal-400 font-black text-sm flex-shrink-0 mt-0.5">{b.icon}</span>
+                    <div className="text-white font-black text-sm leading-tight">{b.title}</div>
+                  </div>
+                  <p className="text-slate-300 text-xs font-medium leading-relaxed ml-5">{b.detail}</p>
+                  <div className="ml-5 mt-2">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-teal-500/70">{b.tag}</span>
                   </div>
                 </motion.div>
               ))}
