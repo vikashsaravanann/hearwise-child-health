@@ -7,6 +7,7 @@ import {
   RefreshCw, Shield, LogOut, CheckCircle, AlertTriangle, User,
   Mail, Smartphone, Key, Lock, PlayCircle, GitCommit, Copy, Ear
 } from 'lucide-react';
+import Loader from '../components/Loader';
 import {
   PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid
 } from 'recharts';
@@ -124,7 +125,13 @@ export default function Dashboard() {
     
     const today = new Date().toISOString().split('T')[0];
     const { count: todayCount } = await supabase.from('screening_results').select('*', { count: 'exact', head: true }).gte('created_at', today);
-    const { count: totalUsers } = await supabase.from('profiles').select('*', { count: 'exact', head: true }).catch(() => ({ count: 0 }));
+    let totalUsers = 0;
+    try {
+      const res = await supabase.from('profiles').select('*', { count: 'exact', head: true });
+      totalUsers = res.count || 0;
+    } catch (e) {
+      // Ignore
+    }
 
     const total = (passCount || 0) + (referCount || 0);
     const passRate = total > 0 ? Math.round(((passCount || 0) / total) * 100) : 0;
@@ -292,19 +299,23 @@ export default function Dashboard() {
 
   if (loading || (!data && !errorMsg)) {
     return (
-      <div className="fixed inset-0 z-50 flex flex-col items-center justify-center"
-        style={{ background: 'rgba(10,15,30,0.95)', backdropFilter: 'blur(12px)' }}>
-        <motion.img
-          src={`${import.meta.env.BASE_URL}owl-mascot.png`}
-          className="w-16 h-16 object-contain mb-4"
-          animate={{ scale: [1, 1.1, 1], opacity: [0.7, 1, 0.7] }}
-          transition={{ duration: 1.5, repeat: Infinity }}
-          onError={(e) => { (e.target as HTMLImageElement).src = '/owl-mascot.png'; }}
+      <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#020817] overflow-hidden">
+        {/* Animated gradient orbs */}
+        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-teal-500/10 rounded-full blur-[120px] animate-pulse pointer-events-none" />
+        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-cyan-500/8 rounded-full blur-[100px] animate-pulse pointer-events-none" style={{ animationDelay: '2s' }} />
+        <div className="absolute top-1/2 left-0 w-[300px] h-[300px] bg-blue-600/6 rounded-full blur-[80px] animate-pulse pointer-events-none" style={{ animationDelay: '4s' }} />
+
+        <div
+          className="absolute inset-0 pointer-events-none opacity-[0.03]"
+          style={{
+            backgroundImage: `linear-gradient(rgba(20,184,166,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(20,184,166,0.5) 1px, transparent 1px)`,
+            backgroundSize: '60px 60px'
+          }}
         />
-        <p className="text-teal-400 text-sm font-bold tracking-widest mb-4" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-          LOADING DASHBOARD DATA...
-        </p>
-        <div className="w-8 h-8 border-2 border-teal-400 border-t-transparent rounded-full animate-spin" />
+        
+        <div className="relative z-10">
+          <Loader text="LOADING DASHBOARD DATA..." />
+        </div>
       </div>
     );
   }
