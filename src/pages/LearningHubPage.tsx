@@ -1,3 +1,4 @@
+import BackButton from '../components/BackButton';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -40,7 +41,8 @@ export default function LearningHubPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] overflow-x-hidden font-sans selection:bg-purple-300 relative">
+    <div className="pt-20 min-h-screen bg-[#f8fafc] overflow-x-hidden font-sans selection:bg-purple-300 relative">
+      <BackButton />
       {/* Decorative background elements */}
       <div className="fixed top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-purple-200/50 blur-3xl animate-pulse"></div>

@@ -1,3 +1,4 @@
+import BackButton from '../components/BackButton';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -106,6 +107,7 @@ export default function Waitlist() {
 
   return (
     <PageWrapper title="Early Access Waitlist" backPath="/">
+      <BackButton />
       <div className="bg-[#000b1d] min-h-screen pb-24 text-white font-sans overflow-x-hidden relative">
         
         {/* Background Accents */}

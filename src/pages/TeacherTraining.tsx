@@ -1,3 +1,4 @@
+import BackButton from '../components/BackButton';
 import React, { useState } from 'react';
 import PageWrapper from '@/components/shared/PageWrapper';
 import FadeInSection from '@/components/FadeInSection';
@@ -139,6 +140,7 @@ export default function TeacherTraining() {
 
   return (
     <PageWrapper title="Teacher Training" showBack={true} backTo="/">
+      <BackButton />
       <div className="min-h-screen bg-slate-50 pb-20">
         
         {/* Section 1: Video */}

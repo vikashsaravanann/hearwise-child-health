@@ -1,3 +1,4 @@
+import BackButton from '../components/BackButton';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -20,7 +21,8 @@ export default function Blog() {
 
   return (
     <>
-      <div className="bg-[#020817] min-h-screen text-slate-300 relative overflow-hidden pb-24">
+      <BackButton />
+      <div className="pt-20 bg-[#020817] min-h-screen text-slate-300 relative overflow-hidden pb-24">
         
         {/* Animated background orbs */}
         <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-teal-500/10 rounded-full blur-[120px] animate-pulse pointer-events-none" />

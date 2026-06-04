@@ -1,3 +1,4 @@
+import BackButton from '../components/BackButton';
 import { useState, useMemo, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -106,7 +107,8 @@ export default function Audiologists() {
 
   return (
     <>
-      <div className="bg-[#020817] min-h-screen text-slate-300 pb-24 relative overflow-hidden">
+      <BackButton />
+      <div className="pt-20 bg-[#020817] min-h-screen text-slate-300 pb-24 relative overflow-hidden">
         
         {/* Animated background orbs */}
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-teal-500/10 rounded-full blur-[120px] animate-pulse pointer-events-none" />

@@ -1,3 +1,4 @@
+import BackButton from '../components/BackButton';
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSupabaseHealth } from '@/hooks/useSupabaseHealth';
@@ -157,7 +158,8 @@ export default function ExplorePage() {
   const [isChatOpen, setIsChatOpen] = useState(false);
 
   return (
-    <div className="min-h-screen relative overflow-x-hidden bg-[#e0f7fa]">
+    <div className="pt-20 min-h-screen relative overflow-x-hidden bg-[#e0f7fa]">
+      <BackButton />
       {/* Animated Ocean Background */}
       <div className="fixed inset-0 pointer-events-none z-0">
         <div className="absolute inset-0 bg-gradient-to-b from-[#e0f2fe] via-[#cffafe] to-white opacity-80" />

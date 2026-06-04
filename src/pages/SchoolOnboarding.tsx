@@ -1,3 +1,4 @@
+import BackButton from '../components/BackButton';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -118,8 +119,9 @@ export default function SchoolOnboarding() {
 
   if (isSuccess) {
     return (
-      <>
-        <div className="bg-[#020817] min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+    <>
+      <BackButton />
+        <div className="pt-20 bg-[#020817] min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
           <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none mix-blend-overlay"></div>
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-emerald-500/20 rounded-full blur-[150px] pointer-events-none" />
           

@@ -1,9 +1,11 @@
+import BackButton from '../components/BackButton';
 import { motion } from 'framer-motion';
 import VideoCard from '../components/VideoCard';
 
 export default function HearingHealthPage() {
   return (
-    <div className="min-h-screen bg-[#020817] relative overflow-hidden">
+    <div className="pt-20 min-h-screen bg-[#020817] relative overflow-hidden">
+      <BackButton />
       {/* Animated gradient orbs */}
       <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-teal-500/10 rounded-full blur-[120px] animate-pulse pointer-events-none" />
       <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-cyan-500/8 rounded-full blur-[100px] animate-pulse pointer-events-none" style={{ animationDelay: '2s' }} />
