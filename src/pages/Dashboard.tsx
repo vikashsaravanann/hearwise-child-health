@@ -106,26 +106,7 @@ export default function Dashboard() {
             </div>
           </div>
           <div className="hidden sm:flex items-center gap-3">
-            {/* Live Clock */}
-            <div className="flex items-center gap-3 px-5 py-2.5 rounded-2xl border border-teal-500/15 bg-teal-500/5 backdrop-blur-sm">
-              <span className="w-2 h-2 rounded-full bg-teal-400 animate-pulse flex-shrink-0" />
-              <div className="flex items-baseline gap-1">
-                <span className="text-white font-black text-lg tabular-nums tracking-tight"
-                  style={{ fontVariantNumeric: 'tabular-nums', fontFamily: "'Inter', monospace" }}>
-                  {now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true }).toUpperCase()}
-                </span>
-              </div>
-              <span className="w-px h-5 bg-white/10" />
-              <div className="text-slate-400 font-bold text-xs tracking-widest uppercase">
-                {now.toLocaleDateString('en-IN', { weekday: 'long' }).toUpperCase()}
-                {', '}
-                {now.getDate()}
-                {' '}
-                {now.toLocaleDateString('en-IN', { month: 'long' }).toUpperCase()}
-                {' '}
-                {now.getFullYear()}
-              </div>
-            </div>
+            {/* Live Clock removed as requested */}
           </div>
           <button
             onClick={() => { signOut(); navigate('/login'); }}
@@ -177,119 +158,6 @@ export default function Dashboard() {
                   <span key={tag} className="px-4 py-1.5 rounded-full border border-white/10 bg-white/5 text-slate-300 text-xs font-bold uppercase tracking-wider">{tag}</span>
                 ))}
               </div>
-            </div>
-          </div>
-        </Reveal>
-
-        {/* ══════════════════════════════════════════════════════════
-            HERO — WELCOME BANNER
-        ══════════════════════════════════════════════════════════ */}
-        <Reveal>
-          <div className="relative rounded-[2.5rem] overflow-hidden border border-teal-500/20 bg-gradient-to-br from-teal-900/20 via-[#05070f] to-cyan-900/10 p-10 sm:p-16 text-center">
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(20,184,166,0.15)_0%,_transparent_70%)] pointer-events-none" />
-            <div className="relative z-10">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-teal-500/30 bg-teal-500/10 text-teal-400 text-xs font-bold uppercase tracking-[0.2em] mb-6">
-                <span className="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse" />
-                Admin Access · Secure Dashboard
-              </div>
-              <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black text-white mb-4 tracking-tight leading-none">
-                WELCOME BACK,{' '}
-                <span className="bg-gradient-to-r from-teal-400 via-cyan-400 to-teal-300 bg-clip-text text-transparent">VIKASH SARAVANAN</span>
-              </h1>
-              <p className="text-slate-400 text-base sm:text-lg font-medium max-w-xl mx-auto">
-                {now.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).toUpperCase()}
-              </p>
-            </div>
-          </div>
-        </Reveal>
-
-        {/* ══════════════════════════════════════════════════════════
-            STAT CARDS
-        ══════════════════════════════════════════════════════════ */}
-        <Reveal delay={0.1}>
-          <h2 className="text-xs font-bold uppercase tracking-[0.3em] text-slate-500 mb-8">Platform Overview</h2>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
-            {[
-              { label: 'Children Screened', value: childrenCount, ref: childrenRef, suffix: '', color: 'text-teal-400', border: 'border-teal-500/20', glow: 'bg-teal-500/5', icon: '👂' },
-              { label: 'Schools Onboarded', value: schoolsCount, ref: schoolsRef, suffix: '+', color: 'text-cyan-400', border: 'border-cyan-500/20', glow: 'bg-cyan-500/5', icon: '🏫' },
-              { label: 'Issues Detected', value: detectedCount, ref: detectedRef, suffix: '', color: 'text-orange-400', border: 'border-orange-500/20', glow: 'bg-orange-500/5', icon: '⚠️' },
-              { label: 'Certifications', value: certsCount, ref: certsRef, suffix: '+', color: 'text-emerald-400', border: 'border-emerald-500/20', glow: 'bg-emerald-500/5', icon: '🏆' },
-            ].map((s, i) => (
-              <motion.div
-                key={s.label}
-                ref={s.ref}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1, duration: 0.6 }}
-                whileHover={{ y: -6, scale: 1.02 }}
-                className={`rounded-2xl border ${s.border} ${s.glow} p-6 sm:p-8 cursor-default`}
-              >
-                <div className="text-3xl mb-3">{s.icon}</div>
-                <div className={`text-3xl sm:text-4xl font-black ${s.color} mb-2`}>
-                  {s.value.toLocaleString()}{s.suffix}
-                </div>
-                <div className="text-slate-500 text-xs font-bold uppercase tracking-widest">{s.label}</div>
-              </motion.div>
-            ))}
-          </div>
-        </Reveal>
-
-        {/* ══════════════════════════════════════════════════════════
-            PLATFORM HEALTH BARS
-        ══════════════════════════════════════════════════════════ */}
-        <Reveal delay={0.1}>
-          <div className="rounded-3xl border border-white/8 bg-white/[0.02] p-8 sm:p-12">
-            <h2 className="text-xs font-bold uppercase tracking-[0.3em] text-slate-500 mb-2">Platform Health</h2>
-            <p className="text-2xl sm:text-3xl font-black text-white mb-10">Real-Time Metrics</p>
-            <div className="grid sm:grid-cols-2 gap-8">
-              {[
-                { label: 'Test Completion Rate', value: 94, color: 'from-teal-500 to-cyan-400' },
-                { label: 'Platform Uptime', value: 99, color: 'from-emerald-500 to-teal-400' },
-                { label: 'Mobile Usage', value: 87, color: 'from-cyan-500 to-blue-400' },
-                { label: 'Teacher Satisfaction', value: 91, color: 'from-teal-400 to-emerald-400' },
-              ].map((m, i) => (
-                <motion.div key={m.label} initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}>
-                  <Bar {...m} />
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </Reveal>
-
-        {/* ══════════════════════════════════════════════════════════
-            RECENT ACTIVITY
-        ══════════════════════════════════════════════════════════ */}
-        <Reveal>
-          <div className="rounded-3xl border border-white/8 bg-white/[0.02] p-8 sm:p-12">
-            <h2 className="text-xs font-bold uppercase tracking-[0.3em] text-slate-500 mb-2">Live Feed</h2>
-            <p className="text-2xl sm:text-3xl font-black text-white mb-10">Recent Activity</p>
-            <div className="space-y-4">
-              {[
-                { time: '09:42 AM', event: 'New School Registered', detail: 'Panchayat Union Middle School, Karur', type: 'success' },
-                { time: '08:15 AM', event: 'Hearing Test Completed', detail: '24 children screened — Grade 3', type: 'info' },
-                { time: 'Yesterday', event: 'Issue Detected', detail: '3 children referred to audiologist', type: 'warning' },
-                { time: 'Yesterday', event: 'Report Downloaded', detail: 'Parent PDF report — Rajan S.', type: 'info' },
-              ].map((item, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.08 }}
-                  className="flex items-start gap-5 p-5 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-white/10 transition-colors"
-                >
-                  <div className={`w-2.5 h-2.5 rounded-full flex-shrink-0 mt-1.5 ${
-                    item.type === 'success' ? 'bg-teal-400' :
-                    item.type === 'warning' ? 'bg-orange-400' : 'bg-blue-400'
-                  }`} />
-                  <div className="flex-1">
-                    <div className="text-white font-bold text-base">{item.event}</div>
-                    <div className="text-slate-400 text-sm mt-0.5">{item.detail}</div>
-                  </div>
-                  <div className="text-slate-600 text-xs font-semibold whitespace-nowrap">{item.time}</div>
-                </motion.div>
-              ))}
             </div>
           </div>
         </Reveal>
@@ -475,6 +343,119 @@ export default function Dashboard() {
                   <div className="ml-5 mt-2">
                     <span className="text-[10px] font-black uppercase tracking-widest text-teal-500/70">{b.tag}</span>
                   </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </Reveal>
+
+        {/* ══════════════════════════════════════════════════════════
+            HERO — WELCOME BANNER
+        ══════════════════════════════════════════════════════════ */}
+        <Reveal>
+          <div className="relative rounded-[2.5rem] overflow-hidden border border-teal-500/20 bg-gradient-to-br from-teal-900/20 via-[#05070f] to-cyan-900/10 p-10 sm:p-16 text-center">
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(20,184,166,0.15)_0%,_transparent_70%)] pointer-events-none" />
+            <div className="relative z-10">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-teal-500/30 bg-teal-500/10 text-teal-400 text-xs font-bold uppercase tracking-[0.2em] mb-6">
+                <span className="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse" />
+                Admin Access · Secure Dashboard
+              </div>
+              <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black text-white mb-4 tracking-tight leading-none">
+                WELCOME BACK,{' '}
+                <span className="bg-gradient-to-r from-teal-400 via-cyan-400 to-teal-300 bg-clip-text text-transparent">VIKASH SARAVANAN</span>
+              </h1>
+              <p className="text-slate-400 text-base sm:text-lg font-medium max-w-xl mx-auto">
+                {now.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).toUpperCase()}
+              </p>
+            </div>
+          </div>
+        </Reveal>
+
+        {/* ══════════════════════════════════════════════════════════
+            STAT CARDS
+        ══════════════════════════════════════════════════════════ */}
+        <Reveal delay={0.1}>
+          <h2 className="text-xs font-bold uppercase tracking-[0.3em] text-slate-500 mb-8">Platform Overview</h2>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+            {[
+              { label: 'Children Screened', value: childrenCount, ref: childrenRef, suffix: '', color: 'text-teal-400', border: 'border-teal-500/20', glow: 'bg-teal-500/5', icon: '👂' },
+              { label: 'Schools Onboarded', value: schoolsCount, ref: schoolsRef, suffix: '+', color: 'text-cyan-400', border: 'border-cyan-500/20', glow: 'bg-cyan-500/5', icon: '🏫' },
+              { label: 'Issues Detected', value: detectedCount, ref: detectedRef, suffix: '', color: 'text-orange-400', border: 'border-orange-500/20', glow: 'bg-orange-500/5', icon: '⚠️' },
+              { label: 'Certifications', value: certsCount, ref: certsRef, suffix: '+', color: 'text-emerald-400', border: 'border-emerald-500/20', glow: 'bg-emerald-500/5', icon: '🏆' },
+            ].map((s, i) => (
+              <motion.div
+                key={s.label}
+                ref={s.ref}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1, duration: 0.6 }}
+                whileHover={{ y: -6, scale: 1.02 }}
+                className={`rounded-2xl border ${s.border} ${s.glow} p-6 sm:p-8 cursor-default`}
+              >
+                <div className="text-3xl mb-3">{s.icon}</div>
+                <div className={`text-3xl sm:text-4xl font-black ${s.color} mb-2`}>
+                  {s.value.toLocaleString()}{s.suffix}
+                </div>
+                <div className="text-slate-500 text-xs font-bold uppercase tracking-widest">{s.label}</div>
+              </motion.div>
+            ))}
+          </div>
+        </Reveal>
+
+        {/* ══════════════════════════════════════════════════════════
+            PLATFORM HEALTH BARS
+        ══════════════════════════════════════════════════════════ */}
+        <Reveal delay={0.1}>
+          <div className="rounded-3xl border border-white/8 bg-white/[0.02] p-8 sm:p-12">
+            <h2 className="text-xs font-bold uppercase tracking-[0.3em] text-slate-500 mb-2">Platform Health</h2>
+            <p className="text-2xl sm:text-3xl font-black text-white mb-10">Real-Time Metrics</p>
+            <div className="grid sm:grid-cols-2 gap-8">
+              {[
+                { label: 'Test Completion Rate', value: 94, color: 'from-teal-500 to-cyan-400' },
+                { label: 'Platform Uptime', value: 99, color: 'from-emerald-500 to-teal-400' },
+                { label: 'Mobile Usage', value: 87, color: 'from-cyan-500 to-blue-400' },
+                { label: 'Teacher Satisfaction', value: 91, color: 'from-teal-400 to-emerald-400' },
+              ].map((m, i) => (
+                <motion.div key={m.label} initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}>
+                  <Bar {...m} />
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </Reveal>
+
+        {/* ══════════════════════════════════════════════════════════
+            RECENT ACTIVITY
+        ══════════════════════════════════════════════════════════ */}
+        <Reveal>
+          <div className="rounded-3xl border border-white/8 bg-white/[0.02] p-8 sm:p-12">
+            <h2 className="text-xs font-bold uppercase tracking-[0.3em] text-slate-500 mb-2">Live Feed</h2>
+            <p className="text-2xl sm:text-3xl font-black text-white mb-10">Recent Activity</p>
+            <div className="space-y-4">
+              {[
+                { time: '09:42 AM', event: 'New School Registered', detail: 'Panchayat Union Middle School, Karur', type: 'success' },
+                { time: '08:15 AM', event: 'Hearing Test Completed', detail: '24 children screened — Grade 3', type: 'info' },
+                { time: 'Yesterday', event: 'Issue Detected', detail: '3 children referred to audiologist', type: 'warning' },
+                { time: 'Yesterday', event: 'Report Downloaded', detail: 'Parent PDF report — Rajan S.', type: 'info' },
+              ].map((item, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.08 }}
+                  className="flex items-start gap-5 p-5 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-white/10 transition-colors"
+                >
+                  <div className={`w-2.5 h-2.5 rounded-full flex-shrink-0 mt-1.5 ${
+                    item.type === 'success' ? 'bg-teal-400' :
+                    item.type === 'warning' ? 'bg-orange-400' : 'bg-blue-400'
+                  }`} />
+                  <div className="flex-1">
+                    <div className="text-white font-bold text-base">{item.event}</div>
+                    <div className="text-slate-400 text-sm mt-0.5">{item.detail}</div>
+                  </div>
+                  <div className="text-slate-600 text-xs font-semibold whitespace-nowrap">{item.time}</div>
                 </motion.div>
               ))}
             </div>
