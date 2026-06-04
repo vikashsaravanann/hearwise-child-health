@@ -139,7 +139,7 @@ function Section({ group, index, onOpenChat }: { group: typeof GROUPS[0], index:
             
             <div className="mb-3 relative z-10">
               {typeof item.icon === 'string' ? (
-                <img src={item.icon} alt="icon" className="w-12 h-12 object-contain" />
+                <img loading="lazy" decoding="async" src={item.icon} alt="icon" className="w-12 h-12 object-contain" />
               ) : (
                 <item.icon size={48} className="text-slate-700" strokeWidth={1.5} />
               )}
@@ -186,7 +186,7 @@ export default function ExplorePage() {
         {/* Header */}
         <div className="flex flex-col items-center text-center mb-10 pt-4">
           <div className="relative">
-            <img src={mascot} alt="HearWise Mascot" className="w-20 h-20 object-contain drop-shadow-md mb-2 animate-[bounce_3s_infinite]" />
+            <img loading="lazy" decoding="async" src={mascot} alt="HearWise Mascot" className="w-20 h-20 object-contain drop-shadow-md mb-2 animate-[bounce_3s_infinite]" />
             
             {/* DB Status Badge */}
             <div className="absolute -bottom-1 -right-2 bg-white rounded-full px-2 py-0.5 shadow-sm border border-slate-100 flex items-center gap-1.5">
@@ -197,7 +197,7 @@ export default function ExplorePage() {
             </div>
           </div>
           
-          <h1 className="text-3xl md:text-4xl font-black text-slate-800 tracking-tight mb-2">Explore HearWise</h1>
+          <h1 className="text-2xl sm:text-3xl md:text-3xl sm:text-4xl font-black text-slate-800 tracking-tight mb-2">Explore HearWise</h1>
           <p className="text-slate-500 font-medium text-sm md:text-base">Tap any card to get started</p>
         </div>
 

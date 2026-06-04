@@ -112,7 +112,7 @@ export default function SessionSetupPage() {
       <div className="relative z-10 flex flex-col min-h-[calc(100vh-80px)]">
         <div className="mx-auto w-full max-w-3xl">
           <div className="mb-6 flex items-center justify-between">
-            <h2 className="text-3xl font-black text-blue-900 tracking-tight">
+            <h2 className="text-2xl sm:text-3xl font-black text-blue-900 tracking-tight">
               {step === 1 ? t('startSession', lang) : t('beginTest', lang)}
             </h2>
             <LanguageToggle />
@@ -135,7 +135,7 @@ export default function SessionSetupPage() {
                   <Label className="text-sm font-semibold">{t('teacherName', lang)}</Label>
                   <Input className="mt-1.5 h-12 rounded-xl bg-background/80" value={teacherName} onChange={e => setTeacherName(e.target.value)} />
                 </div>
-                <div className="grid gap-5 sm:grid-cols-2">
+                <div className="grid gap-5 sm:grid-cols-1 sm:grid-cols-2">
                   <div>
                     <Label className="text-sm font-semibold">{t('classGrade', lang)}</Label>
                     <Select value={classGrade} onValueChange={setClassGrade}>
@@ -172,7 +172,7 @@ export default function SessionSetupPage() {
                   <Label className="text-sm font-semibold">{t('studentName', lang)}</Label>
                   <Input className="mt-1.5 h-12 rounded-xl bg-background/80" value={studentName} onChange={e => setStudentName(e.target.value)} />
                 </div>
-                <div className="grid gap-5 sm:grid-cols-2">
+                <div className="grid gap-5 sm:grid-cols-1 sm:grid-cols-2">
                   <div>
                     <Label className="text-sm font-semibold">{t('age', lang)}</Label>
                     <Input className="mt-1.5 h-12 rounded-xl bg-background/80" type="number" value={studentAge} onChange={e => setStudentAge(e.target.value)} />

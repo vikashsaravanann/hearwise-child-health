@@ -85,7 +85,7 @@ export default function StudentEntryPage() {
       <div className="relative z-10 flex flex-col min-h-[calc(100vh-80px)]">
         <div className="mx-auto w-full max-w-3xl">
           <div className="mb-6 flex items-center justify-between">
-            <h2 className="text-4xl font-black text-blue-900 tracking-tight">{t('beginTest', lang)}</h2>
+            <h2 className="text-3xl sm:text-4xl font-black text-blue-900 tracking-tight">{t('beginTest', lang)}</h2>
             <LanguageToggle />
           </div>
         </div>
@@ -100,13 +100,13 @@ export default function StudentEntryPage() {
             Next Student Profile
           </div>
 
-          <div className="grid gap-6">
+          <div className="grid gap-5 sm:p-6">
             <div className="space-y-2">
               <Label className="text-lg font-black text-blue-900">{t('studentName', lang)}</Label>
               <Input className="h-14 rounded-2xl bg-white/50 border-2 border-white/80 text-lg font-bold" value={name} onChange={e => setName(e.target.value)} />
               {errors.name && <p className="mt-1 text-xs text-destructive font-bold">{errors.name}</p>}
             </div>
-            <div className="grid gap-6 sm:grid-cols-2">
+            <div className="grid gap-6 sm:grid-cols-1 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label className="text-lg font-black text-blue-900">{t('age', lang)}</Label>
                 <Input className="h-14 rounded-2xl bg-white/50 border-2 border-white/80 text-lg font-bold" type="number" min="4" max="16" value={age} onChange={e => setAge(e.target.value)} />

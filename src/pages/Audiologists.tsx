@@ -131,7 +131,7 @@ export default function Audiologists() {
                 <ShieldCheck className="w-4 h-4" />
                 VERIFIED PARTNERS
               </div>
-              <h1 className="text-4xl md:text-6xl font-black text-white tracking-tight leading-tight">
+              <h1 className="text-3xl sm:text-4xl md:text-6xl font-black text-white tracking-tight leading-tight">
                 FIND A VERIFIED <br/>
                 <span className="bg-gradient-to-r from-teal-400 to-cyan-400 bg-clip-text text-transparent">
                   CLINIC NEAR YOU
@@ -148,7 +148,7 @@ export default function Audiologists() {
                 <motion.div 
                   initial={{ opacity: 0, y: -20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="bg-amber-900/20 border border-amber-500/50 rounded-2xl p-6 text-left max-w-3xl mx-auto mt-8 flex gap-4 items-start shadow-xl shadow-amber-900/10 backdrop-blur-md"
+                  className="bg-amber-900/20 border border-amber-500/50 rounded-2xl p-5 sm:p-6 text-left max-w-3xl mx-auto mt-8 flex gap-4 items-start shadow-xl shadow-amber-900/10 backdrop-blur-md"
                 >
                   <AlertTriangle className="w-8 h-8 text-amber-400 shrink-0" />
                   <div>
@@ -168,7 +168,7 @@ export default function Audiologists() {
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-white/5 border border-white/10 rounded-3xl p-6 backdrop-blur-xl divide-x divide-white/10"
+            className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-white/5 border border-white/10 rounded-3xl p-5 sm:p-6 backdrop-blur-xl divide-x divide-white/10"
           >
             {[
               { label: 'Verified Clinics', value: '124+', icon: <Building className="text-teal-400 w-5 h-5" /> },
@@ -188,7 +188,7 @@ export default function Audiologists() {
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 space-y-12">
           
           {/* Filters */}
-          <div className="glass-panel p-6 rounded-3xl bg-black/40 border border-white/10 backdrop-blur-xl flex flex-col md:flex-row gap-4 items-end shadow-2xl">
+          <div className="glass-panel p-5 sm:p-6 rounded-3xl bg-black/40 border border-white/10 backdrop-blur-xl flex flex-col md:flex-row gap-4 items-end shadow-2xl">
             <div className="flex-1 w-full relative">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
               <Input 
@@ -238,7 +238,7 @@ export default function Audiologists() {
               <p className="text-slate-400 text-lg">Try adjusting your filters or search query.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:p-6">
               {filteredList.map((aud, i) => (
                 <motion.div
                   key={aud.id}
@@ -246,7 +246,7 @@ export default function Audiologists() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.05 }}
-                  className="bg-white/5 border border-white/10 rounded-3xl p-6 flex flex-col justify-between hover:border-teal-500/50 hover:bg-white/10 hover:shadow-2xl hover:shadow-teal-500/10 transition-all duration-300 group backdrop-blur-md relative overflow-hidden"
+                  className="bg-white/5 border border-white/10 rounded-3xl p-5 sm:p-6 flex flex-col justify-between hover:border-teal-500/50 hover:bg-white/10 hover:shadow-2xl hover:shadow-teal-500/10 transition-all duration-300 group backdrop-blur-md relative overflow-hidden"
                 >
                   <div className="absolute top-0 right-0 w-32 h-32 bg-teal-500/10 rounded-full blur-[50px] opacity-0 group-hover:opacity-100 transition-opacity" />
                   <div className="space-y-4 mb-8 relative z-10">
@@ -283,7 +283,7 @@ export default function Audiologists() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3 mt-auto relative z-10">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-auto relative z-10">
                     <Button variant="outline" className="w-full bg-black/40 border-white/10 hover:bg-white/10 text-white rounded-xl h-11" onClick={() => window.open(`tel:${aud.phone.replace(/\s+/g, '')}`)}>
                       <Phone className="w-4 h-4 mr-2 text-teal-400" /> Call
                     </Button>
@@ -297,14 +297,14 @@ export default function Audiologists() {
           )}
 
           {/* New Informational Widgets */}
-          <div className="grid md:grid-cols-2 gap-8 pt-16 mt-16 border-t border-white/10">
+          <div className="grid md:grid-cols-1 sm:grid-cols-2 gap-6 sm:p-8 pt-16 mt-16 border-t border-white/10">
             <motion.div 
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               className="space-y-6"
             >
-              <h2 className="text-3xl font-black text-white">Why Choose a HearWise Partner?</h2>
+              <h2 className="text-2xl sm:text-3xl font-black text-white">Why Choose a HearWise Partner?</h2>
               <div className="space-y-4">
                 {[
                   { title: 'Verified Credentials', desc: 'Every clinic is thoroughly vetted for RCI certification and valid audiology degrees.' },
@@ -328,7 +328,7 @@ export default function Audiologists() {
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="bg-gradient-to-br from-blue-900/30 to-indigo-900/30 border border-blue-500/30 p-8 rounded-3xl relative overflow-hidden"
+              className="bg-gradient-to-br from-blue-900/30 to-indigo-900/30 border border-blue-500/30 p-6 sm:p-8 rounded-3xl relative overflow-hidden"
             >
               <div className="absolute -top-10 -right-10 opacity-10">
                 <Stethoscope className="w-64 h-64 text-blue-400" />
@@ -366,7 +366,7 @@ export default function Audiologists() {
                 <div className="w-20 h-20 bg-teal-500/20 rounded-3xl flex items-center justify-center mx-auto mb-6 text-teal-400 border border-teal-500/30">
                   <UserPlus className="w-10 h-10" />
                 </div>
-                <h3 className="text-4xl font-black text-white">Are you an audiologist?</h3>
+                <h3 className="text-3xl sm:text-4xl font-black text-white">Are you an audiologist?</h3>
                 <p className="text-teal-100/70 text-lg max-w-xl mx-auto">
                   Partner with HearWise. Join our verified referral network and receive pediatric referrals directly from school screenings in your city.
                 </p>
@@ -383,11 +383,11 @@ export default function Audiologists() {
                 {!isSuccess ? (
                   <form onSubmit={handlePartnerSubmit} className="space-y-8">
                     <div className="text-center mb-10">
-                      <h3 className="text-3xl font-black text-white mb-2">Join the Network</h3>
+                      <h3 className="text-2xl sm:text-3xl font-black text-white mb-2">Join the Network</h3>
                       <p className="text-slate-400 text-lg">We will verify your RCI credentials and add you within 3–5 working days.</p>
                     </div>
                     
-                    <div className="grid sm:grid-cols-2 gap-6">
+                    <div className="grid sm:grid-cols-1 sm:grid-cols-2 gap-5 sm:p-6">
                       <div className="space-y-2">
                         <label className="text-sm font-semibold text-slate-300">Full Name *</label>
                         <Input required value={partnerForm.name} onChange={e => setPartnerForm(p => ({...p, name: e.target.value}))} className="bg-white/5 border-white/10 h-14 rounded-xl text-white focus:border-teal-500" />
@@ -426,7 +426,7 @@ export default function Audiologists() {
                     <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="w-24 h-24 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto border border-emerald-500/30">
                       <CheckCircle2 className="w-12 h-12 text-emerald-400" />
                     </motion.div>
-                    <h3 className="text-3xl font-black text-white">Application Received!</h3>
+                    <h3 className="text-2xl sm:text-3xl font-black text-white">Application Received!</h3>
                     <p className="text-emerald-100/70 text-lg max-w-md mx-auto">Thank you for partnering with HearWise. Our clinical team will verify your RCI credentials and be in touch soon.</p>
                   </div>
                 )}

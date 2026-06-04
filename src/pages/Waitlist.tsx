@@ -126,9 +126,9 @@ export default function Waitlist() {
             <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed">
               Be among the first schools in India to offer free hearing screening for every child. Join our early access waitlist and we will onboard your school personally.
             </p>
-            <div className="flex justify-center items-center gap-6 pt-6">
+            <div className="flex justify-center items-center gap-5 sm:p-6 pt-6">
               <div className="text-center">
-                <div className="text-4xl font-black text-teal-400 font-mono mb-1">{waitlistCount}</div>
+                <div className="text-3xl sm:text-4xl font-black text-teal-400 font-mono mb-1">{waitlistCount}</div>
                 <div className="text-xs text-slate-500 uppercase font-bold tracking-widest">Schools Waiting</div>
               </div>
             </div>
@@ -152,7 +152,7 @@ export default function Waitlist() {
                   className="glass-panel p-8 sm:p-10 rounded-[3rem] bg-white/5 border border-white/10 backdrop-blur-xl shadow-2xl"
                 >
                   <form onSubmit={handleSubmit} className="space-y-6">
-                    <div className="grid sm:grid-cols-2 gap-6">
+                    <div className="grid sm:grid-cols-1 sm:grid-cols-2 gap-5 sm:p-6">
                       <div className="space-y-2">
                         <Label className="text-slate-300">Full Name *</Label>
                         <Input required value={formData.fullName} onChange={e => updateForm('fullName', e.target.value)} className="bg-black/20 border-white/10 h-12 focus:border-teal-500 text-white" />
@@ -177,7 +177,7 @@ export default function Waitlist() {
                       <Input required value={formData.schoolName} onChange={e => updateForm('schoolName', e.target.value)} className="bg-black/20 border-white/10 h-12 focus:border-teal-500 text-white" />
                     </div>
 
-                    <div className="grid sm:grid-cols-2 gap-6">
+                    <div className="grid sm:grid-cols-1 sm:grid-cols-2 gap-5 sm:p-6">
                       <div className="space-y-2">
                         <Label className="text-slate-300">State *</Label>
                         <Select required value={formData.state} onValueChange={v => updateForm('state', v)}>
@@ -197,7 +197,7 @@ export default function Waitlist() {
                       </div>
                     </div>
 
-                    <div className="grid sm:grid-cols-2 gap-6">
+                    <div className="grid sm:grid-cols-1 sm:grid-cols-2 gap-5 sm:p-6">
                       <div className="space-y-2">
                         <Label className="text-slate-300">Mobile Number *</Label>
                         <div className="relative">
@@ -236,15 +236,15 @@ export default function Waitlist() {
                   className="glass-panel p-10 sm:p-12 text-center rounded-[3rem] border border-emerald-500/30 bg-emerald-900/10 shadow-2xl shadow-emerald-500/10 space-y-8"
                 >
                   <div className="w-24 h-24 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto animate-pulse">
-                    <span className="text-5xl">🎉</span>
+                    <span className="text-4xl md:text-5xl">🎉</span>
                   </div>
                   <div>
-                    <h2 className="text-4xl font-black text-white mb-4">You're on the list!</h2>
+                    <h2 className="text-3xl sm:text-4xl font-black text-white mb-4">You're on the list!</h2>
                     <p className="text-lg text-emerald-100/80 leading-relaxed max-w-sm mx-auto">
                       We've added <strong className="text-white">{formData.fullName}</strong> from <strong className="text-white">{formData.schoolName}</strong> to our early access waitlist.
                     </p>
                   </div>
-                  <div className="inline-block bg-black/40 border border-emerald-500/30 rounded-2xl p-6 px-10">
+                  <div className="inline-block bg-black/40 border border-emerald-500/30 rounded-2xl p-5 sm:p-6 px-10">
                     <p className="text-sm text-emerald-400/80 font-bold uppercase tracking-widest mb-2">Your Position in Queue</p>
                     <p className="text-6xl font-black text-white font-mono">#{queuePosition}</p>
                   </div>

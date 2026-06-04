@@ -195,13 +195,13 @@ export default function Login() {
         transition={{ duration: 0.6, ease: 'easeOut' }}
         className="relative w-full max-w-3xl z-10 flex flex-col items-center"
       >
-        <div className="relative w-full rounded-2xl bg-[#0f111a] border-t-[3px] border-indigo-500 px-12 py-16 shadow-[0_10px_40px_-10px_rgba(99,102,241,0.15)] flex flex-col">
+        <div className="relative w-full rounded-2xl bg-[#0f111a] border-t-[3px] border-indigo-500 px-6 sm:px-12 py-8 sm:py-16 shadow-[0_10px_40px_-10px_rgba(99,102,241,0.15)] flex flex-col">
           
           <div className="text-center mb-10">
             <div className="mb-8 flex justify-center">
               <WaveformBars />
             </div>
-            <h1 className="text-5xl font-black text-white mb-4 tracking-wide">Access HearWise</h1>
+            <h1 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-wide">Access HearWise</h1>
             <p className="text-[#8e95a5] text-xl px-2 leading-relaxed">
               Secure entry for school administrators and clinical staff.
             </p>
@@ -213,7 +213,7 @@ export default function Login() {
               <button
                 key={t.id}
                 onClick={() => { setTab(t.id); setStep('input'); setError(''); setOtp(['','','','','','']); }}
-                className={`flex-1 py-2.5 rounded-lg text-[13px] font-semibold transition-all duration-300 ${
+                className={`flex-1 py-2.5 rounded-lg text-xs sm:text-[13px] font-semibold transition-all duration-300 ${
                   tab === t.id
                     ? 'border border-[#3b82f6] bg-[#1a2138] text-white shadow-[0_0_12px_rgba(59,130,246,0.15)]'
                     : 'text-[#8e95a5] hover:text-gray-300 border border-transparent'
@@ -310,7 +310,7 @@ export default function Login() {
                         value={val}
                         onChange={e => handleOtpChange(e.target.value, idx)}
                         onKeyDown={e => handleOtpKeyDown(e, idx)}
-                        className="w-10 h-12 rounded-lg bg-[#161825] border border-[#1e2336] text-white text-lg font-bold text-center focus:outline-none focus:border-indigo-500 transition-colors"
+                        className="w-10 h-12 sm:w-11 sm:h-14 rounded-xl bg-[#161825] border border-[#1e2336] text-white text-lg font-bold text-center focus:outline-none focus:border-indigo-500 transition-colors"
                       />
                     ))}
                   </div>

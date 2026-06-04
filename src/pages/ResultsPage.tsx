@@ -144,13 +144,13 @@ export default function ResultsPage() {
       <main className="relative z-10 w-full max-w-4xl mx-auto px-4 flex flex-col items-center my-8">
         
         {/* Core Result Header Card */}
-        <div className={`glass-panel w-full p-8 border-4 shadow-2xl backdrop-blur-xl rounded-[3rem] text-center mb-8 flex flex-col items-center gap-4 transition-all duration-300 ${bgColor}`}>
+        <div className={`glass-panel w-full p-6 sm:p-8 border-4 shadow-2xl backdrop-blur-xl rounded-[3rem] text-center mb-8 flex flex-col items-center gap-4 transition-all duration-300 ${bgColor}`}>
           <div className="relative mb-2">
             <div className="absolute inset-0 bg-blue-300/20 rounded-full blur-2xl animate-pulse" />
             <AnimatedOwl state={owlMood} size={110} />
           </div>
           <div>
-            <h1 className="text-3xl sm:text-4xl font-black text-blue-900 tracking-tight mb-2">
+            <h1 className="text-3xl sm:text-3xl sm:text-4xl font-black text-blue-900 tracking-tight mb-2">
               {titleMessage}
             </h1>
             <p className="text-lg font-bold text-blue-800/60 max-w-xl mx-auto">
@@ -169,11 +169,11 @@ export default function ResultsPage() {
         </div>
 
         {/* Clinical Frequency Boards */}
-        <div className="grid w-full gap-6 md:grid-cols-2 mb-8">
+        <div className="grid w-full gap-5 sm:p-6 md:grid-cols-1 sm:grid-cols-2 mb-8">
           {/* Left Ear Board */}
-          <div className="glass-panel p-6 sm:p-8 border-2 border-white/50 shadow-xl rounded-[2.5rem] bg-white/70 backdrop-blur-md">
+          <div className="glass-panel p-6 sm:p-6 sm:p-8 border-2 border-white/50 shadow-xl rounded-[2.5rem] bg-white/70 backdrop-blur-md">
             <div className="flex items-center gap-3 mb-6">
-              <span className="text-3xl">👂</span>
+              <span className="text-2xl sm:text-3xl">👂</span>
               <div>
                 <h3 className="text-lg font-black text-blue-900 leading-tight">{t('leftEar', lang)}</h3>
                 <p className="text-xs text-blue-800/40 font-bold uppercase tracking-wider">Frequency Sweep</p>
@@ -185,9 +185,9 @@ export default function ResultsPage() {
           </div>
 
           {/* Right Ear Board */}
-          <div className="glass-panel p-6 sm:p-8 border-2 border-white/50 shadow-xl rounded-[2.5rem] bg-white/70 backdrop-blur-md">
+          <div className="glass-panel p-6 sm:p-6 sm:p-8 border-2 border-white/50 shadow-xl rounded-[2.5rem] bg-white/70 backdrop-blur-md">
             <div className="flex items-center gap-3 mb-6">
-              <span className="text-3xl">👂</span>
+              <span className="text-2xl sm:text-3xl">👂</span>
               <div>
                 <h3 className="text-lg font-black text-blue-900 leading-tight">{t('rightEar', lang)}</h3>
                 <p className="text-xs text-blue-800/40 font-bold uppercase tracking-wider">Frequency Sweep</p>
@@ -200,7 +200,7 @@ export default function ResultsPage() {
         </div>
 
         {/* Parent Guidance & Clinical Context Panel */}
-        <div className="glass-panel w-full p-6 sm:p-8 border-2 border-white/50 shadow-xl rounded-[2.5rem] bg-white/70 backdrop-blur-md mb-8">
+        <div className="glass-panel w-full p-6 sm:p-6 sm:p-8 border-2 border-white/50 shadow-xl rounded-[2.5rem] bg-white/70 backdrop-blur-md mb-8">
           <div className="flex items-center gap-3 mb-4">
             <HeartPulse className="w-6 h-6 text-blue-600" />
             <h4 className="text-md font-black text-blue-900">{t('parentGuidance', lang)}</h4>

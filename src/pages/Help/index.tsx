@@ -11,7 +11,7 @@ export default function HelpPage() {
       owlState="idle"
       owlSpeech={lang === 'ta' ? 'உங்களுக்கு உதவி தேவையா?' : 'Do you need help?'}
     >
-      <div className="max-w-2xl mx-auto p-6 text-center">
+      <div className="max-w-2xl mx-auto p-5 sm:p-6 text-center">
         <h2 className="text-2xl font-black text-white mb-4" style={{ fontFamily: 'Fredoka, sans-serif' }}>
           {lang === 'ta' ? 'உதவி மையம்' : 'Help Center'}
         </h2>

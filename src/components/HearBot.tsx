@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
+import { supabase } from '../lib/supabase';
 
 const Typewriter = ({ text, delay = 15 }: { text: string; delay?: number }) => {
   const [currentText, setCurrentText] = useState('');
@@ -141,65 +142,40 @@ export default function HearBot() {
     setLoading(true);
 
     try {
-      // Using the environment variable for Groq API Key
-      const apiKey = import.meta.env.VITE_GROQ_API_KEY;
-
       const history = messages.slice(-6).map(m => ({
         role: m.role === 'user' ? 'user' : 'assistant',
         content: m.text,
       }));
 
-      if (!apiKey || apiKey.includes('hidden_for_deployment_replace_in_vercel') || apiKey === '') {
-        throw new Error('MISSING_API_KEY');
+      const fullMessages = [
+        { role: 'system', content: SYSTEM_PROMPT },
+        ...history,
+        { role: 'user', content: text.trim() },
+      ];
+
+      const { data, error } = await supabase.functions.invoke('chat-with-hearbot', {
+        body: { messages: fullMessages }
+      });
+
+      if (error) {
+        throw new Error(`Supabase Edge Function Error: ${error.message}`);
       }
-
-      const response = await fetch(
-        `https://api.groq.com/openai/v1/chat/completions`,
-        {
-          method: 'POST',
-          headers: { 
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${apiKey}`
-          },
-          body: JSON.stringify({
-            model: "llama-3.3-70b-versatile",
-            messages: [
-              { role: 'system', content: SYSTEM_PROMPT },
-              ...history,
-              { role: 'user', content: text.trim() },
-            ],
-            max_tokens: 300, 
-            temperature: 0.4,
-          }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(`Failed to fetch from Groq: ${response.statusText}`);
+      
+      if (data?.error) {
+        throw new Error(`API Error: ${data.error}`);
       }
-
-      const data = await response.json();
       const rawReply = data?.choices?.[0]?.message?.content || "I'm sorry, I couldn't process that. Please try again.";
       const reply = cleanBotText(rawReply);
 
       setMessages(prev => [...prev, { id: (Date.now() + 1).toString(), role: 'bot', text: reply, time: getTime() }]);
     } catch (err: unknown) {
       console.error("HearBot API Error:", err);
-      if (err instanceof Error && err.message === 'MISSING_API_KEY') {
-        setMessages(prev => [...prev, {
-          id: (Date.now() + 1).toString(),
-          role: 'bot',
-          text: "My AI brain isn't connected right now! The Groq API key is missing. Please add a valid VITE_GROQ_API_KEY to your environment variables.",
-          time: getTime(),
-        }]);
-      } else {
-        setMessages(prev => [...prev, {
-          id: (Date.now() + 1).toString(),
-          role: 'bot',
-          text: `I'm having trouble connecting right now. Error: ${err instanceof Error ? err.message : 'Unknown network error'}`,
-          time: getTime(),
-        }]);
-      }
+      setMessages(prev => [...prev, {
+        id: (Date.now() + 1).toString(),
+        role: 'bot',
+        text: `I'm having trouble connecting right now. Error: ${err instanceof Error ? err.message : 'Unknown network error'}`,
+        time: getTime(),
+      }]);
     } finally {
       setLoading(false);
     }
@@ -228,9 +204,9 @@ export default function HearBot() {
             whileHover={{ scale: 1.12 }}
             whileTap={{ scale: 0.9 }}
             onClick={() => setOpen(true)}
-            className="relative w-16 h-16 rounded-full shadow-2xl shadow-teal-500/40 overflow-hidden border-2 border-teal-400/50 bg-[#020817]"
+            className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-full shadow-2xl shadow-teal-500/40 overflow-hidden border-2 border-teal-400/50 bg-[#020817]"
           >
-            <img src={`${import.meta.env.BASE_URL}owl-mascot.png`} alt="HearBot" className="w-full h-full object-cover" />
+            <img loading="lazy" decoding="async" src={`${import.meta.env.BASE_URL}owl-mascot.png`} alt="HearBot" className="w-full h-full object-cover" />
             <span className="absolute inset-0 rounded-full animate-ping bg-teal-400/20 pointer-events-none" />
             <span className="absolute bottom-1 right-1 w-3 h-3 rounded-full bg-teal-400 border-2 border-[#020817]" />
           </motion.button>
@@ -254,7 +230,7 @@ export default function HearBot() {
             {/* Header */}
             <div className="relative z-10 flex items-center gap-3 px-5 py-4 border-b border-white/5">
               <div className="relative w-11 h-11 rounded-full overflow-hidden border border-teal-400/30 flex-shrink-0">
-                <img src={`${import.meta.env.BASE_URL}owl-mascot.png`} alt="HearBot" className="w-full h-full object-cover" />
+                <img loading="lazy" decoding="async" src={`${import.meta.env.BASE_URL}owl-mascot.png`} alt="HearBot" className="w-full h-full object-cover" />
                 <span className="absolute bottom-0.5 right-0.5 w-2.5 h-2.5 rounded-full bg-teal-400 border border-black" />
               </div>
               <div className="flex-1 min-w-0">
@@ -294,7 +270,7 @@ export default function HearBot() {
                 >
                   {msg.role === 'bot' && (
                     <div className="w-7 h-7 rounded-full overflow-hidden flex-shrink-0 mt-0.5 border border-teal-400/20">
-                      <img src={`${import.meta.env.BASE_URL}owl-mascot.png`} alt="bot" className="w-full h-full object-cover" />
+                      <img loading="lazy" decoding="async" src={`${import.meta.env.BASE_URL}owl-mascot.png`} alt="bot" className="w-full h-full object-cover" />
                     </div>
                   )}
                   <div className={`max-w-[78%] flex flex-col gap-1 ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
@@ -321,7 +297,7 @@ export default function HearBot() {
               {loading && (
                 <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="flex gap-2.5">
                   <div className="w-7 h-7 rounded-full overflow-hidden flex-shrink-0 border border-teal-400/20">
-                    <img src={`${import.meta.env.BASE_URL}owl-mascot.png`} alt="bot" className="w-full h-full object-cover" />
+                    <img loading="lazy" decoding="async" src={`${import.meta.env.BASE_URL}owl-mascot.png`} alt="bot" className="w-full h-full object-cover" />
                   </div>
                   <div className="px-4 py-3 rounded-2xl rounded-tl-sm bg-white/5 border border-white/10 flex items-center gap-1.5">
                     {[0, 1, 2].map(i => (

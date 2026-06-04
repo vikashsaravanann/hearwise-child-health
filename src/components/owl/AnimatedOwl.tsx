@@ -45,7 +45,7 @@ export default function AnimatedOwl({
         style={{ width: size, height: size, animation: getAnimation(state) }}
         className="relative"
       >
-        <img
+        <img loading="eager"
           src={owlMascot}
           alt="HearWise Owl Mascot"
           width={size}

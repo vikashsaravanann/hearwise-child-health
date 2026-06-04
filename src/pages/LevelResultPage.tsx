@@ -106,7 +106,7 @@ export default function LevelResultPage() {
         {/* Header */}
         <div className="text-center mb-6 mt-4" style={{ animation: 'fade-in 0.6s ease-out' }}>
           <div className="text-6xl mb-3 animate-bounce-celebration">{reward.emoji}</div>
-          <h1 className="text-4xl md:text-5xl font-black mb-2"
+          <h1 className="text-3xl sm:text-4xl md:text-4xl md:text-5xl font-black mb-2"
             style={{ fontFamily: 'Fredoka, sans-serif', color: 'hsl(200, 100%, 25%)' }}>
             {getPerformanceMessage()}
           </h1>
@@ -117,7 +117,7 @@ export default function LevelResultPage() {
 
         {/* Score Card */}
         <div className="w-full max-w-2xl mb-6">
-          <div className="ocean-panel p-6 md:p-10 text-center relative overflow-hidden">
+          <div className="ocean-panel p-5 sm:p-6 md:p-10 text-center relative overflow-hidden">
             <div className="absolute top-0 left-0 w-40 h-40 bg-blue-300/20 rounded-full blur-2xl -z-10 animate-pulse-glow" />
 
             {/* Score */}
@@ -146,7 +146,7 @@ export default function LevelResultPage() {
                 {lang === 'ta' ? '🎁 உங்கள் பரிசு 🎁' : '🎁 YOUR REWARD 🎁'}
               </p>
               <div className={`inline-block bg-gradient-to-r ${reward.color} text-white rounded-3xl px-8 py-5 shadow-2xl hover:scale-110 transition-transform cursor-default`}>
-                <div className="text-5xl mb-1">{reward.emoji}</div>
+                <div className="text-4xl md:text-5xl mb-1">{reward.emoji}</div>
                 <div className="text-xl font-black">{reward.badgeName}</div>
                 <div className="text-xs opacity-90 mt-1">
                   {lang === 'ta' ? 'திறக்கப்பட்டது! 🔓' : 'Unlocked! 🔓'}
@@ -174,7 +174,7 @@ export default function LevelResultPage() {
         </div>
 
         {/* Action buttons */}
-        <div className="w-full max-w-2xl grid grid-cols-2 gap-4">
+        <div className="w-full max-w-2xl grid grid-cols-1 sm:grid-cols-2 gap-4">
           <button onClick={() => navigate(`/ocean-test/${level}`)}
             className="px-6 py-4 bg-blue-500 text-white rounded-2xl font-bold text-lg hover:bg-blue-600 transition-all hover:scale-105 active:scale-95">
             🔄 {lang === 'ta' ? 'மீண்டும் முயல்' : 'Retry'}

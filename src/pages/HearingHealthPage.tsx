@@ -54,12 +54,12 @@ export default function HearingHealthPage() {
 
       <section className="relative z-10 px-6 py-16 max-w-6xl mx-auto">
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
-          <h2 className="text-3xl font-black text-white uppercase tracking-wider">
+          <h2 className="text-2xl sm:text-3xl font-black text-white uppercase tracking-wider">
             TYPES OF <span className="text-cyan-400">HEARING LOSS</span>
           </h2>
           <p className="text-slate-500 text-sm uppercase tracking-widest mt-2">KNOW WHAT YOU ARE SCREENING FOR</p>
         </motion.div>
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:p-6">
           {[
             {
               type: 'CONDUCTIVE', icon: '👂',
@@ -93,9 +93,9 @@ export default function HearingHealthPage() {
               viewport={{ once: true }}
               transition={{ delay: i * 0.15 }}
               whileHover={{ y: -6 }}
-              className={`rounded-2xl border p-8 transition-all duration-300 ${card.color}`}
+              className={`rounded-2xl border p-6 sm:p-8 transition-all duration-300 ${card.color}`}
             >
-              <div className="text-4xl mb-4">{card.icon}</div>
+              <div className="text-3xl sm:text-4xl mb-4">{card.icon}</div>
               <div className={`inline-block px-3 py-1 rounded-full border text-xs font-black uppercase tracking-widest mb-4 ${card.badge}`}>
                 {card.treatable}
               </div>
@@ -117,11 +117,11 @@ export default function HearingHealthPage() {
       <section className="relative z-10 px-6 py-16 max-w-5xl mx-auto">
         <div className="rounded-3xl border border-orange-500/20 bg-orange-500/5 p-10">
           <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}>
-            <h2 className="text-3xl font-black text-white uppercase tracking-wider mb-2">
+            <h2 className="text-2xl sm:text-3xl font-black text-white uppercase tracking-wider mb-2">
               ⚠ WARNING SIGNS IN <span className="text-orange-400">CHILDREN</span>
             </h2>
             <p className="text-slate-400 text-sm mb-8 uppercase tracking-widest">IF A CHILD SHOWS THESE SIGNS, SCREEN THEM IMMEDIATELY</p>
-            <div className="grid md:grid-cols-2 gap-4">
+            <div className="grid md:grid-cols-1 sm:grid-cols-2 gap-4">
               {[
                 'Does not respond when called by name from behind',
                 'Frequently asks "What?" or "Can you repeat that?"',
@@ -155,7 +155,7 @@ export default function HearingHealthPage() {
 
       <section className="relative z-10 px-6 py-16 max-w-5xl mx-auto">
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
-          <h2 className="text-3xl font-black text-white uppercase tracking-wider">
+          <h2 className="text-2xl sm:text-3xl font-black text-white uppercase tracking-wider">
             HOW THE <span className="text-teal-400">HEARWISE TEST</span> WORKS
           </h2>
         </motion.div>
@@ -173,9 +173,9 @@ export default function HearingHealthPage() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="flex items-center gap-6 p-6 rounded-2xl border border-teal-500/20 bg-teal-500/5 hover:bg-teal-500/10 transition-all"
+              className="flex items-center gap-5 sm:p-6 p-5 sm:p-6 rounded-2xl border border-teal-500/20 bg-teal-500/5 hover:bg-teal-500/10 transition-all"
             >
-              <div className="text-3xl w-12 flex-shrink-0 text-center">{item.icon}</div>
+              <div className="text-2xl sm:text-3xl w-12 flex-shrink-0 text-center">{item.icon}</div>
               <div className="w-12 h-12 rounded-full bg-gradient-to-br from-teal-400 to-cyan-500 flex items-center justify-center text-black font-black text-sm flex-shrink-0">
                 {item.step}
               </div>
@@ -190,7 +190,7 @@ export default function HearingHealthPage() {
 
       <section className="relative z-10 px-6 py-16 max-w-5xl mx-auto">
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-10">
-          <h2 className="text-3xl font-black text-white uppercase tracking-wider">
+          <h2 className="text-2xl sm:text-3xl font-black text-white uppercase tracking-wider">
             HEARWISE VS <span className="text-red-400">TRADITIONAL</span> SCREENING
           </h2>
         </motion.div>

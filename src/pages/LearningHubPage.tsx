@@ -63,10 +63,10 @@ export default function LearningHubPage() {
 
       <div className="max-w-4xl mx-auto px-4 py-8 flex flex-col items-center">
         {/* Welcome Section */}
-        <div className="flex flex-col md:flex-row items-center justify-center gap-8 mb-16 animate-in slide-in-from-bottom-10 duration-1000">
+        <div className="flex flex-col md:flex-row items-center justify-center gap-6 sm:p-8 mb-16 animate-in slide-in-from-bottom-10 duration-1000">
           <div className="relative">
             <div className="absolute -inset-4 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full blur-xl opacity-50 animate-pulse"></div>
-            <img src={owlMascot} alt="HearWise Mascot" className="w-48 h-48 md:w-64 md:h-64 object-contain relative z-10 hover:scale-110 transition-transform cursor-pointer drop-shadow-2xl" onClick={playFunSound} />
+            <img loading="eager" src={owlMascot} alt="HearWise Mascot" className="w-48 h-48 md:w-64 md:h-64 object-contain relative z-10 hover:scale-110 transition-transform cursor-pointer drop-shadow-2xl" onClick={playFunSound} />
           </div>
           <div className="text-center md:text-left space-y-4 max-w-md">
             <div className="inline-flex items-center gap-2 bg-pink-100 text-pink-600 px-4 py-1.5 rounded-full text-sm font-bold tracking-wide uppercase">
@@ -83,16 +83,16 @@ export default function LearningHubPage() {
 
         {/* Games Section */}
         <div className="w-full space-y-8">
-          <h2 className="text-3xl font-extrabold text-slate-800 text-center mb-8">🎮 Choose a Game</h2>
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-800 text-center mb-8">🎮 Choose a Game</h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+          <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 gap-5 sm:p-6 w-full">
             
             {/* Game Card 1 */}
             <Card className="rounded-[2rem] border-4 border-blue-200 bg-white overflow-hidden shadow-xl hover:shadow-2xl hover:border-blue-400 hover:-translate-y-2 transition-all duration-300 group">
               <div className="h-32 bg-gradient-to-br from-blue-400 to-cyan-300 flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
                 <Music className="w-16 h-16 text-white animate-bounce" />
               </div>
-              <CardContent className="p-6 text-center space-y-4">
+              <CardContent className="p-5 sm:p-6 text-center space-y-4">
                 <h3 className="text-2xl font-bold text-slate-800">Sound Match</h3>
                 <p className="text-slate-500 font-medium">Listen carefully! Can you find the matching sound?</p>
                 <Button 
@@ -110,16 +110,16 @@ export default function LearningHubPage() {
         {/* Active Game Area (Sound Match) */}
         {activeGame === 'soundMatch' && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/80 backdrop-blur-sm p-4 animate-in fade-in duration-300">
-            <div className="bg-white w-full max-w-2xl rounded-[3rem] p-8 shadow-2xl relative flex flex-col items-center animate-in zoom-in-95 duration-500">
-              <Button variant="ghost" className="absolute top-6 left-6 rounded-full bg-slate-100 hover:bg-slate-200 w-12 h-12 p-0" onClick={() => setActiveGame('none')}>
+            <div className="bg-white w-full max-w-2xl rounded-[3rem] p-6 sm:p-8 shadow-2xl relative flex flex-col items-center animate-in zoom-in-95 duration-500">
+              <Button variant="ghost" className="absolute top-5 sm:p-6 left-6 rounded-full bg-slate-100 hover:bg-slate-200 w-12 h-12 p-0" onClick={() => setActiveGame('none')}>
                 <ArrowLeft className="w-6 h-6 text-slate-600" />
               </Button>
               
-              <h2 className="text-4xl font-black text-center text-blue-600 mb-2 mt-4">Sound Match!</h2>
+              <h2 className="text-3xl sm:text-4xl font-black text-center text-blue-600 mb-2 mt-4">Sound Match!</h2>
               <p className="text-lg text-slate-500 mb-8 font-medium text-center">Tap the cards to find the matching pairs.</p>
 
               {soundMatchState === 'playing' && (
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 w-full px-4 mb-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 sm:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full px-4 mb-8">
                   {[1, 2, 3, 4, 5, 6].map((i) => (
                     <div 
                       key={i} 
@@ -139,7 +139,7 @@ export default function LearningHubPage() {
                   <div className="w-32 h-32 bg-yellow-100 rounded-full flex items-center justify-center border-4 border-yellow-400 shadow-[0_0_40px_rgba(250,204,21,0.6)] animate-bounce">
                     <Star className="w-20 h-20 text-yellow-500 fill-yellow-500" />
                   </div>
-                  <h3 className="text-4xl font-black text-green-500">You Won!</h3>
+                  <h3 className="text-3xl sm:text-4xl font-black text-green-500">You Won!</h3>
                   <p className="text-xl text-slate-600 font-bold">+50 Points</p>
                   <Button 
                     className="h-14 px-10 rounded-2xl text-xl font-bold bg-green-500 hover:bg-green-600 shadow-[0_4px_0_rgb(22,163,74)] active:translate-y-1 active:shadow-[0_0px_0_rgb(22,163,74)] transition-all"

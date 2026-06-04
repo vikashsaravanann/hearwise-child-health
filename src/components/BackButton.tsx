@@ -37,7 +37,7 @@ export default function BackButton() {
       </motion.div>
 
       {/* HearWise mini owl logo */}
-      <img
+      <img loading="lazy" decoding="async"
         src="/hearwise-child-health/owl-mascot.png"
         alt=""
         className="w-5 h-5 object-contain opacity-80 group-hover:opacity-100 transition-opacity"

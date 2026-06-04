@@ -11,7 +11,7 @@ export default function SoundExplorerPage() {
       owlState="excited"
       owlSpeech={lang === 'ta' ? 'ஒலிகளை கண்டறிவோம்!' : 'Explore sounds!'}
     >
-      <div className="max-w-2xl mx-auto p-6 text-center">
+      <div className="max-w-2xl mx-auto p-5 sm:p-6 text-center">
         <p className="text-white/80">
           {lang === 'ta'
             ? 'வித்தியாசமான ஒலி அலைவரிசைகளை கேட்டு, அவர்களின் மூலத்தை கண்டறியுங்கள்.'

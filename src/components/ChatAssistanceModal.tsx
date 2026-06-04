@@ -254,7 +254,7 @@ Keep responses concise, friendly, and use emojis like 🦉, 🌊, or 🎧. Trans
         <div className="px-8 py-6 border-b border-blue-50 flex items-center justify-between bg-gradient-to-r from-blue-50 to-white">
           <div className="flex items-center gap-4">
             <div className="relative w-16 h-16 bg-white rounded-full flex items-center justify-center overflow-hidden border-4 border-blue-100 shadow-xl">
-              <img src={mascot} alt="Ollie" className="w-12 h-12 object-contain mt-1" />
+              <img loading="lazy" decoding="async" src={mascot} alt="Ollie" className="w-12 h-12 object-contain mt-1" />
               <motion.div 
                 animate={{ scale: [1, 1.2, 1] }}
                 transition={{ repeat: Infinity, duration: 2 }}
@@ -324,7 +324,7 @@ Keep responses concise, friendly, and use emojis like 🦉, 🌊, or 🎧. Trans
               >
                 {msg.sender === 'ollie' && (
                   <div className="w-10 h-10 rounded-full bg-white border-2 border-blue-100 flex-shrink-0 flex items-center justify-center shadow-md">
-                    <img src={mascot} alt="Ollie" className="w-8 h-8 object-contain" />
+                    <img loading="lazy" decoding="async" src={mascot} alt="Ollie" className="w-8 h-8 object-contain" />
                   </div>
                 )}
                 
@@ -344,7 +344,7 @@ Keep responses concise, friendly, and use emojis like 🦉, 🌊, or 🎧. Trans
           {isTyping && (
             <div className="flex gap-4 justify-start">
               <div className="w-10 h-10 rounded-full bg-white border-2 border-blue-100 flex-shrink-0 flex items-center justify-center shadow-md">
-                <img src={mascot} alt="Ollie" className="w-8 h-8 object-contain" />
+                <img loading="lazy" decoding="async" src={mascot} alt="Ollie" className="w-8 h-8 object-contain" />
               </div>
               <div className="bg-white border-2 border-blue-50 rounded-[2rem] rounded-tl-none p-5 shadow-xl flex items-center gap-2">
                 <div className="w-2.5 h-2.5 bg-blue-300 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />

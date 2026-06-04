@@ -125,7 +125,7 @@ export default function SessionSummaryPage() {
         {pendingResultsCount > 0 ? `${pendingResultsCount} ${t('pendingSync', lang)}` : t('allResultsSaved', lang)}
       </p>
 
-      <div className="mt-8 grid grid-cols-2 gap-4">
+      <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Card className="rounded-2xl">
           <CardContent className="flex flex-col items-center p-4">
             <Users className="text-primary" size={28} />

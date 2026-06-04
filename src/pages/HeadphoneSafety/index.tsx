@@ -11,7 +11,7 @@ export default function HeadphoneSafetyPage() {
       owlState="idle"
       owlSpeech={lang === 'ta' ? 'பாதுகாப்பாக கேட்போம்!' : 'Let’s listen safely!'}
     >
-      <div className="max-w-2xl mx-auto p-6 text-center">
+      <div className="max-w-2xl mx-auto p-5 sm:p-6 text-center">
         <h2 className="text-2xl font-black text-white mb-4" style={{ fontFamily: 'Fredoka, sans-serif' }}>
           {lang === 'ta' ? '60/60 விதி' : 'The 60/60 Rule'}
         </h2>

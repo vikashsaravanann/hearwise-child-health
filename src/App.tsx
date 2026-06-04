@@ -13,6 +13,7 @@ import SWUpdatePrompt from "@/components/SWUpdatePrompt";
 import LanguageToggle from "@/components/LanguageToggle";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import HearBot from "@/components/HearBot";
+import MobileBottomNav from "@/components/MobileBottomNav";
 import Loader from "@/components/Loader";
 import LandingPage from "./pages/LandingPage";
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
@@ -122,10 +123,13 @@ const App = () => (
           <OfflineBadge />
           <LanguageToggle />
           <HashRouter>
+            <MobileBottomNav />
             <HearBot />
-            <Suspense fallback={<Loader fullscreen text="LOADING" />}>
-              <InnerRoutes />
-            </Suspense>
+            <main className="pb-20 lg:pb-0">
+              <Suspense fallback={<Loader fullscreen text="LOADING" />}>
+                <InnerRoutes />
+              </Suspense>
+            </main>
           </HashRouter>
           <SpeedInsights />
         </SessionProvider>

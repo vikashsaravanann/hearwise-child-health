@@ -112,7 +112,7 @@ export default function LandingPage() {
 
         {/* Large faint mascot "dragon" under everything - positioned slightly better for visibility */}
         <div className="absolute bottom-[5%] right-[-5%] w-[600px] h-[600px] opacity-[0.08] rotate-[-10deg]">
-          <img src={owlMascot} alt="" className="w-full h-full object-contain brightness-0 invert" />
+          <img loading="eager" src={owlMascot} alt="" className="w-full h-full object-contain brightness-0 invert" />
         </div>
       </div>
 
@@ -121,7 +121,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
           <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}>
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/20">
-              <img src={owlMascot} alt="Logo" className="w-7 h-7 object-contain" />
+              <img loading="eager" src={owlMascot} alt="Logo" className="w-7 h-7 object-contain" />
             </div>
             <span className="text-xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-white/70">
               HEARWISE TECHNOLOGIES
@@ -227,7 +227,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-6">
           
           {/* Hero Section */}
-          <section className="grid lg:grid-cols-2 gap-16 items-center">
+          <section className="grid lg:grid-cols-1 sm:grid-cols-2 gap-16 items-center">
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
@@ -279,7 +279,7 @@ export default function LandingPage() {
               </div>
 
               {/* Stats Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {quickStats.map((stat, i) => (
                   <motion.div 
                     key={i}
@@ -311,11 +311,11 @@ export default function LandingPage() {
                 
                 {/* Mascot Frame */}
                 <motion.div 
-                  className="relative z-10 w-full h-full rounded-[4rem] border-2 border-white/20 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-2xl p-8 flex items-center justify-center overflow-hidden"
+                  className="relative z-10 w-full h-full rounded-[4rem] border-2 border-white/20 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-2xl p-6 sm:p-8 flex items-center justify-center overflow-hidden"
                   animate={{ y: [0, -15, 0] }}
                   transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                 >
-                  <img 
+                  <img loading="eager" 
                     src={owlMascot} 
                     alt="Owl Mascot" 
                     className="w-full h-full object-contain drop-shadow-[0_0_30px_rgba(0,225,255,0.4)]"
@@ -340,11 +340,11 @@ export default function LandingPage() {
                 <span className="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse" />
                 WATCH & LEARN
               </div>
-              <h2 className="text-4xl font-black mb-4 uppercase tracking-wider">SEE HEARWISE IN ACTION</h2>
+              <h2 className="text-3xl sm:text-4xl font-black mb-4 uppercase tracking-wider">SEE HEARWISE IN ACTION</h2>
               <p className="text-white/60 uppercase tracking-widest text-sm">WATCH HOW HEARWISE IS CHANGING LIVES IN SCHOOLS ACROSS TAMIL NADU</p>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:p-8">
               <VideoCard
                 title="WHAT IS HEARWISE? — 60 SECOND EXPLAINER"
                 description="Discover how HearWise is transforming childhood hearing screening across India's schools with just a smartphone and headphones."
@@ -388,11 +388,11 @@ export default function LandingPage() {
           {/* Features Section */}
           <section id="features" className="mt-32">
             <div className="text-center mb-16">
-              <h2 className="text-5xl font-black mb-6">{t('features', lang)} & Roadmap</h2>
+              <h2 className="text-4xl md:text-5xl font-black mb-6">{t('features', lang)} & Roadmap</h2>
               <p className="text-xl text-white/60 max-w-3xl mx-auto italic">{t('ourSlogan', lang)}</p>
             </div>
 
-            <div className="grid lg:grid-cols-2 gap-10">
+            <div className="grid lg:grid-cols-1 sm:grid-cols-2 gap-10">
               {/* Mission & Vision */}
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
@@ -401,12 +401,12 @@ export default function LandingPage() {
                 className="p-10 rounded-[3rem] bg-gradient-to-br from-cyan-500/10 to-blue-600/10 border border-white/10 backdrop-blur-xl space-y-8"
               >
                 <div>
-                  <h3 className="text-3xl font-black mb-4 flex items-center gap-3"><Target className="w-8 h-8 text-cyan-400" /> {t('ourMission', lang)}</h3>
+                  <h3 className="text-2xl sm:text-3xl font-black mb-4 flex items-center gap-3"><Target className="w-8 h-8 text-cyan-400" /> {t('ourMission', lang)}</h3>
                   <p className="text-lg text-white/70 leading-relaxed">{t('ourMissionDesc', lang)}</p>
                 </div>
                 <div className="h-px bg-white/10 w-full" />
                 <div>
-                  <h3 className="text-3xl font-black mb-4 flex items-center gap-3"><Sparkles className="w-8 h-8 text-pink-400" /> {t('ourVision', lang)}</h3>
+                  <h3 className="text-2xl sm:text-3xl font-black mb-4 flex items-center gap-3"><Sparkles className="w-8 h-8 text-pink-400" /> {t('ourVision', lang)}</h3>
                   <p className="text-lg text-white/70 leading-relaxed">{t('ourVisionDesc', lang)}</p>
                 </div>
               </motion.div>
@@ -419,7 +419,7 @@ export default function LandingPage() {
                 transition={{ delay: 0.2 }}
                 className="p-10 rounded-[3rem] bg-white/5 border border-white/10 backdrop-blur-xl"
               >
-                <h3 className="text-3xl font-black mb-6 flex items-center gap-3"><Users className="w-8 h-8 text-emerald-400" /> {t('aboutUs', lang)}</h3>
+                <h3 className="text-2xl sm:text-3xl font-black mb-6 flex items-center gap-3"><Users className="w-8 h-8 text-emerald-400" /> {t('aboutUs', lang)}</h3>
                 <ul className="space-y-4 text-white/70 text-lg">
                   <li className="flex items-start gap-3"><CheckCircle2 className="w-6 h-6 text-emerald-400 shrink-0" /> Built by HearWise Technologies Pvt. Ltd.</li>
                   <li className="flex items-start gap-3"><CheckCircle2 className="w-6 h-6 text-emerald-400 shrink-0" /> Team of healthcare technologists, audiologists, and education experts.</li>
@@ -435,7 +435,7 @@ export default function LandingPage() {
                 viewport={{ once: true }}
                 className="p-10 rounded-[3rem] bg-[#001c3d] border border-cyan-500/20"
               >
-                <h3 className="text-3xl font-black mb-6 text-white">{t('whatWeBuilt', lang)}</h3>
+                <h3 className="text-2xl sm:text-3xl font-black mb-6 text-white">{t('whatWeBuilt', lang)}</h3>
                 <ul className="space-y-3 text-white/70">
                   {['Mobile-first school hearing screening platform', 'Bilingual (English + Tamil) child-friendly interface', '5-level hearing test per ear with nature sounds', 'Offline-first data sync with retry logic', 'Admin dashboard with analytics', 'AI chatbot assistant (HearBot)', 'Learning Hub with interactive games and health education', 'Clinical-safe readiness gating and practice rounds', 'Parent-friendly result guidance', 'Deployed on Vercel with Supabase backend'].map((item, i) => (
                     <li key={i} className="flex items-start gap-2"><CheckCircle2 className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" /> {item}</li>
@@ -451,7 +451,7 @@ export default function LandingPage() {
                 transition={{ delay: 0.2 }}
                 className="p-10 rounded-[3rem] bg-[#001c3d] border border-pink-500/20"
               >
-                <h3 className="text-3xl font-black mb-6 text-white">{t('whatWeWillDo', lang)}</h3>
+                <h3 className="text-2xl sm:text-3xl font-black mb-6 text-white">{t('whatWeWillDo', lang)}</h3>
                 <ul className="space-y-3 text-white/70">
                   {['Tighten Supabase Row Level Security (RLS) to role-scoped policies', 'Add server-side sync endpoint with payload validation', 'Audiologist referral network integration', 'Automated parent notification via SMS/WhatsApp', 'AI-powered audiogram analysis', 'Multi-school district dashboard', 'Integration with national health databases (NHP)', 'Wearable device support'].map((item, i) => (
                     <li key={i} className="flex items-start gap-2"><ArrowRight className="w-5 h-5 text-pink-400 shrink-0 mt-0.5" /> {item}</li>
@@ -462,8 +462,8 @@ export default function LandingPage() {
 
             {/* Platform Benefits */}
             <div className="mt-20">
-              <h3 className="text-4xl font-black mb-10 text-center">{t('platformBenefits', lang)}</h3>
-              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              <h3 className="text-3xl sm:text-4xl font-black mb-10 text-center">{t('platformBenefits', lang)}</h3>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:p-6">
                 {[
                   { title: 'Early Detection', desc: 'Detect hearing loss before it affects learning and development.', icon: <Sparkles className="w-6 h-6 text-yellow-400" /> },
                   { title: 'Accessible', desc: 'Works on any smartphone with standard headphones.', icon: <Headphones className="w-6 h-6 text-cyan-400" /> },
@@ -480,7 +480,7 @@ export default function LandingPage() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.1 }}
-                    className="p-6 rounded-3xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
+                    className="p-5 sm:p-6 rounded-3xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
                   >
                     <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center mb-4">
                       {benefit.icon}
@@ -510,7 +510,7 @@ export default function LandingPage() {
               <div className="w-20 h-20 rounded-3xl bg-cyan-500/20 flex items-center justify-center mb-8 border border-cyan-500/30">
                 <Headphones className="w-10 h-10 text-cyan-400" />
               </div>
-              <h3 className="text-4xl font-black mb-6 text-white">Smart School Screening</h3>
+              <h3 className="text-3xl sm:text-4xl font-black mb-6 text-white">Smart School Screening</h3>
               <p className="text-lg text-white/60 mb-8 leading-relaxed">
                 Our platform brings clinical-grade audiometry to the classroom. Using Digital Pure Tone Audiometry (PTA) principles, we screen students across the critical speech frequencies (250Hz - 8kHz). The system automatically adjusts to ambient noise levels and provides a 'pass/refer' result instantly, ensuring that hearing loss is caught early when intervention is most effective.
               </p>
@@ -522,7 +522,7 @@ export default function LandingPage() {
                 Start Screening Session
                 <ArrowRight className="ml-3 w-6 h-6" />
               </Button>
-              <div className="p-8 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md max-w-2xl">
+              <div className="p-6 sm:p-8 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md max-w-2xl">
                 <p className="text-sm font-black text-cyan-300 uppercase tracking-widest mb-4">Technical Detail & Compliance</p>
                 <div className="text-white/50 text-sm space-y-3 text-left">
                   <p>• <strong>ISO 8253 Compliant</strong>: Our testing protocols align with international standards for audiometric test methods.</p>
@@ -542,7 +542,7 @@ export default function LandingPage() {
               <div className="w-20 h-20 rounded-3xl bg-pink-500/20 flex items-center justify-center mb-8 border border-pink-500/30">
                 <BarChart className="w-10 h-10 text-pink-400" />
               </div>
-              <h3 className="text-4xl font-black mb-6 text-white">Instant Results & Analytics</h3>
+              <h3 className="text-3xl sm:text-4xl font-black mb-6 text-white">Instant Results & Analytics</h3>
               <p className="text-lg text-white/60 mb-8 leading-relaxed">
                 Transform screening data into actionable health insights. Administrators get a bird's-eye view of hearing health across entire school districts, while teachers receive immediate individual reports. Our analytics engine flags children for secondary screening and automatically generates clinical referral documents for parents, streamlining the entire care pathway.
               </p>
@@ -554,7 +554,7 @@ export default function LandingPage() {
                 Access Dashboard
                 <LayoutDashboard className="ml-3 w-6 h-6" />
               </Button>
-              <div className="p-8 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md max-w-2xl">
+              <div className="p-6 sm:p-8 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md max-w-2xl">
                 <p className="text-sm font-black text-pink-300 uppercase tracking-widest mb-4">Data Transparency & Security</p>
                 <div className="text-white/50 text-sm space-y-3 text-left">
                   <p>• <strong>Prevalence Mapping</strong>: Visualize hearing health trends by grade, school, or district to allocate resources effectively.</p>
@@ -574,7 +574,7 @@ export default function LandingPage() {
               <div className="w-20 h-20 rounded-3xl bg-emerald-500/20 flex items-center justify-center mb-8 border border-emerald-500/30">
                 <BookOpen className="w-10 h-10 text-emerald-400" />
               </div>
-              <h3 className="text-4xl font-black mb-6 text-white">Education & Awareness</h3>
+              <h3 className="text-3xl sm:text-4xl font-black mb-6 text-white">Education & Awareness</h3>
               <p className="text-lg text-white/60 mb-8 leading-relaxed">
                 Hearing care starts with knowledge. Our learning hub offers curriculum-aligned modules that teach students about ear anatomy, the physics of sound, and the dangers of high-decibel environments. Through interactive games and the 'Sonic Safety' curriculum, we empower the next generation to protect their hearing through healthy habits like the 60/60 rule.
               </p>
@@ -586,7 +586,7 @@ export default function LandingPage() {
                 Open Learning Hub
                 <BookOpen className="ml-3 w-6 h-6" />
               </Button>
-              <div className="p-8 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md max-w-2xl">
+              <div className="p-6 sm:p-8 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md max-w-2xl">
                 <p className="text-sm font-black text-emerald-300 uppercase tracking-widest mb-4">Resource Detail & Learning Path</p>
                 <div className="text-white/50 text-sm space-y-3 text-left">
                   <p>• <strong>Interactive Anatomy</strong>: 3D modules exploring the outer, middle, and inner ear functions.</p>
@@ -606,7 +606,7 @@ export default function LandingPage() {
               <div className="w-20 h-20 rounded-3xl bg-orange-500/20 flex items-center justify-center mb-8 border border-orange-500/30">
                 <HelpCircle className="w-10 h-10 text-orange-400" />
               </div>
-              <h3 className="text-4xl font-black mb-6 text-white">Clinical Support & Help</h3>
+              <h3 className="text-3xl sm:text-4xl font-black mb-6 text-white">Clinical Support & Help</h3>
               <p className="text-lg text-white/60 mb-8 leading-relaxed">
                 We bridge the gap between screening and clinical care. If a child is flagged, our platform provides direct links to book follow-up appointments with certified audiologists. Integrated tele-support allows school health workers to consult with experts in real-time, ensuring that every student receives the clinical attention they deserve.
               </p>
@@ -618,7 +618,7 @@ export default function LandingPage() {
                 Get Assistance
                 <HelpCircle className="ml-3 w-6 h-6" />
               </Button>
-              <div className="p-8 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md max-w-2xl">
+              <div className="p-6 sm:p-8 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md max-w-2xl">
                 <p className="text-sm font-black text-orange-300 uppercase tracking-widest mb-4">Service Detail & Referral Support</p>
                 <div className="text-white/50 text-sm space-y-3 text-left">
                   <p>• <strong>Direct Appointment Booking</strong>: Seamless integration with local audiometric clinics and government hospitals.</p>
@@ -629,10 +629,10 @@ export default function LandingPage() {
             </motion.div>
 
             {/* Expanded Educational Awareness Section */}
-            <div className="grid md:grid-cols-3 gap-8 mt-20">
+            <div className="grid md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:p-8 mt-20">
               <motion.div 
                 whileHover={{ y: -10 }}
-                className="p-8 rounded-[2.5rem] bg-white/10 backdrop-blur-md border border-white/20 shadow-2xl"
+                className="p-6 sm:p-8 rounded-[2.5rem] bg-white/10 backdrop-blur-md border border-white/20 shadow-2xl"
               >
                 <div className="w-14 h-14 rounded-2xl bg-cyan-400/20 flex items-center justify-center mb-6">
                   <Target className="w-8 h-8 text-cyan-400" />
@@ -645,7 +645,7 @@ export default function LandingPage() {
 
               <motion.div 
                 whileHover={{ y: -10 }}
-                className="p-8 rounded-[2.5rem] bg-white/10 backdrop-blur-md border border-white/20 shadow-2xl"
+                className="p-6 sm:p-8 rounded-[2.5rem] bg-white/10 backdrop-blur-md border border-white/20 shadow-2xl"
               >
                 <div className="w-14 h-14 rounded-2xl bg-pink-400/20 flex items-center justify-center mb-6">
                   <Users className="w-8 h-8 text-pink-400" />
@@ -658,7 +658,7 @@ export default function LandingPage() {
 
               <motion.div 
                 whileHover={{ y: -10 }}
-                className="p-8 rounded-[2.5rem] bg-white/10 backdrop-blur-md border border-white/20 shadow-2xl"
+                className="p-6 sm:p-8 rounded-[2.5rem] bg-white/10 backdrop-blur-md border border-white/20 shadow-2xl"
               >
                 <div className="w-14 h-14 rounded-2xl bg-emerald-400/20 flex items-center justify-center mb-6">
                   <Sparkles className="w-8 h-8 text-emerald-400" />
@@ -674,7 +674,7 @@ export default function LandingPage() {
           {/* More Details about HearWise Technologies */}
           <section id="tech-details" className="mt-40 bg-gradient-to-br from-blue-900/40 to-cyan-900/40 p-12 md:p-20 rounded-[4rem] border border-white/10 backdrop-blur-xl">
             <div className="max-w-4xl mx-auto">
-              <h2 className="text-5xl font-black mb-12 text-center">Inside the Tech</h2>
+              <h2 className="text-4xl md:text-5xl font-black mb-12 text-center">Inside the Tech</h2>
               
               <div className="space-y-16">
                 <div className="flex flex-col md:flex-row gap-10 items-start">
@@ -686,7 +686,7 @@ export default function LandingPage() {
                     <p className="text-white/60 leading-relaxed mb-4">
                       Our proprietary engine synthesizes pure tones with clinical precision. We cover the entire critical speech spectrum from 250Hz to 8000Hz, ensuring that no frequency gap goes unnoticed.
                     </p>
-                    <ul className="grid grid-cols-2 gap-3">
+                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <li className="flex items-center gap-2 text-xs text-white/40 font-bold uppercase"><CheckCircle2 className="w-3 h-3 text-cyan-400" /> Anti-Aliasing</li>
                       <li className="flex items-center gap-2 text-xs text-white/40 font-bold uppercase"><CheckCircle2 className="w-3 h-3 text-cyan-400" /> Precise Gain Control</li>
                     </ul>
@@ -702,7 +702,7 @@ export default function LandingPage() {
                     <p className="text-white/60 leading-relaxed mb-4">
                       The biggest challenge in school screening is ambient noise. HearWise uses real-time microphone analysis to ensure the background noise floor is within acceptable limits for a valid test.
                     </p>
-                    <ul className="grid grid-cols-2 gap-3">
+                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <li className="flex items-center gap-2 text-xs text-white/40 font-bold uppercase"><CheckCircle2 className="w-3 h-3 text-blue-400" /> Real-time FFT</li>
                       <li className="flex items-center gap-2 text-xs text-white/40 font-bold uppercase"><CheckCircle2 className="w-3 h-3 text-blue-400" /> Noise Warning System</li>
                     </ul>
@@ -718,7 +718,7 @@ export default function LandingPage() {
                     <p className="text-white/60 leading-relaxed mb-4">
                       Data is processed instantly, generating comprehensive reports and school-wide dashboards. We use industry-standard encryption to ensure that every student's medical data remains private and secure.
                     </p>
-                    <ul className="grid grid-cols-2 gap-3">
+                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <li className="flex items-center gap-2 text-xs text-white/40 font-bold uppercase"><CheckCircle2 className="w-3 h-3 text-purple-400" /> End-to-End Encryption</li>
                       <li className="flex items-center gap-2 text-xs text-white/40 font-bold uppercase"><CheckCircle2 className="w-3 h-3 text-purple-400" /> Multi-School Management</li>
                     </ul>
@@ -731,7 +731,7 @@ export default function LandingPage() {
 
           {/* Clinical Accuracy Section */}
           <section id="accuracy" className="mt-40">
-            <div className="grid lg:grid-cols-2 gap-20 items-center">
+            <div className="grid lg:grid-cols-1 sm:grid-cols-2 gap-20 items-center">
               <motion.div
                 initial={{ opacity: 0, x: -30 }}
                 whileInView={{ opacity: 1, x: 0 }}
@@ -740,9 +740,9 @@ export default function LandingPage() {
                 <div className="w-16 h-16 rounded-2xl bg-cyan-500/20 flex items-center justify-center mb-8">
                   <Shield className="w-10 h-10 text-cyan-400" />
                 </div>
-                <h2 className="text-4xl font-black mb-8">Clinical Grade Accuracy <br/> <span className="text-cyan-400">in Your Pocket</span></h2>
+                <h2 className="text-3xl sm:text-4xl font-black mb-8">Clinical Grade Accuracy <br/> <span className="text-cyan-400">in Your Pocket</span></h2>
                 <div className="space-y-8">
-                  <div className="flex gap-6">
+                  <div className="flex gap-5 sm:p-6">
                     <div className="mt-1 w-8 h-8 rounded-xl bg-cyan-500/20 flex items-center justify-center shrink-0 border border-cyan-500/30">
                       <CheckCircle2 className="w-5 h-5 text-cyan-400" />
                     </div>
@@ -751,7 +751,7 @@ export default function LandingPage() {
                       <p className="text-white/50 text-sm leading-relaxed">We utilize Pure Tone Audiometry (PTA) protocols recognized by global audiology bodies, covering frequencies from 250Hz to 8000Hz with 5dB step accuracy.</p>
                     </div>
                   </div>
-                  <div className="flex gap-6">
+                  <div className="flex gap-5 sm:p-6">
                     <div className="mt-1 w-8 h-8 rounded-xl bg-cyan-500/20 flex items-center justify-center shrink-0 border border-cyan-500/30">
                       <CheckCircle2 className="w-5 h-5 text-cyan-400" />
                     </div>
@@ -760,7 +760,7 @@ export default function LandingPage() {
                       <p className="text-white/50 text-sm leading-relaxed">Our real-time AI analyzes the ambient noise floor. If the environment becomes too loud for a valid clinical test, the system automatically alerts the educator to pause.</p>
                     </div>
                   </div>
-                  <div className="flex gap-6">
+                  <div className="flex gap-5 sm:p-6">
                     <div className="mt-1 w-8 h-8 rounded-xl bg-cyan-500/20 flex items-center justify-center shrink-0 border border-cyan-500/30">
                       <CheckCircle2 className="w-5 h-5 text-cyan-400" />
                     </div>
@@ -769,7 +769,7 @@ export default function LandingPage() {
                       <p className="text-white/50 text-sm leading-relaxed">Advanced algorithms interpret responses in real-time, identifying complex hearing patterns and providing immediate, reliable referral recommendations.</p>
                     </div>
                   </div>
-                  <div className="flex gap-6">
+                  <div className="flex gap-5 sm:p-6">
                     <div className="mt-1 w-8 h-8 rounded-xl bg-cyan-500/20 flex items-center justify-center shrink-0 border border-cyan-500/30">
                       <CheckCircle2 className="w-5 h-5 text-cyan-400" />
                     </div>
@@ -787,21 +787,21 @@ export default function LandingPage() {
                 viewport={{ once: true }}
                 className="relative"
               >
-                <div className="grid grid-cols-2 gap-6">
-                  <div className="p-8 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-sm hover:bg-white/10 transition-all">
-                    <div className="text-5xl font-black text-cyan-400 mb-2">98%</div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:p-6">
+                  <div className="p-6 sm:p-8 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-sm hover:bg-white/10 transition-all">
+                    <div className="text-4xl md:text-5xl font-black text-cyan-400 mb-2">98%</div>
                     <div className="text-xs font-bold text-white/40 uppercase tracking-widest leading-loose">Correlation with <br/> Clinical PTA</div>
                   </div>
-                  <div className="p-8 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-sm hover:bg-white/10 transition-all">
-                    <div className="text-5xl font-black text-pink-400 mb-2">&lt;1 min</div>
+                  <div className="p-6 sm:p-8 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-sm hover:bg-white/10 transition-all">
+                    <div className="text-4xl md:text-5xl font-black text-pink-400 mb-2">&lt;1 min</div>
                     <div className="text-xs font-bold text-white/40 uppercase tracking-widest leading-loose">Average <br/> Test Duration</div>
                   </div>
-                  <div className="p-8 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-sm hover:bg-white/10 transition-all">
-                    <div className="text-5xl font-black text-emerald-400 mb-2">1.5M</div>
+                  <div className="p-6 sm:p-8 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-sm hover:bg-white/10 transition-all">
+                    <div className="text-4xl md:text-5xl font-black text-emerald-400 mb-2">1.5M</div>
                     <div className="text-xs font-bold text-white/40 uppercase tracking-widest leading-loose">Target Student <br/> Population</div>
                   </div>
-                  <div className="p-8 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-sm hover:bg-white/10 transition-all">
-                    <div className="text-5xl font-black text-orange-400 mb-2">38+</div>
+                  <div className="p-6 sm:p-8 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-sm hover:bg-white/10 transition-all">
+                    <div className="text-4xl md:text-5xl font-black text-orange-400 mb-2">38+</div>
                     <div className="text-xs font-bold text-white/40 uppercase tracking-widest leading-loose">Districts Covered <br/> in TN Pilot</div>
                   </div>
                 </div>
@@ -812,7 +812,7 @@ export default function LandingPage() {
           {/* Our Process Section */}
           <section id="process" className="mt-40">
             <div className="text-center mb-16">
-              <h2 className="text-4xl font-black mb-4">How It Works</h2>
+              <h2 className="text-3xl sm:text-4xl font-black mb-4">How It Works</h2>
               <p className="text-white/60">A simple 4-step process for high-impact screening</p>
             </div>
 
@@ -820,7 +820,7 @@ export default function LandingPage() {
               {/* Connector line */}
               <div className="hidden lg:block absolute top-1/2 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-cyan-500/30 to-transparent -translate-y-1/2" />
               
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 relative z-10">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:p-8 relative z-10">
                 {[
                   { step: '01', title: 'Setup', desc: 'Register your school and class details in seconds.' },
                   { step: '02', title: 'Prepare', desc: 'Quickly check headphone levels and environment noise.' },
@@ -830,9 +830,9 @@ export default function LandingPage() {
                   <motion.div 
                     key={i}
                     whileHover={{ scale: 1.05 }}
-                    className="p-8 rounded-[2rem] bg-[#001c3d] border border-cyan-500/20 text-center relative overflow-hidden"
+                    className="p-6 sm:p-8 rounded-[2rem] bg-[#001c3d] border border-cyan-500/20 text-center relative overflow-hidden"
                   >
-                    <div className="absolute top-0 right-0 p-4 text-4xl font-black text-white/5">{item.step}</div>
+                    <div className="absolute top-0 right-0 p-4 text-3xl sm:text-4xl font-black text-white/5">{item.step}</div>
                     <div className="w-12 h-12 rounded-full bg-cyan-500 text-[#000b1d] font-black flex items-center justify-center mx-auto mb-6 shadow-lg shadow-cyan-500/40">
                       {item.step}
                     </div>
@@ -870,7 +870,7 @@ export default function LandingPage() {
             </div>
 
             {/* Body */}
-            <div className="px-8 py-8 grid md:grid-cols-3 gap-6">
+            <div className="px-8 py-8 grid md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:p-6">
 
               {/* Install Prompt */}
               <div className="rounded-2xl border border-teal-500/20 bg-teal-500/5 p-5 flex flex-col gap-4">
@@ -959,7 +959,7 @@ export default function LandingPage() {
       <footer className="relative mt-16 pb-20 border-t border-white/5">
         <div className="relative z-10 max-w-7xl mx-auto px-6 py-12 text-center">
           <div className="flex items-center justify-center gap-3 mb-6 opacity-40 grayscale hover:opacity-100 transition-opacity">
-            <img src={owlMascot} alt="Logo" className="w-8 h-8 object-contain" />
+            <img loading="eager" src={owlMascot} alt="Logo" className="w-8 h-8 object-contain" />
             <span className="font-black tracking-tight text-xl">HearWise Technologies</span>
           </div>
           <p className="text-white/30 text-[11px] uppercase tracking-[0.3em] mb-4">

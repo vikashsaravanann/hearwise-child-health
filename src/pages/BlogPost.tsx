@@ -61,11 +61,11 @@ export default function BlogPost() {
               {post.category}
             </div>
             
-            <h1 className="text-4xl md:text-6xl font-black text-white leading-tight mb-6">
+            <h1 className="text-3xl sm:text-4xl md:text-6xl font-black text-white leading-tight mb-6">
               {post.title}
             </h1>
             
-            <div className="flex items-center gap-6 text-sm font-bold text-slate-400 uppercase tracking-widest pt-6 mt-6 border-t border-teal-500/20">
+            <div className="flex items-center gap-5 sm:p-6 text-sm font-bold text-slate-400 uppercase tracking-widest pt-6 mt-6 border-t border-teal-500/20">
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-teal-400" /> {post.date}
               </div>
@@ -96,7 +96,7 @@ export default function BlogPost() {
         {/* Related Articles */}
         <div className="max-w-5xl mx-auto px-6 pt-16 border-t border-teal-500/20 relative z-10 mt-8">
           <h3 className="text-2xl font-black text-white uppercase tracking-wider mb-8">Related <span className="text-teal-400">Articles</span></h3>
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid md:grid-cols-1 sm:grid-cols-2 gap-5 sm:p-6">
             {relatedPosts.map((related, i) => (
               <motion.div
                 key={related.slug}
@@ -106,7 +106,7 @@ export default function BlogPost() {
                 transition={{ delay: i * 0.1 }}
                 whileHover={{ y: -6, scale: 1.02 }}
                 onClick={() => navigate(`/blog/${related.slug}`)}
-                className="group relative rounded-3xl border border-teal-500/30 bg-teal-500/5 p-8 hover:bg-teal-500/10 hover:shadow-lg hover:shadow-teal-500/20 transition-all duration-300 cursor-pointer flex flex-col h-full"
+                className="group relative rounded-3xl border border-teal-500/30 bg-teal-500/5 p-6 sm:p-8 hover:bg-teal-500/10 hover:shadow-lg hover:shadow-teal-500/20 transition-all duration-300 cursor-pointer flex flex-col h-full"
               >
                 <div className="text-xs font-bold text-teal-400 uppercase tracking-widest mb-4">
                   {related.category}
@@ -128,7 +128,7 @@ export default function BlogPost() {
         <div className="max-w-4xl mx-auto px-6 mt-24 relative z-10">
           <div className="bg-gradient-to-r from-teal-900/50 to-emerald-900/50 border border-teal-500/30 rounded-[3rem] p-10 md:p-16 text-center space-y-8 relative overflow-hidden shadow-2xl shadow-teal-500/10">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(45,212,191,0.15),transparent_70%)]" />
-            <h2 className="text-3xl md:text-4xl font-black text-white relative z-10 uppercase tracking-wider">Ready to make a <span className="text-teal-400">difference?</span></h2>
+            <h2 className="text-2xl sm:text-3xl md:text-3xl sm:text-4xl font-black text-white relative z-10 uppercase tracking-wider">Ready to make a <span className="text-teal-400">difference?</span></h2>
             <p className="text-lg text-teal-100/80 relative z-10 max-w-xl mx-auto">
               Join HearWise and help us ensure that no child loses their future to undetected hearing loss.
             </p>

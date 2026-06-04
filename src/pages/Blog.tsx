@@ -64,7 +64,7 @@ export default function Blog() {
               initial={{ opacity: 0, y: 30 }} 
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="group relative rounded-3xl border border-teal-500/30 bg-teal-500/5 p-8 md:p-12 hover:bg-teal-500/10 hover:shadow-xl hover:shadow-teal-500/20 transition-all duration-300 cursor-pointer flex flex-col md:flex-row gap-8 items-center"
+              className="group relative rounded-3xl border border-teal-500/30 bg-teal-500/5 p-6 sm:p-8 md:p-12 hover:bg-teal-500/10 hover:shadow-xl hover:shadow-teal-500/20 transition-all duration-300 cursor-pointer flex flex-col md:flex-row gap-6 sm:p-8 items-center"
               onClick={() => navigate(`/blog/${featuredPost.slug}`)}
             >
               <div className="w-24 h-24 shrink-0 rounded-full bg-gradient-to-br from-teal-400 to-cyan-500 flex items-center justify-center shadow-xl shadow-teal-500/30">
@@ -74,7 +74,7 @@ export default function Blog() {
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-teal-500/30 bg-teal-500/10 text-teal-400 text-xs font-semibold uppercase tracking-widest">
                   Featured • {featuredPost.category}
                 </div>
-                <h2 className="text-3xl md:text-4xl font-black text-white uppercase tracking-wider leading-tight group-hover:text-teal-400 transition-colors">
+                <h2 className="text-2xl sm:text-3xl md:text-3xl sm:text-4xl font-black text-white uppercase tracking-wider leading-tight group-hover:text-teal-400 transition-colors">
                   {featuredPost.title}
                 </h2>
                 <p className="text-slate-400 text-lg leading-relaxed">
@@ -110,7 +110,7 @@ export default function Blog() {
             ))}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:p-6">
             {filteredPosts.map((post, i) => {
               const styles = [
                 { color: 'border-teal-500/30 bg-teal-500/5 hover:bg-teal-500/10', glow: 'hover:shadow-teal-500/20', text: 'text-teal-400' },
@@ -129,11 +129,11 @@ export default function Blog() {
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.1 }}
                   whileHover={{ y: -6, scale: 1.02 }}
-                  className={`group relative rounded-3xl border p-8 transition-all duration-300 cursor-pointer shadow-lg flex flex-col h-full ${style.color} ${style.glow}`}
+                  className={`group relative rounded-3xl border p-6 sm:p-8 transition-all duration-300 cursor-pointer shadow-lg flex flex-col h-full ${style.color} ${style.glow}`}
                   onClick={() => navigate(`/blog/${post.slug}`)}
                 >
                   <div className="flex justify-between items-start mb-6">
-                    <div className="text-4xl">
+                    <div className="text-3xl sm:text-4xl">
                       <BookOpen className={`w-10 h-10 ${style.text}`} />
                     </div>
                     <div className={`px-3 py-1 rounded-full border border-white/10 bg-white/5 text-xs font-bold uppercase tracking-widest ${style.text}`}>
@@ -160,14 +160,14 @@ export default function Blog() {
           </div>
 
           {/* New Informational Widgets */}
-          <div className="grid md:grid-cols-2 gap-8 pt-8">
+          <div className="grid md:grid-cols-1 sm:grid-cols-2 gap-6 sm:p-8 pt-8">
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="bg-gradient-to-br from-teal-900/40 to-blue-900/40 border border-teal-500/30 p-8 rounded-3xl relative overflow-hidden"
+              className="bg-gradient-to-br from-teal-900/40 to-blue-900/40 border border-teal-500/30 p-6 sm:p-8 rounded-3xl relative overflow-hidden"
             >
-              <div className="absolute top-0 right-0 p-8 text-teal-500/20">
+              <div className="absolute top-0 right-0 p-6 sm:p-8 text-teal-500/20">
                 <BellRing className="w-32 h-32" />
               </div>
               <div className="relative z-10 space-y-4 max-w-md">
@@ -196,7 +196,7 @@ export default function Blog() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.2 }}
-              className="bg-white/5 border border-white/10 p-8 rounded-3xl"
+              className="bg-white/5 border border-white/10 p-6 sm:p-8 rounded-3xl"
             >
               <h3 className="text-2xl font-black text-white mb-6">Quick Health Facts</h3>
               <div className="space-y-4">

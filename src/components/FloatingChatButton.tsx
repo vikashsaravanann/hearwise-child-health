@@ -31,7 +31,7 @@ export default function FloatingChatButton() {
             className="fixed bottom-6 right-6 z-40 bg-blue-600 text-white rounded-full p-0 w-16 h-16 shadow-2xl flex items-center justify-center border-4 border-white overflow-hidden group"
           >
             <div className="absolute inset-0 bg-gradient-to-tr from-blue-700 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity" />
-            <img 
+            <img loading="lazy" decoding="async" 
               src={mascot} 
               alt="Ask Ollie" 
               className="w-10 h-10 object-contain relative z-10 group-hover:scale-110 transition-transform"

@@ -47,7 +47,7 @@ export default function HeadphoneCheckPage() {
 
       <div className="relative z-10 w-full max-w-3xl flex flex-col items-center">
         <div className="flex w-full items-center justify-between mb-4">
-          <h2 className="text-3xl font-black text-blue-900 tracking-tight">{t('headphoneCheck', lang)}</h2>
+          <h2 className="text-2xl sm:text-3xl font-black text-blue-900 tracking-tight">{t('headphoneCheck', lang)}</h2>
           <LanguageToggle />
         </div>
         
@@ -67,7 +67,7 @@ export default function HeadphoneCheckPage() {
             </label>
           ))}
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+          <div className="grid grid-cols-1 sm:grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
             <Button 
               variant="outline" 
               className={`h-16 gap-3 rounded-2xl border-2 font-black text-lg transition-all duration-300 ${samplePlayed ? 'bg-emerald-500/10 border-emerald-400 text-emerald-700' : 'bg-white/60 border-blue-200 text-blue-700 hover:bg-white/80'}`} 

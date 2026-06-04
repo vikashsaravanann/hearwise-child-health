@@ -130,7 +130,7 @@ const EducationPage: React.FC = () => {
           </div>
 
           {/* Resources Grid */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
+          <div className="grid md:grid-cols-2 lg:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:p-8 mb-20">
             {sections.map((section, idx) => (
               <motion.div
                 key={idx}
@@ -147,7 +147,7 @@ const EducationPage: React.FC = () => {
               >
                 <motion.div 
                   whileHover={{ rotate: [0, -10, 10, 0] }}
-                  className="p-6 rounded-3xl bg-white/50 mb-8 border-2 border-white group-hover:bg-white transition-colors"
+                  className="p-5 sm:p-6 rounded-3xl bg-white/50 mb-8 border-2 border-white group-hover:bg-white transition-colors"
                 >
                   {section.icon}
                 </motion.div>
@@ -195,11 +195,11 @@ const EducationPage: React.FC = () => {
 
             <div className="relative z-10">
               <Activity className="w-20 h-20 text-white mx-auto mb-8 animate-pulse" />
-              <h3 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight">Ready to Test Your Ears?</h3>
+              <h3 className="text-3xl sm:text-4xl md:text-4xl md:text-5xl font-black text-white mb-6 tracking-tight">Ready to Test Your Ears?</h3>
               <p className="text-white/80 text-xl max-w-2xl mx-auto mb-12 font-bold leading-relaxed">
                 Take the Hearing Hero challenge today and discover your underwater superpowers!
               </p>
-              <div className="flex flex-wrap justify-center gap-6">
+              <div className="flex flex-wrap justify-center gap-5 sm:p-6">
                 <motion.button 
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}

@@ -59,7 +59,7 @@ function WhatSoundGame({ lang, onBack }: { lang: string; onBack: () => void }) {
   if (done) return (
     <div className="text-center py-12">
       <div className="text-7xl mb-4">🎉</div>
-      <h2 className="text-4xl font-black text-white mb-2" style={{ fontFamily: 'Fredoka, sans-serif' }}>
+      <h2 className="text-3xl sm:text-4xl font-black text-white mb-2" style={{ fontFamily: 'Fredoka, sans-serif' }}>
         {score}/10
       </h2>
       <p className="text-white/80 text-lg mb-6">{score >= 8 ? '🌟 Amazing!' : score >= 5 ? '👏 Great!' : '💪 Keep trying!'}</p>
@@ -82,17 +82,17 @@ function WhatSoundGame({ lang, onBack }: { lang: string; onBack: () => void }) {
         <span>⭐ {score}</span>
       </div>
       {/* Sound display */}
-      <div className="ocean-panel p-8 text-center mb-6">
+      <div className="ocean-panel p-6 sm:p-8 text-center mb-6">
         <p className="text-white/70 text-sm mb-3">{lang === 'ta' ? 'இந்த ஒலி என்ன?' : 'What sound is this?'}</p>
         <div className="text-8xl mb-4 animate-bounce-celebration">{answer?.emoji}</div>
-        <div className="w-16 h-16 mx-auto rounded-full bg-gradient-to-r from-orange-400 to-red-500 flex items-center justify-center text-3xl shadow-xl cursor-pointer hover:scale-110 transition-all active:scale-95"
+        <div className="w-16 h-16 mx-auto rounded-full bg-gradient-to-r from-orange-400 to-red-500 flex items-center justify-center text-2xl sm:text-3xl shadow-xl cursor-pointer hover:scale-110 transition-all active:scale-95"
           onClick={() => {}}>
           🔊
         </div>
         <p className="text-white/50 text-xs mt-2">{lang === 'ta' ? 'ஒலியை கேள்' : 'Listen to the sound'}</p>
       </div>
       {/* Options */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {options.map((opt) => (
           <button key={opt.id} onClick={() => handleSelect(opt.id)}
             className={`p-5 rounded-3xl text-center font-black text-xl transition-all duration-300 border-4 ${
@@ -104,7 +104,7 @@ function WhatSoundGame({ lang, onBack }: { lang: string; onBack: () => void }) {
                 ? 'bg-green-400 text-white border-green-300'
                 : 'bg-white/20 text-white border-white/30 hover:bg-white/30 hover:scale-105'
             }`}>
-            <div className="text-5xl mb-2">{opt.emoji}</div>
+            <div className="text-4xl md:text-5xl mb-2">{opt.emoji}</div>
             <div className="text-base">{lang === 'ta' ? opt.labelTa : opt.label}</div>
           </button>
         ))}
@@ -145,7 +145,7 @@ function HighLowGame({ lang, onBack }: { lang: string; onBack: () => void }) {
   if (done) return (
     <div className="text-center py-12">
       <div className="text-7xl mb-4">{score >= 6 ? '🏆' : '⭐'}</div>
-      <h2 className="text-4xl font-black text-white mb-2" style={{ fontFamily: 'Fredoka, sans-serif' }}>{score}/8</h2>
+      <h2 className="text-3xl sm:text-4xl font-black text-white mb-2" style={{ fontFamily: 'Fredoka, sans-serif' }}>{score}/8</h2>
       <div className="flex gap-3 justify-center mt-6">
         <button onClick={() => { setRound(0); setScore(0); setDone(false); setSelected(null); }}
           className="px-6 py-3 bg-yellow-400 text-gray-900 rounded-2xl font-black hover:scale-105 transition-all">
@@ -161,24 +161,24 @@ function HighLowGame({ lang, onBack }: { lang: string; onBack: () => void }) {
       <div className="flex justify-between text-white/80 text-sm mb-4">
         <span>Round {round + 1}/8</span><span>⭐ {score}</span>
       </div>
-      <div className="ocean-panel p-8 mb-6">
+      <div className="ocean-panel p-6 sm:p-8 mb-6">
         <div className="text-8xl mb-3">{q.emoji}</div>
         <p className="text-white font-bold text-xl">{q.label}</p>
         <p className="text-white/60 text-sm mt-2">{lang === 'ta' ? 'இந்த ஒலி உயர்வா அல்லது தாழ்வா?' : 'Is this sound HIGH or LOW?'}</p>
       </div>
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:p-6">
         <button onClick={() => handleSelect('high')}
-          className={`p-8 rounded-3xl font-black text-2xl transition-all border-4 ${
+          className={`p-6 sm:p-8 rounded-3xl font-black text-2xl transition-all border-4 ${
             selected === 'high' ? (q.answer === 'high' ? 'bg-green-500 border-green-300' : 'bg-red-500 border-red-300') : 'bg-gradient-to-t from-blue-600 to-blue-300 border-blue-200 hover:scale-105'
           } text-white`}>
-          <div className="text-5xl mb-2">🚀</div>
+          <div className="text-4xl md:text-5xl mb-2">🚀</div>
           {lang === 'ta' ? 'உயர்வு' : 'HIGH'}
         </button>
         <button onClick={() => handleSelect('low')}
-          className={`p-8 rounded-3xl font-black text-2xl transition-all border-4 ${
+          className={`p-6 sm:p-8 rounded-3xl font-black text-2xl transition-all border-4 ${
             selected === 'low' ? (q.answer === 'low' ? 'bg-green-500 border-green-300' : 'bg-red-500 border-red-300') : 'bg-gradient-to-b from-blue-600 to-blue-900 border-blue-700 hover:scale-105'
           } text-white`}>
-          <div className="text-5xl mb-2">🤿</div>
+          <div className="text-4xl md:text-5xl mb-2">🤿</div>
           {lang === 'ta' ? 'தாழ்வு' : 'LOW'}
         </button>
       </div>
@@ -220,7 +220,7 @@ function SaveSeaCreaturesGame({ lang, onBack }: { lang: string; onBack: () => vo
   if (done) return (
     <div className="text-center py-12">
       <div className="text-7xl mb-4">🌊</div>
-      <h2 className="text-4xl font-black text-white mb-2">Ocean Hero!</h2>
+      <h2 className="text-3xl sm:text-4xl font-black text-white mb-2">Ocean Hero!</h2>
       <p className="text-white/80 text-lg mb-6">You saved {score} sea creatures!</p>
       <div className="flex gap-3 justify-center">
         <button onClick={() => { setRound(0); setScore(0); setDone(false); }}
@@ -328,7 +328,7 @@ export default function GamesPage() {
         >
           {lang === 'ta' ? 'விளையாட்டை தேர்ந்தெடு!' : 'Choose Your Adventure!'}
         </motion.p>
-        <div className="grid md:grid-cols-1 gap-6">
+        <div className="grid md:grid-cols-1 gap-5 sm:p-6">
           {games.map((g, i) => (
             <motion.button 
               key={g.id} 
@@ -336,12 +336,12 @@ export default function GamesPage() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: i * 0.1 }}
               onClick={() => setActiveGame(g.id)}
-              className={`w-full p-8 rounded-[3rem] bg-gradient-to-r ${g.color} text-white text-left shadow-2xl hover:scale-[1.02] transition-all active:scale-95 border-4 border-white/40 group`}
+              className={`w-full p-6 sm:p-8 rounded-[3rem] bg-gradient-to-r ${g.color} text-white text-left shadow-2xl hover:scale-[1.02] transition-all active:scale-95 border-4 border-white/40 group`}
             >
-              <div className="flex items-center gap-8">
+              <div className="flex items-center gap-6 sm:p-8">
                 <div className="text-7xl group-hover:scale-110 transition-transform duration-500">{g.emoji}</div>
                 <div className="flex-1">
-                  <h3 className="text-3xl font-black mb-2 tracking-tight" style={{ fontFamily: 'Fredoka, sans-serif' }}>{g.title}</h3>
+                  <h3 className="text-2xl sm:text-3xl font-black mb-2 tracking-tight" style={{ fontFamily: 'Fredoka, sans-serif' }}>{g.title}</h3>
                   <p className="text-white/80 text-lg font-bold mb-4">{g.desc}</p>
                   <div className="flex items-center gap-3">
                     <span className="text-xs bg-white/20 rounded-full px-4 py-1.5 font-black uppercase tracking-widest">
@@ -356,7 +356,7 @@ export default function GamesPage() {
                     </div>
                   </div>
                 </div>
-                <div className="text-4xl opacity-0 group-hover:opacity-100 group-hover:translate-x-2 transition-all">→</div>
+                <div className="text-3xl sm:text-4xl opacity-0 group-hover:opacity-100 group-hover:translate-x-2 transition-all">→</div>
               </div>
             </motion.button>
           ))}

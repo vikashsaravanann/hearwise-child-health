@@ -147,7 +147,7 @@ export default function TeacherTraining() {
         <div className="bg-slate-900 pt-24 pb-16 px-6 relative overflow-hidden">
           <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
           <div className="max-w-4xl mx-auto relative z-10">
-            <h1 className="text-4xl md:text-5xl font-black text-white text-center mb-4 font-['Syne']">
+            <h1 className="text-3xl sm:text-4xl md:text-4xl md:text-5xl font-black text-white text-center mb-4 font-['Syne']">
               Watch Before You Start — 3 Minute Training Video
             </h1>
             <p className="text-slate-400 text-center text-lg mb-12">
@@ -177,8 +177,8 @@ export default function TeacherTraining() {
             
             <div className="space-y-6">
               {steps.map((step, idx) => (
-                <div key={idx} className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 flex gap-6 hover:shadow-md transition-shadow">
-                  <div className="flex-shrink-0 w-16 h-16 rounded-full bg-teal-50 text-3xl flex items-center justify-center border border-teal-100">
+                <div key={idx} className="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-200 flex gap-5 sm:p-6 hover:shadow-md transition-shadow">
+                  <div className="flex-shrink-0 w-16 h-16 rounded-full bg-teal-50 text-2xl sm:text-3xl flex items-center justify-center border border-teal-100">
                     {step.icon}
                   </div>
                   <div>
@@ -209,7 +209,7 @@ export default function TeacherTraining() {
         {/* Section 3: Quick Quiz */}
         <div className="max-w-3xl mx-auto px-6 mt-32">
           <FadeInSection delay={0.2}>
-            <div className="bg-white rounded-3xl p-8 md:p-12 shadow-xl border border-slate-100">
+            <div className="bg-white rounded-3xl p-6 sm:p-8 md:p-12 shadow-xl border border-slate-100">
               <div className="text-center mb-10">
                 <h2 className="hw-section-title text-slate-900 !mb-2">Quick Knowledge Check</h2>
                 <p className="text-slate-500">Answer these 5 questions to confirm you are ready to conduct screenings.</p>
@@ -275,7 +275,7 @@ export default function TeacherTraining() {
                       <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-emerald-100 text-emerald-500 mb-6">
                         <CheckCircle2 size={48} />
                       </div>
-                      <h3 className="text-3xl font-black text-slate-900 mb-4">🎉 Excellent!</h3>
+                      <h3 className="text-2xl sm:text-3xl font-black text-slate-900 mb-4">🎉 Excellent!</h3>
                       <p className="text-lg text-slate-600 mb-8">You are ready to conduct HearWise screenings.</p>
                       <div className="inline-block bg-emerald-500 text-white px-6 py-2 rounded-full font-bold uppercase tracking-wider text-sm">
                         Certified Ready
@@ -286,7 +286,7 @@ export default function TeacherTraining() {
                       <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-amber-100 text-amber-500 mb-6">
                         <AlertCircle size={48} />
                       </div>
-                      <h3 className="text-3xl font-black text-slate-900 mb-4">👍 Good!</h3>
+                      <h3 className="text-2xl sm:text-3xl font-black text-slate-900 mb-4">👍 Good!</h3>
                       <p className="text-lg text-slate-600 mb-8">You scored {score}/5. Review the steps above and try again.</p>
                       <button onClick={() => { setShowResult(false); setCurrentQ(0); setAnswers([]); }} className="text-teal-600 font-bold hover:underline">
                         Retake Quiz
@@ -297,7 +297,7 @@ export default function TeacherTraining() {
                       <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-rose-100 text-rose-500 mb-6">
                         <XCircle size={48} />
                       </div>
-                      <h3 className="text-3xl font-black text-slate-900 mb-4">📖 Keep Learning</h3>
+                      <h3 className="text-2xl sm:text-3xl font-black text-slate-900 mb-4">📖 Keep Learning</h3>
                       <p className="text-lg text-slate-600 mb-8">You scored {score}/5. Please read the guide carefully and retake the quiz.</p>
                       <button onClick={() => { setShowResult(false); setCurrentQ(0); setAnswers([]); }} className="text-teal-600 font-bold hover:underline">
                         Retake Quiz

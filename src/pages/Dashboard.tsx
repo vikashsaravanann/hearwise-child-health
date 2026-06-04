@@ -5,7 +5,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import {
   RefreshCw, Shield, LogOut, CheckCircle, AlertTriangle, User,
-  Mail, Smartphone, Key, Lock, PlayCircle, GitCommit, Copy
+  Mail, Smartphone, Key, Lock, PlayCircle, GitCommit, Copy, Ear
 } from 'lucide-react';
 import {
   PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid
@@ -57,6 +57,7 @@ export default function Dashboard() {
   const [expandedRowId, setExpandedRowId] = useState<string | null>(null);
   const [aiAdvice, setAiAdvice] = useState('');
   const [aiLoading, setAiLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   // Time update
   useEffect(() => {
@@ -106,8 +107,9 @@ export default function Dashboard() {
         routeChecks: healthData.routes,
         githubCommits: commitsData,
       });
-    } catch (e) {
+    } catch (e: any) {
       console.error('Failed to load dashboard data:', e);
+      setErrorMsg(e.message || String(e));
     } finally {
       setLoading(false);
     }
@@ -205,10 +207,10 @@ export default function Dashboard() {
     
     let events = [
       ...(logs || []).map((l: any) => ({
-        id: 'l'+l.id, type: 'login', date: new Date(l.created_at), data: l
+        id: 'l'+l.id, type: 'login', date: new Date(l.created_at || Date.now()), data: l
       })),
       ...(screens || []).map((s: any) => ({
-        id: 's'+s.id, type: 'screening', date: new Date(s.created_at), data: s
+        id: 's'+s.id, type: 'screening', date: new Date(s.created_at || Date.now()), data: s
       }))
     ];
     events.sort((a, b) => b.date.getTime() - a.date.getTime());
@@ -288,7 +290,7 @@ export default function Dashboard() {
     }
   }
 
-  if (loading || !data) {
+  if (loading || (!data && !errorMsg)) {
     return (
       <div className="fixed inset-0 z-50 flex flex-col items-center justify-center"
         style={{ background: 'rgba(10,15,30,0.95)', backdropFilter: 'blur(12px)' }}>
@@ -299,12 +301,29 @@ export default function Dashboard() {
           transition={{ duration: 1.5, repeat: Infinity }}
           onError={(e) => { (e.target as HTMLImageElement).src = '/owl-mascot.png'; }}
         />
-        <p className="text-teal-400 text-sm font-semibold" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-          Loading dashboard data...
+        <p className="text-teal-400 text-sm font-bold tracking-widest mb-4" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+          LOADING DASHBOARD DATA...
         </p>
+        <div className="w-8 h-8 border-2 border-teal-400 border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
+
+  if (errorMsg) {
+    return (
+      <div className="fixed inset-0 z-50 flex flex-col items-center justify-center p-6 text-center"
+        style={{ background: 'rgba(10,15,30,0.95)', backdropFilter: 'blur(12px)' }}>
+        <AlertTriangle className="w-16 h-16 text-red-500 mb-4" />
+        <h2 className="text-2xl font-bold text-white mb-2">Error Loading Dashboard</h2>
+        <p className="text-slate-400 mb-6">{errorMsg}</p>
+        <button onClick={() => { setErrorMsg(null); fetchAllDashboardData(); }} className="px-6 py-2 bg-teal-500 hover:bg-teal-400 text-black font-bold rounded-lg transition-colors">
+          Retry Loading
+        </button>
+      </div>
+    );
+  }
+
+  if (!data) return null;
 
   // --- RENDER HELPERS ---
   const SectionHeader = ({ num, title, sub }: any) => (
@@ -369,7 +388,7 @@ export default function Dashboard() {
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto p-6 md:p-8 space-y-12">
+      <div className="max-w-7xl mx-auto p-5 sm:p-6 md:p-6 sm:p-8 space-y-12">
         
         {/* 1 — CEO PROFILE HERO CARD */}
         <motion.section
@@ -383,11 +402,11 @@ export default function Dashboard() {
           className="flex flex-col lg:flex-row gap-10"
         >
           <div className="w-full lg:w-1/3 flex flex-col items-center lg:items-start text-center lg:text-left">
-            <div className="w-24 h-24 rounded-full flex items-center justify-center text-white text-3xl font-bold mb-6"
+            <div className="w-24 h-24 rounded-full flex items-center justify-center text-white text-2xl sm:text-3xl font-bold mb-6"
               style={{ background: 'linear-gradient(135deg, #0d9488 0%, #3b82f6 50%, #8b5cf6 100%)', fontFamily: "'Syne', sans-serif" }}>
               VS
             </div>
-            <h2 className="text-4xl font-bold text-white mb-3" style={{ fontFamily: "'Syne', sans-serif" }}>Vikash Saravanan</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-3" style={{ fontFamily: "'Syne', sans-serif" }}>Vikash Saravanan</h2>
             <div className="flex flex-wrap gap-2 mb-4 justify-center lg:justify-start">
               <span className="px-3 py-1 text-xs font-bold rounded-full bg-teal-500/20 text-teal-400 border border-teal-500/30">Founder & CEO</span>
               <span className="px-3 py-1 text-xs font-bold rounded-full bg-red-500/20 text-red-400 border border-red-500/30">Admin</span>
@@ -408,7 +427,7 @@ export default function Dashboard() {
               Vikash Saravanan is an ambitious first-year B.Tech AI and Data Science student at Rathinam Technical Campus, Coimbatore. He is the sole founder and architect of HearWise Technologies — India's first mobile school hearing screening platform. As an AI Engineer, Prompt Engineer, and Full-Stack Web Developer, Vikash bridges advanced machine learning with full-stack software architecture. His mission is to engineer high-performance systems that solve real-world challenges in healthcare and education. He is intensely focused on securing high-impact internship opportunities and building production-ready AI systems.
             </p>
             
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
               <div className="p-4 rounded-xl bg-white/5 border border-white/10">
                 <p className="text-white font-bold mb-1">Hackathon Finalist</p>
                 <p className="text-xs text-slate-400">Meta PyTorch OpenEnv (Team: Fresh Tensors, Scaler)</p>
@@ -445,9 +464,9 @@ export default function Dashboard() {
 
         {/* 2 — HEARWISE PLATFORM OVERVIEW CARD */}
         <motion.section initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={ANIM_VIEWPORT} transition={{ duration: 0.6 }} style={SECTION_STYLE}>
-          <div className="flex flex-col md:flex-row items-center gap-8">
+          <div className="flex flex-col md:flex-row items-center gap-6 sm:p-8">
             <motion.img src={`${import.meta.env.BASE_URL}owl-mascot.png`} className="w-32 h-32" animate={{ y: [0, -10, 0] }} transition={{ duration: 4, repeat: Infinity }} />
-            <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="flex-1 grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 gap-6 sm:p-8">
               <div>
                 <h3 className="text-2xl font-bold text-white mb-2" style={{ fontFamily: "'Syne', sans-serif" }}>HearWise Technologies</h3>
                 <p className="text-teal-400 font-semibold mb-4">India's First Mobile School Hearing Screening Platform</p>
@@ -483,7 +502,7 @@ export default function Dashboard() {
               <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={ANIM_VIEWPORT} transition={{ delay: i * 0.08 }} className="relative bg-white/5 border border-white/10 p-5 rounded-2xl overflow-hidden group hover:-translate-y-1 transition-transform cursor-default">
                 <div className="absolute -top-4 -right-4 w-16 h-16 rounded-full opacity-20 blur-2xl" style={{ backgroundColor: stat.color }} />
                 <div className="text-2xl mb-2">{stat.icon}</div>
-                <div className="text-3xl font-bold text-white mb-1" style={{ fontFamily: "'Syne', sans-serif" }}>{stat.value}</div>
+                <div className="text-2xl sm:text-3xl font-bold text-white mb-1" style={{ fontFamily: "'Syne', sans-serif" }}>{stat.value}</div>
                 <div className="text-xs text-slate-400">{stat.label}</div>
                 <div className="absolute top-3 right-3 text-[9px] font-bold text-emerald-400 bg-emerald-400/10 px-1.5 py-0.5 rounded-full">↑ Live Data</div>
               </motion.div>
@@ -536,7 +555,7 @@ export default function Dashboard() {
           <SectionHeader num="3" title="Hearing Test Records" sub="Every child screened — teacher name, student details, district, results per ear" />
           <div className="space-y-3">
             {data.screenings.length === 0 && (
-              <div className="p-8 text-center text-slate-500 bg-white/5 rounded-xl border border-white/10">No hearing tests conducted yet.</div>
+              <div className="p-6 sm:p-8 text-center text-slate-500 bg-white/5 rounded-xl border border-white/10">No hearing tests conducted yet.</div>
             )}
             {data.screenings.map(s => (
               <div key={s.id} className="bg-white/5 border border-white/10 rounded-xl overflow-hidden cursor-pointer" onClick={() => setExpandedRowId(expandedRowId === s.id ? null : s.id)}>
@@ -558,7 +577,7 @@ export default function Dashboard() {
                   </div>
                 </div>
                 {expandedRowId === s.id && (
-                  <motion.div initial={{ height: 0 }} animate={{ height: 'auto' }} className="px-6 py-4 border-t border-white/10 bg-black/20 flex flex-col md:flex-row gap-8">
+                  <motion.div initial={{ height: 0 }} animate={{ height: 'auto' }} className="px-6 py-4 border-t border-white/10 bg-black/20 flex flex-col md:flex-row gap-6 sm:p-8">
                     <div className="flex-1 space-y-2 text-sm text-slate-300">
                       <p><strong className="text-white">Location:</strong> {s.location || s.district}</p>
                       <p><strong className="text-white">Teacher:</strong> {s.teacher_name} ({s.teacher_email})</p>
@@ -589,13 +608,13 @@ export default function Dashboard() {
         {/* 6 — VIDEO VIEWS */}
         <motion.section initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={ANIM_VIEWPORT} transition={{ duration: 0.6 }} style={SECTION_STYLE}>
           <SectionHeader num="4" title="Video Engagement Tracker" sub="Track which explainer videos users are watching" />
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:p-6">
             {data.videoViews.length === 0 && <p className="text-slate-500 col-span-3">No video view data yet.</p>}
             {data.videoViews.map((v, i) => (
               <div key={i} className="bg-white/5 border border-white/10 p-5 rounded-2xl">
                 <PlayCircle className="w-8 h-8 text-teal-400 mb-3" />
                 <h3 className="text-white font-bold mb-2 line-clamp-2">{v.title}</h3>
-                <div className="text-3xl font-bold text-teal-400 mb-4" style={{ fontFamily: "'Syne', sans-serif" }}>{v.count} Views</div>
+                <div className="text-2xl sm:text-3xl font-bold text-teal-400 mb-4" style={{ fontFamily: "'Syne', sans-serif" }}>{v.count} Views</div>
                 <div className="space-y-1">
                   <p className="text-xs text-slate-500 font-bold uppercase mb-2">Recent Viewers:</p>
                   {v.emails.slice(0,5).map((e: string, j: number) => <p key={j} className="text-xs text-slate-300 truncate">{e}</p>)}
@@ -607,13 +626,13 @@ export default function Dashboard() {
         </motion.section>
 
         {/* 7 & 8 — TIMELINE & CHARTS */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-1 sm:grid-cols-2 gap-6 sm:p-8">
           <motion.section initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={ANIM_VIEWPORT} transition={{ duration: 0.6 }} style={SECTION_STYLE} className="h-[600px] flex flex-col">
             <SectionHeader num="5" title="Recent Platform Activity" sub="A live feed of everything happening on HearWise right now" />
             <div className="flex-1 overflow-y-auto space-y-6 pr-2">
               {data.timelineEvents.map((ev, i) => (
                 <div key={ev.id} className="flex gap-4 relative">
-                  <div className="absolute left-[11px] top-6 bottom-[-24px] w-px bg-white/10" />
+                  <div className="absolute left-[11px] top-5 sm:p-6 bottom-[-24px] w-px bg-white/10" />
                   <div className={`w-6 h-6 rounded-full flex items-center justify-center z-10 flex-shrink-0 ${ev.type === 'login' ? 'bg-blue-500/20 text-blue-400' : 'bg-purple-500/20 text-purple-400'}`}>
                     {ev.type === 'login' ? <User className="w-3 h-3" /> : <Ear className="w-3 h-3" />}
                   </div>
@@ -644,7 +663,7 @@ export default function Dashboard() {
                 </PieChart>
               </ResponsiveContainer>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {data.loginChartData.map(d => (
                 <div key={d.name} className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full" style={{ backgroundColor: d.color }} />
@@ -660,7 +679,7 @@ export default function Dashboard() {
           <SectionHeader num="7" title="Website Health & Error Monitor" sub="Live detection of errors, warnings, and issues" />
           
           <div className="mb-6"><h3 className="text-white font-bold mb-3 uppercase text-sm tracking-widest text-slate-400">Database Tables Health</h3>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {data.healthChecks.map((c, i) => (
                 <div key={i} className={`p-4 rounded-xl border ${c.status === 'ok' ? 'bg-green-500/10 border-green-500/20 text-green-400' : 'bg-red-500/10 border-red-500/20 text-red-400'}`}>
                   <div className="flex items-center gap-2 font-bold mb-1">{c.status === 'ok' ? <CheckCircle className="w-4 h-4"/> : <AlertTriangle className="w-4 h-4"/>} {c.name}</div>
@@ -680,7 +699,7 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="bg-teal-900/20 border border-teal-500/30 rounded-2xl p-6">
+          <div className="bg-teal-900/20 border border-teal-500/30 rounded-2xl p-5 sm:p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-white font-bold flex items-center gap-2">🤖 AI Fix Advisor</h3>
               <button onClick={handleAskAi} disabled={aiLoading} className="px-4 py-2 bg-teal-500 hover:bg-teal-400 text-black font-bold rounded-lg text-sm disabled:opacity-50 transition-colors">

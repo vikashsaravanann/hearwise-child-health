@@ -181,7 +181,7 @@ export default function ActiveTestPage() {
       </div>
 
       {/* Header Info Panel */}
-      <header className="relative z-10 w-full max-w-5xl mx-auto px-4 pt-6 flex justify-between items-center gap-4">
+      <header className="relative z-10 w-full max-w-5xl mx-auto px-4 pt-20 pb-4 flex justify-between items-center gap-4">
         <div className="glass-panel px-6 py-3 border-2 border-white/50 shadow-lg flex items-center gap-3 bg-white/70 backdrop-blur-md rounded-2xl">
           <div className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse" />
           <div className="text-left">
@@ -237,13 +237,13 @@ export default function ActiveTestPage() {
           </div>
 
           {/* Left/Right Ear Indicator with active visual highlighting */}
-          <div className="flex justify-center items-center gap-8 mb-8">
+          <div className="flex justify-center items-center gap-6 sm:p-8 mb-8">
             <div className={`flex flex-col items-center rounded-2xl px-6 py-3 border-2 shadow-md transition-all duration-300 ${
               currentEar === 'left' 
                 ? 'bg-gradient-to-br from-blue-500 to-blue-600 border-blue-400 text-white scale-105 shadow-blue-500/20' 
                 : 'bg-white/50 border-white/20 text-blue-900/60'
             }`}>
-              <span className="text-3xl mb-1">👂</span>
+              <span className="text-2xl sm:text-3xl mb-1">👂</span>
               <span className="text-sm font-black tracking-wide">{t('leftEar', lang)}</span>
             </div>
 
@@ -252,7 +252,7 @@ export default function ActiveTestPage() {
                 ? 'bg-gradient-to-br from-cyan-500 to-cyan-600 border-cyan-400 text-white scale-105 shadow-cyan-500/20' 
                 : 'bg-white/50 border-white/20 text-blue-900/60'
             }`}>
-              <span className="text-3xl mb-1">👂</span>
+              <span className="text-2xl sm:text-3xl mb-1">👂</span>
               <span className="text-sm font-black tracking-wide">{t('rightEar', lang)}</span>
             </div>
           </div>
@@ -271,14 +271,14 @@ export default function ActiveTestPage() {
               {isPlaying && <div className="absolute h-48 w-48 rounded-full bg-blue-500/25 animate-blue-glow" />}
 
               {/* Magical pearl button */}
-              <div className={`flex h-44 w-44 items-center justify-center rounded-full border-4 border-white/60 shadow-2xl transition-all duration-300 ${
+              <div className={`flex h-36 w-36 sm:h-44 sm:w-44 items-center justify-center rounded-full border-4 border-white/60 shadow-2xl transition-all duration-300 ${
                 tapped 
                   ? 'scale-110 bg-blue-600/30 border-blue-400' 
                   : isPlaying 
                   ? 'bg-blue-500/10 hover:scale-105 hover:shadow-cyan-400/20' 
                   : 'bg-white/20 hover:scale-105'
               }`}>
-                <div className={`h-24 w-24 rounded-full bg-gradient-to-br from-blue-400 via-blue-600 to-indigo-700 shadow-xl transition-all duration-300 ${
+                <div className={`h-20 w-20 sm:h-24 sm:w-24 rounded-full bg-gradient-to-br from-blue-400 via-blue-600 to-indigo-700 shadow-xl transition-all duration-300 ${
                   tapped ? 'scale-125' : 'hover:scale-110'
                 }`} />
               </div>
@@ -286,7 +286,7 @@ export default function ActiveTestPage() {
               {/* Floating stars effect */}
               {showStars && (
                 <>
-                  <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 text-2xl text-yellow-400 animate-star-burst">✦</span>
+                  <span className="pointer-events-none absolute -top-6 sm:p-8 left-1/2 -translate-x-1/2 text-2xl text-yellow-400 animate-star-burst">✦</span>
                   <span className="pointer-events-none absolute left-3 top-5 text-lg text-yellow-500 animate-star-burst-delay-1">✦</span>
                   <span className="pointer-events-none absolute right-3 top-5 text-lg text-yellow-500 animate-star-burst-delay-2">✦</span>
                 </>
@@ -321,7 +321,7 @@ export default function ActiveTestPage() {
       </footer>
 
       {/* Floating balloon animation on success */}
-      {showBalloon && <div className="fixed bottom-1/3 left-1/2 -translate-x-1/2 text-5xl z-50 animate-float-up pointer-events-none">🎈</div>}
+      {showBalloon && <div className="fixed bottom-1/3 left-1/2 -translate-x-1/2 text-4xl md:text-5xl z-50 animate-float-up pointer-events-none">🎈</div>}
 
       <style>{`
         @keyframes pulse-ring {

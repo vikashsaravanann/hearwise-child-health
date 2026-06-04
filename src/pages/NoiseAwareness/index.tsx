@@ -48,7 +48,7 @@ export default function NoiseAwarenessPage() {
             <motion.h2 
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="text-4xl md:text-6xl font-black text-blue-900 mb-6 leading-tight tracking-tight"
+              className="text-3xl sm:text-4xl md:text-6xl font-black text-blue-900 mb-6 leading-tight tracking-tight"
             >
               {lang === 'ta' ? 'அதிக சத்தம் ஆபத்தானது!' : 'Is it Too Loud?'}
             </motion.h2>
@@ -64,7 +64,7 @@ export default function NoiseAwarenessPage() {
           </div>
 
           {/* Rules Grid */}
-          <div className="grid md:grid-cols-3 gap-8 mb-20">
+          <div className="grid md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:p-8 mb-20">
             {rules.map((rule, i) => (
               <motion.div
                 key={i}
@@ -93,7 +93,7 @@ export default function NoiseAwarenessPage() {
              viewport={{ once: true }}
              className="glass-panel p-12 border-4 border-white/60 rounded-[4rem] shadow-3xl bg-white/40 backdrop-blur-xl mb-20"
           >
-            <h3 className="text-3xl font-black text-blue-900 mb-8 text-center">The Sound Meter</h3>
+            <h3 className="text-2xl sm:text-3xl font-black text-blue-900 mb-8 text-center">The Sound Meter</h3>
             <div className="relative h-20 w-full bg-gradient-to-r from-green-400 via-yellow-400 to-red-500 rounded-full border-4 border-white shadow-inner overflow-hidden">
                <motion.div 
                  animate={{ x: ['0%', '80%', '40%', '90%', '20%'] }}

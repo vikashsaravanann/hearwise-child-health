@@ -11,7 +11,7 @@ export default function LeaderboardPage() {
       owlState="excited"
       owlSpeech={lang === 'ta' ? 'யார் முன்னிலையில் உள்ளனர்?' : 'Who is leading?'}
     >
-      <div className="max-w-2xl mx-auto p-6 text-center">
+      <div className="max-w-2xl mx-auto p-5 sm:p-6 text-center">
         <h2 className="text-2xl font-black text-white mb-4" style={{ fontFamily: 'Fredoka, sans-serif' }}>
           {lang === 'ta' ? 'சிறந்த சாதனையாளர்கள்' : 'Top Achievers'}
         </h2>

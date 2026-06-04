@@ -155,10 +155,10 @@ export default function OceanTestPage() {
         <AnimatedOwl state={owlState} size={72} speechBubble={owlSpeech} />
       </div>
 
-      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 py-20">
+      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 pt-24 pb-20">
         <div className="text-center mb-6 mt-4">
-          <div className="text-4xl mb-2">{currentLevelInfo.emoji}</div>
-          <h1 className="text-3xl md:text-4xl font-black mb-1" style={{ fontFamily: 'Fredoka, sans-serif', color: 'hsl(200, 100%, 25%)' }}>
+          <div className="text-3xl sm:text-4xl mb-2">{currentLevelInfo.emoji}</div>
+          <h1 className="text-2xl sm:text-3xl md:text-3xl sm:text-4xl font-black mb-1" style={{ fontFamily: 'Fredoka, sans-serif', color: 'hsl(200, 100%, 25%)' }}>
             {currentLevelInfo.name}
           </h1>
           <p className="text-blue-700 font-semibold">{currentLevelInfo.description}</p>
@@ -177,11 +177,11 @@ export default function OceanTestPage() {
         </div>
 
         <div className="w-full max-w-2xl">
-          <div className="ocean-panel p-6 md:p-10 text-center relative overflow-hidden backdrop-blur-xl border-4 border-white/50 shadow-[0_20px_50px_rgba(0,0,0,0.15)]">
+          <div className="ocean-panel p-5 sm:p-6 md:p-10 text-center relative overflow-hidden backdrop-blur-xl border-4 border-white/50 shadow-[0_20px_50px_rgba(0,0,0,0.15)]">
             <div className="absolute top-0 left-0 w-32 h-32 bg-blue-300/20 rounded-full blur-2xl -z-10" />
             <div className="absolute bottom-0 right-0 w-40 h-40 bg-cyan-300/20 rounded-full blur-2xl -z-10" />
 
-            <div className="grid grid-cols-3 gap-3 mb-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-6">
               <div className="bg-blue-100/80 rounded-2xl p-3 border-2 border-blue-300">
                 <div className="text-xs text-blue-600 font-semibold mb-1 uppercase tracking-tighter">FREQUENCY</div>
                 <div className="text-xl font-black text-blue-700">{currentTest.frequency}</div>
@@ -220,11 +220,11 @@ export default function OceanTestPage() {
               )}
             </div>
 
-            <p className="text-2xl md:text-3xl font-black text-blue-900/80 mb-8 tracking-tight">
+            <p className="text-xl sm:text-2xl md:text-2xl sm:text-3xl font-black text-blue-900/80 mb-8 tracking-tight">
               {lang === 'ta' ? 'எந்த காதில் ஒலி கேட்டது?' : 'Which ear did you hear the sound in?'}
             </p>
 
-            <div className="grid grid-cols-2 gap-6 mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:p-6 mb-8">
               {(['left', 'right'] as const).map((ear) => {
                 const isSelected = selectedResponse === ear;
                 const isCorrectEar = isSelected && feedback === 'correct';
@@ -234,7 +234,7 @@ export default function OceanTestPage() {
                     key={ear}
                     onClick={() => handleResponse(ear)}
                     disabled={feedback !== null || isPlayingSound || !hasPlayedSound}
-                    className={`relative p-6 rounded-[2.5rem] font-black text-xl transition-all duration-500 border-4 shadow-xl overflow-hidden group ${
+                    className={`relative py-6 sm:py-8 px-4 rounded-3xl sm:rounded-[2.5rem] font-black text-xl transition-all duration-500 border-4 shadow-xl overflow-hidden group ${
                       isCorrectEar
                         ? 'bg-green-500 text-white scale-105 shadow-green-500/40 border-green-300'
                         : isWrongEar
@@ -248,7 +248,7 @@ export default function OceanTestPage() {
                         : 'bg-gradient-to-br from-cyan-400 to-cyan-600 text-white hover:scale-105 hover:shadow-2xl border-cyan-300 active:scale-95'
                     }`}
                   >
-                    <div className={`text-5xl mb-2 transition-transform duration-500 ${!isPlayingSound && hasPlayedSound ? 'group-hover:scale-125' : ''}`}>👂</div>
+                    <div className={`text-4xl md:text-5xl mb-2 transition-transform duration-500 ${!isPlayingSound && hasPlayedSound ? 'group-hover:scale-125' : ''}`}>👂</div>
                     <div className="relative z-10 tracking-wider">
                       {ear === 'left' ? (lang === 'ta' ? 'இடது' : 'LEFT') : (lang === 'ta' ? 'வலது' : 'RIGHT')}
                     </div>
@@ -262,7 +262,7 @@ export default function OceanTestPage() {
             <div className="h-10">
               {feedback === 'correct' && (
                 <div className="animate-bounce text-center">
-                  <p className="text-3xl font-black text-green-600 drop-shadow-sm">{lang === 'ta' ? '🎉 அருமை!' : '🎉 EXCELLENT!'}</p>
+                  <p className="text-2xl sm:text-3xl font-black text-green-600 drop-shadow-sm">{lang === 'ta' ? '🎉 அருமை!' : '🎉 EXCELLENT!'}</p>
                 </div>
               )}
               {feedback === 'incorrect' && (

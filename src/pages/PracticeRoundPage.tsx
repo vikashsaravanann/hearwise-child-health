@@ -69,7 +69,7 @@ export default function PracticeRoundPage() {
               <OwlIcon mood="happy" size={100} />
             </div>
             
-            <h2 className="text-3xl font-black text-blue-900 mb-3">{t('practiceRound', lang)}</h2>
+            <h2 className="text-2xl sm:text-3xl font-black text-blue-900 mb-3">{t('practiceRound', lang)}</h2>
             <p className="text-lg text-blue-800/60 font-bold mb-10">{t('tapWhenHear', lang)}</p>
 
             <button

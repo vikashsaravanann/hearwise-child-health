@@ -136,11 +136,11 @@ export default function SchoolOnboarding() {
             >
               <PartyPopper className="w-14 h-14 text-emerald-400" />
             </motion.div>
-            <h1 className="text-5xl font-black text-white tracking-tight">Registration Received!</h1>
+            <h1 className="text-4xl md:text-5xl font-black text-white tracking-tight">Registration Received!</h1>
             <p className="text-xl text-emerald-100/90 leading-relaxed max-w-xl mx-auto">
               Welcome to the HearWise network, <strong className="text-white font-black">{formData.schoolName}</strong>!
             </p>
-            <div className="bg-emerald-900/40 border border-emerald-500/30 rounded-2xl p-6 text-left">
+            <div className="bg-emerald-900/40 border border-emerald-500/30 rounded-2xl p-5 sm:p-6 text-left">
               <h3 className="text-emerald-400 font-bold uppercase tracking-widest text-sm mb-3 flex items-center gap-2"><Rocket className="w-4 h-4"/> Next Steps</h3>
               <ul className="space-y-3 text-emerald-100/80">
                 <li className="flex items-start gap-3">
@@ -191,7 +191,7 @@ export default function SchoolOnboarding() {
                 <Sparkles className="w-4 h-4" />
                 FOR EDUCATORS
               </div>
-              <h1 className="text-4xl md:text-6xl font-black text-white tracking-tight leading-tight">
+              <h1 className="text-3xl sm:text-4xl md:text-6xl font-black text-white tracking-tight leading-tight">
                 REGISTER YOUR <br/>
                 <span className="bg-gradient-to-r from-teal-400 to-cyan-400 bg-clip-text text-transparent">
                   SCHOOL FOR FREE
@@ -209,8 +209,8 @@ export default function SchoolOnboarding() {
             <div className="lg:col-span-8">
               {/* STEP INDICATOR */}
               <div className="flex justify-between items-center relative pb-10">
-                <div className="absolute top-6 left-0 right-0 h-1.5 bg-white/5 z-0 rounded-full" />
-                <div className="absolute top-6 left-0 h-1.5 bg-gradient-to-r from-teal-600 to-teal-400 z-0 rounded-full transition-all duration-500 shadow-[0_0_10px_rgba(45,212,191,0.5)]" style={{ width: `${((step - 1) / 3) * 100}%` }} />
+                <div className="absolute top-5 sm:p-6 left-0 right-0 h-1.5 bg-white/5 z-0 rounded-full" />
+                <div className="absolute top-5 sm:p-6 left-0 h-1.5 bg-gradient-to-r from-teal-600 to-teal-400 z-0 rounded-full transition-all duration-500 shadow-[0_0_10px_rgba(45,212,191,0.5)]" style={{ width: `${((step - 1) / 3) * 100}%` }} />
                 
                 {[
                   { num: 1, label: 'Details', icon: <Building2 className="w-5 h-5" /> },
@@ -246,7 +246,7 @@ export default function SchoolOnboarding() {
                   >
                     {step === 1 && (
                       <div className="space-y-8">
-                        <h2 className="text-3xl font-black text-white flex items-center gap-3"><Building2 className="text-teal-400 w-8 h-8" /> School Details</h2>
+                        <h2 className="text-2xl sm:text-3xl font-black text-white flex items-center gap-3"><Building2 className="text-teal-400 w-8 h-8" /> School Details</h2>
                         
                         <div className="space-y-6">
                           <div>
@@ -271,7 +271,7 @@ export default function SchoolOnboarding() {
                             <Textarea value={formData.address} onChange={e => updateForm('address', e.target.value)} className="bg-white/5 border-white/10 mt-2 focus:border-teal-500 min-h-[100px] rounded-xl text-white text-lg" />
                           </div>
 
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                          <div className="grid grid-cols-1 sm:grid-cols-1 sm:grid-cols-2 gap-5 sm:p-6">
                             <div>
                               <Label className="text-slate-300 text-sm font-semibold">District *</Label>
                               <Select value={formData.district} onValueChange={v => updateForm('district', v)}>
@@ -289,7 +289,7 @@ export default function SchoolOnboarding() {
                             </div>
                           </div>
 
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                          <div className="grid grid-cols-1 sm:grid-cols-1 sm:grid-cols-2 gap-5 sm:p-6">
                             <div>
                               <Label className="text-slate-300 text-sm font-semibold">School UDISE Code (Optional)</Label>
                               <Input value={formData.udiseCode} onChange={e => updateForm('udiseCode', e.target.value)} className="bg-white/5 border-white/10 h-14 mt-2 rounded-xl text-white focus:border-teal-500 text-lg" />
@@ -317,7 +317,7 @@ export default function SchoolOnboarding() {
 
                     {step === 2 && (
                       <div className="space-y-8">
-                        <h2 className="text-3xl font-black text-white flex items-center gap-3"><User className="text-teal-400 w-8 h-8" /> Contact Person</h2>
+                        <h2 className="text-2xl sm:text-3xl font-black text-white flex items-center gap-3"><User className="text-teal-400 w-8 h-8" /> Contact Person</h2>
                         
                         <div className="space-y-6">
                           <div>
@@ -337,7 +337,7 @@ export default function SchoolOnboarding() {
                             </RadioGroup>
                           </div>
 
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                          <div className="grid grid-cols-1 sm:grid-cols-1 sm:grid-cols-2 gap-5 sm:p-6">
                             <div>
                               <Label className="text-slate-300 text-sm font-semibold">Email Address *</Label>
                               <Input type="email" value={formData.email} onChange={e => updateForm('email', e.target.value)} className="bg-white/5 border-white/10 h-14 rounded-xl mt-2 text-white focus:border-teal-500 text-lg" />
@@ -351,7 +351,7 @@ export default function SchoolOnboarding() {
                             </div>
                           </div>
 
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                          <div className="grid grid-cols-1 sm:grid-cols-1 sm:grid-cols-2 gap-5 sm:p-6">
                             <div>
                               <Label className="text-slate-300 text-sm font-semibold">Preferred Language</Label>
                               <Select value={formData.preferredLanguage} onValueChange={v => updateForm('preferredLanguage', v)}>
@@ -385,12 +385,12 @@ export default function SchoolOnboarding() {
 
                     {step === 3 && (
                       <div className="space-y-8">
-                        <h2 className="text-3xl font-black text-white flex items-center gap-3"><Cpu className="text-teal-400 w-8 h-8" /> Infrastructure & Setup</h2>
+                        <h2 className="text-2xl sm:text-3xl font-black text-white flex items-center gap-3"><Cpu className="text-teal-400 w-8 h-8" /> Infrastructure & Setup</h2>
                         
                         <div className="space-y-8">
                           <div>
                             <Label className="text-slate-300 text-base font-semibold">Do you have Android smartphones available for screening? *</Label>
-                            <RadioGroup value={formData.androidAvailable} onValueChange={v => updateForm('androidAvailable', v)} className="flex gap-6 mt-4">
+                            <RadioGroup value={formData.androidAvailable} onValueChange={v => updateForm('androidAvailable', v)} className="flex gap-5 sm:p-6 mt-4">
                               {['Yes', 'No', 'Unsure'].map(type => (
                                 <div key={type} className="flex items-center space-x-2">
                                   <RadioGroupItem value={type} id={`android-${type}`} />
@@ -459,10 +459,10 @@ export default function SchoolOnboarding() {
 
                     {step === 4 && (
                       <div className="space-y-8">
-                        <h2 className="text-3xl font-black text-white flex items-center gap-3"><CheckCircle2 className="text-teal-400 w-8 h-8" /> Review Details</h2>
+                        <h2 className="text-2xl sm:text-3xl font-black text-white flex items-center gap-3"><CheckCircle2 className="text-teal-400 w-8 h-8" /> Review Details</h2>
                         <p className="text-slate-400 text-lg">Please review your school details before submitting.</p>
                         
-                        <div className="bg-white/5 border border-white/10 rounded-3xl p-8 space-y-8 text-base">
+                        <div className="bg-white/5 border border-white/10 rounded-3xl p-6 sm:p-8 space-y-8 text-base">
                           
                           <div className="flex justify-between items-start border-b border-white/10 pb-6">
                             <div className="space-y-2">
@@ -528,8 +528,8 @@ export default function SchoolOnboarding() {
             {/* Informational Sidebar */}
             <div className="lg:col-span-4 space-y-6">
               
-              <div className="bg-gradient-to-br from-teal-900/30 to-[#020817] border border-teal-500/20 p-8 rounded-[2.5rem] backdrop-blur-xl relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-6 opacity-10 pointer-events-none">
+              <div className="bg-gradient-to-br from-teal-900/30 to-[#020817] border border-teal-500/20 p-6 sm:p-8 rounded-[2.5rem] backdrop-blur-xl relative overflow-hidden">
+                <div className="absolute top-0 right-0 p-5 sm:p-6 opacity-10 pointer-events-none">
                   <Target className="w-32 h-32 text-teal-400" />
                 </div>
                 <h3 className="text-2xl font-black text-white mb-6 relative z-10">The HearWise Impact</h3>
@@ -564,7 +564,7 @@ export default function SchoolOnboarding() {
                 </div>
               </div>
 
-              <div className="bg-white/5 border border-white/10 p-8 rounded-[2.5rem] backdrop-blur-xl">
+              <div className="bg-white/5 border border-white/10 p-6 sm:p-8 rounded-[2.5rem] backdrop-blur-xl">
                 <h3 className="text-xl font-black text-white mb-6 flex items-center gap-2">
                   <HelpCircle className="text-cyan-400" /> Frequently Asked
                 </h3>

@@ -11,7 +11,7 @@ export default function MyReportPage() {
       owlState="idle"
       owlSpeech={lang === 'ta' ? 'உங்கள் முன்னேற்றத்தை பாருங்கள்!' : 'Check your progress!'}
     >
-      <div className="max-w-2xl mx-auto p-6 text-center">
+      <div className="max-w-2xl mx-auto p-5 sm:p-6 text-center">
         <h2 className="text-2xl font-black text-white mb-4" style={{ fontFamily: 'Fredoka, sans-serif' }}>
           {lang === 'ta' ? 'உங்கள் சோதனை முடிவுகள்' : 'Your Test Results'}
         </h2>

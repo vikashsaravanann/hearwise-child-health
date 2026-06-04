@@ -47,7 +47,7 @@ export default function AboutPage() {
           </p>
 
           {/* Animated stat strip */}
-          <div className="flex flex-wrap justify-center gap-6 md:gap-12">
+          <div className="flex flex-wrap justify-center gap-5 sm:p-6 md:gap-12">
             {[
               { value: '300M+', label: 'CHILDREN IN INDIA', color: 'text-teal-400' },
               { value: '6%', label: 'HAVE HEARING ISSUES', color: 'text-cyan-400' },
@@ -61,7 +61,7 @@ export default function AboutPage() {
                 transition={{ delay: 0.3 + i * 0.1 }}
                 className="text-center"
               >
-                <div className={`text-3xl md:text-4xl font-black ${stat.color}`}>{stat.value}</div>
+                <div className={`text-2xl sm:text-3xl md:text-3xl sm:text-4xl font-black ${stat.color}`}>{stat.value}</div>
                 <div className="text-slate-500 text-xs uppercase tracking-widest mt-1">{stat.label}</div>
               </motion.div>
             ))}
@@ -76,13 +76,13 @@ export default function AboutPage() {
           viewport={{ once: true }}
           className="text-center mb-12"
         >
-          <h2 className="text-3xl md:text-4xl font-black text-white uppercase tracking-wider">
+          <h2 className="text-2xl sm:text-3xl md:text-3xl sm:text-4xl font-black text-white uppercase tracking-wider">
             OUR <span className="text-teal-400">FOUNDATION</span>
           </h2>
           <p className="text-slate-500 mt-3 text-sm uppercase tracking-widest">WHAT DRIVES US EVERY DAY</p>
         </motion.div>
 
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:p-6">
           {[
             {
               icon: '🎯',
@@ -113,9 +113,9 @@ export default function AboutPage() {
               viewport={{ once: true }}
               transition={{ delay: i * 0.15 }}
               whileHover={{ y: -6, scale: 1.02 }}
-              className={`group relative rounded-2xl border p-8 transition-all duration-300 cursor-default shadow-lg ${card.color} ${card.glow}`}
+              className={`group relative rounded-2xl border p-6 sm:p-8 transition-all duration-300 cursor-default shadow-lg ${card.color} ${card.glow}`}
             >
-              <div className="text-4xl mb-4">{card.icon}</div>
+              <div className="text-3xl sm:text-4xl mb-4">{card.icon}</div>
               <h3 className="text-white font-black text-lg uppercase tracking-widest mb-3">{card.title}</h3>
               <p className="text-slate-400 text-sm leading-relaxed">{card.desc}</p>
             </motion.div>
@@ -129,13 +129,13 @@ export default function AboutPage() {
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="grid md:grid-cols-2 gap-12 items-center"
+            className="grid md:grid-cols-1 sm:grid-cols-2 gap-12 items-center"
           >
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-red-500/30 bg-red-500/10 text-red-400 text-xs font-semibold uppercase tracking-widest mb-6">
                 ⚠ THE CRISIS
               </div>
-              <h2 className="text-3xl md:text-4xl font-black text-white uppercase leading-tight mb-6">
+              <h2 className="text-2xl sm:text-3xl md:text-3xl sm:text-4xl font-black text-white uppercase leading-tight mb-6">
                 MILLIONS OF CHILDREN ARE
                 <span className="text-red-400"> STRUGGLING IN SILENCE</span>
               </h2>
@@ -151,7 +151,7 @@ export default function AboutPage() {
                 Rajasthan, Bihar, or Assam — this is simply not available. HearWise changes that.
               </p>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {[
                 { num: '18M+', text: 'children with hearing impairment in India', color: 'text-red-400' },
                 { num: '₹0', text: 'cost for schools to screen with HearWise', color: 'text-teal-400' },
@@ -194,7 +194,7 @@ export default function AboutPage() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          <h2 className="text-3xl md:text-4xl font-black text-white uppercase tracking-wider mb-4">
+          <h2 className="text-2xl sm:text-3xl md:text-3xl sm:text-4xl font-black text-white uppercase tracking-wider mb-4">
             HOW <span className="text-teal-400">HEARWISE</span> WAS BORN
           </h2>
           <div className="w-16 h-1 bg-gradient-to-r from-teal-400 to-cyan-400 mx-auto mb-8 rounded-full" />
@@ -224,7 +224,7 @@ export default function AboutPage() {
           viewport={{ once: true }}
           className="text-center mb-12"
         >
-          <h2 className="text-3xl font-black text-white uppercase tracking-wider">
+          <h2 className="text-2xl sm:text-3xl font-black text-white uppercase tracking-wider">
             OUR <span className="text-teal-400">JOURNEY</span>
           </h2>
         </motion.div>
@@ -249,7 +249,7 @@ export default function AboutPage() {
               className={`relative flex items-center mb-12 ${item.side === 'left' ? 'flex-row' : 'flex-row-reverse'}`}
             >
               <div className="w-1/2 px-8">
-                <div className={`rounded-2xl border border-teal-500/20 bg-teal-500/5 p-6 hover:bg-teal-500/10 transition-all ${item.side === 'right' ? 'text-right' : ''}`}>
+                <div className={`rounded-2xl border border-teal-500/20 bg-teal-500/5 p-5 sm:p-6 hover:bg-teal-500/10 transition-all ${item.side === 'right' ? 'text-right' : ''}`}>
                   <div className="text-teal-400 text-xs font-black uppercase tracking-widest mb-2">{item.date}</div>
                   <div className="text-white font-black text-sm uppercase mb-2">{item.title}</div>
                   <div className="text-slate-400 text-xs leading-relaxed">{item.desc}</div>
@@ -270,7 +270,7 @@ export default function AboutPage() {
           viewport={{ once: true }}
           className="text-center mb-12"
         >
-          <h2 className="text-3xl font-black text-white uppercase tracking-wider">
+          <h2 className="text-2xl sm:text-3xl font-black text-white uppercase tracking-wider">
             THE <span className="text-teal-400">TEAM</span>
           </h2>
         </motion.div>
@@ -283,7 +283,7 @@ export default function AboutPage() {
           className="rounded-3xl border border-teal-500/30 bg-gradient-to-br from-teal-500/10 to-cyan-500/5 p-10 text-center"
         >
           {/* Owl avatar placeholder */}
-          <div className="w-24 h-24 rounded-full bg-gradient-to-br from-teal-400 to-cyan-500 flex items-center justify-center text-4xl mx-auto mb-6 shadow-xl shadow-teal-500/30">
+          <div className="w-24 h-24 rounded-full bg-gradient-to-br from-teal-400 to-cyan-500 flex items-center justify-center text-3xl sm:text-4xl mx-auto mb-6 shadow-xl shadow-teal-500/30">
             🦉
           </div>
           <h3 className="text-2xl font-black text-white uppercase">VIKASH SARAVANAN</h3>

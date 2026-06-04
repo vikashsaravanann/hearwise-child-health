@@ -25,7 +25,7 @@ export default function ThankYouPage() {
       <motion.div 
         initial={{ opacity: 0, scale: 0.9, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        className="relative z-10 w-full max-w-2xl glass-panel p-8 md:p-12 border-4 border-white/50 shadow-2xl backdrop-blur-xl rounded-[3rem] text-center"
+        className="relative z-10 w-full max-w-2xl glass-panel p-6 sm:p-8 md:p-12 border-4 border-white/50 shadow-2xl backdrop-blur-xl rounded-[3rem] text-center"
       >
         <div className="flex justify-center mb-6">
           <div className="relative">
@@ -34,11 +34,11 @@ export default function ThankYouPage() {
           </div>
         </div>
 
-        <h1 className="text-4xl md:text-6xl font-black text-blue-900 mb-4 tracking-tight">
+        <h1 className="text-3xl sm:text-4xl md:text-6xl font-black text-blue-900 mb-4 tracking-tight">
           Thank You for Visiting!
         </h1>
         
-        <div className="bg-white/40 p-6 rounded-3xl border-2 border-white/50 mb-8">
+        <div className="bg-white/40 p-5 sm:p-6 rounded-3xl border-2 border-white/50 mb-8">
           <p className="text-xl font-bold text-blue-800 mb-2">
             Student: <span className="text-blue-600">{student?.name || '---'}</span>
           </p>
@@ -88,7 +88,7 @@ export default function ThankYouPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-1 sm:grid-cols-2 gap-4">
           <Button 
             className="h-16 rounded-2xl text-lg font-black shadow-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 transition-all flex items-center justify-center gap-2"
             onClick={() => {

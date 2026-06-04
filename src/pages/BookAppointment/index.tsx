@@ -11,7 +11,7 @@ export default function BookAppointmentPage() {
       owlState="idle"
       owlSpeech={lang === 'ta' ? 'நிபுணரை சந்திக்கவும்!' : 'Consult a specialist!'}
     >
-      <div className="max-w-2xl mx-auto p-6 text-center">
+      <div className="max-w-2xl mx-auto p-5 sm:p-6 text-center">
         <h2 className="text-2xl font-black text-white mb-4" style={{ fontFamily: 'Fredoka, sans-serif' }}>
           {lang === 'ta' ? 'மருத்துவ ஆலோசனை' : 'Clinical Consultation'}
         </h2>

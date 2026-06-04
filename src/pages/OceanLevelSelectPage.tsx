@@ -45,7 +45,7 @@ export default function OceanLevelSelectPage() {
       </div>
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen">
         <div className="text-center mb-12 mt-8 animate-fade-in">
-          <h1 className="text-4xl md:text-5xl font-black mb-2" style={{ fontFamily: 'Fredoka, sans-serif', color: 'hsl(200, 100%, 30%)' }}>
+          <h1 className="text-3xl sm:text-4xl md:text-4xl md:text-5xl font-black mb-2" style={{ fontFamily: 'Fredoka, sans-serif', color: 'hsl(200, 100%, 30%)' }}>
             🌊 Ocean Hearing Challenge
           </h1>
           <p className="text-lg md:text-xl text-blue-700 font-semibold">Choose your island and test your hearing abilities!</p>
@@ -62,7 +62,7 @@ export default function OceanLevelSelectPage() {
               onClick={() => handleLevelClick(level)}
             >
               <div
-                className={`relative rounded-3xl p-6 shadow-xl border-2 transition-all duration-300 transform ${selectedLevel === level.id ? 'scale-110 ring-4 ring-yellow-300' : hoveredLevel === level.id ? 'scale-105 shadow-2xl' : 'shadow-lg'} ${level.isUnlocked ? 'cursor-pointer' : 'opacity-60 cursor-not-allowed'}`}
+                className={`relative rounded-3xl p-5 sm:p-6 shadow-xl border-2 transition-all duration-300 transform ${selectedLevel === level.id ? 'scale-110 ring-4 ring-yellow-300' : hoveredLevel === level.id ? 'scale-105 shadow-2xl' : 'shadow-lg'} ${level.isUnlocked ? 'cursor-pointer' : 'opacity-60 cursor-not-allowed'}`}
                 style={{ background: `linear-gradient(135deg, ${level.color})`, borderColor: 'rgba(255,255,255,0.5)' }}
               >
                 <div className="absolute inset-0 rounded-3xl opacity-20 pointer-events-none overflow-hidden">
@@ -83,7 +83,7 @@ export default function OceanLevelSelectPage() {
                   )}
                 </div>
                 {hoveredLevel === level.id && (<div className="absolute inset-0 rounded-3xl border-2 border-white/50 animate-pulse-ring" />)}
-                {!level.isUnlocked && (<div className="absolute inset-0 flex items-center justify-center rounded-3xl bg-black/30 backdrop-blur-sm"><span className="text-3xl">🔒</span></div>)}
+                {!level.isUnlocked && (<div className="absolute inset-0 flex items-center justify-center rounded-3xl bg-black/30 backdrop-blur-sm"><span className="text-2xl sm:text-3xl">🔒</span></div>)}
               </div>
               <div className="absolute -top-4 -right-4 w-10 h-10 rounded-full flex items-center justify-center font-black text-white shadow-lg ring-4 ring-white" style={{ background: `linear-gradient(135deg, ${level.color})` }}>
                 {level.id}

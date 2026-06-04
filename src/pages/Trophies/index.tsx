@@ -19,9 +19,9 @@ export default function TrophiesPage() {
       owlState="celebrating"
       owlSpeech={lang === 'ta' ? 'மிக நல்லது! 🎉' : 'Great job! 🎉'}
     >
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
+      <div className="grid grid-cols-1 sm:grid-cols-1 sm:grid-cols-2 gap-5 sm:p-6 max-w-3xl mx-auto">
         {trophies.map((t) => (
-          <div key={t.level} className="p-6 rounded-3xl bg-gradient-to-br from-white/10 to-white/5 border-2 border-white/20 backdrop-blur-sm shadow-lg text-center">
+          <div key={t.level} className="p-5 sm:p-6 rounded-3xl bg-gradient-to-br from-white/10 to-white/5 border-2 border-white/20 backdrop-blur-sm shadow-lg text-center">
             <div className="text-6xl mb-2">{t.emoji}</div>
             <h3 className="font-black text-2xl" style={{ fontFamily: 'Fredoka, sans-serif' }}>{t.name}</h3>
             <p className="text-white/70 mt-1">{t.title}</p>
