@@ -42,6 +42,20 @@ export default function AuthCallback() {
               return;
             }
             // Session established via code exchange
+            
+            try {
+              await supabase.from('login_logs').insert({
+                user_id: data.session.user.id,
+                email: data.session.user.email || '',
+                full_name: data.session.user.user_metadata?.full_name || '',
+                login_method: 'google',
+                phone_number: data.session.user.phone || null,
+                device_info: navigator.userAgent.substring(0, 100),
+              });
+            } catch (e) {
+              console.error('Failed to log login', e);
+            }
+
             const userEmail = data.session.user.email?.toLowerCase();
             if (userEmail === adminEmail?.toLowerCase()) {
               navigate('/dashboard', { replace: true });
@@ -57,6 +71,19 @@ export default function AuthCallback() {
         }
 
         // Session exists — redirect based on role
+        try {
+          await supabase.from('login_logs').insert({
+            user_id: session.user.id,
+            email: session.user.email || '',
+            full_name: session.user.user_metadata?.full_name || '',
+            login_method: 'google',
+            phone_number: session.user.phone || null,
+            device_info: navigator.userAgent.substring(0, 100),
+          });
+        } catch (e) {
+          console.error('Failed to log login', e);
+        }
+
         setStatus('Signed in! Redirecting...');
         const userEmail = session.user.email?.toLowerCase();
         if (userEmail === adminEmail?.toLowerCase()) {

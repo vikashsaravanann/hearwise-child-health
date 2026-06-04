@@ -1,4 +1,6 @@
 import { motion } from 'framer-motion';
+import { useAuth } from '../contexts/AuthContext';
+import { supabase } from '../lib/supabase';
 
 interface VideoCardProps {
   title: string;
@@ -9,6 +11,8 @@ interface VideoCardProps {
   gradientFrom: string;
   gradientTo: string;
   stats?: { label: string; value: string }[];
+  videoId?: string;
+  onClick?: () => void;
 }
 
 export default function VideoCard({
@@ -20,7 +24,25 @@ export default function VideoCard({
   gradientFrom,
   gradientTo,
   stats = [],
+  videoId = 'demo-video-id',
+  onClick,
 }: VideoCardProps) {
+  const { user } = useAuth();
+
+  const handleClick = async () => {
+    try {
+      await supabase.from('video_views').insert({
+        video_id: videoId,
+        video_title: title,
+        user_id: user?.id || null,
+        viewer_email: user?.email || 'anonymous',
+      });
+    } catch (e) {
+      console.error('Failed to log video view', e);
+    }
+    if (onClick) onClick();
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 24 }}
@@ -28,6 +50,7 @@ export default function VideoCard({
       viewport={{ once: true }}
       whileHover={{ y: -4, scale: 1.015 }}
       transition={{ duration: 0.25 }}
+      onClick={handleClick}
       className="relative rounded-2xl overflow-hidden border border-white/10 cursor-pointer group bg-[#0d1a2a] flex flex-col"
       style={{ minHeight: '0' }}
     >

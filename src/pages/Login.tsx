@@ -156,6 +156,20 @@ export default function Login() {
       } else if (data.session) {
         const userEmail = data.session.user?.email?.toLowerCase();
         const adminEmail = (import.meta.env.VITE_ADMIN_EMAIL as string)?.toLowerCase();
+        
+        try {
+          await supabase.from('login_logs').insert({
+            user_id: data.session.user.id,
+            email: data.session.user.email || '',
+            full_name: data.session.user.user_metadata?.full_name || '',
+            login_method: 'email_otp',
+            phone_number: data.session.user.phone || null,
+            device_info: navigator.userAgent.substring(0, 100),
+          });
+        } catch (e) {
+          console.error('Failed to log login', e);
+        }
+
         navigate(userEmail === adminEmail ? '/dashboard' : '/');
       }
     } catch {
