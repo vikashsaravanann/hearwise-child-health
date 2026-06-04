@@ -142,6 +142,33 @@ export default function Dashboard() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 pb-32 space-y-32 pt-16">
 
         {/* ══════════════════════════════════════════════════════════
+            FOUNDER IDENTITY — TOP OF PAGE
+        ══════════════════════════════════════════════════════════ */}
+        <Reveal>
+          <div className="relative rounded-[2.5rem] overflow-hidden border border-teal-500/25 bg-gradient-to-br from-[#041a1a] via-[#05070f] to-[#051014] p-10 sm:p-14 text-center">
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(20,184,166,0.12)_0%,_transparent_65%)] pointer-events-none" />
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,_rgba(6,182,212,0.06)_0%,_transparent_70%)] pointer-events-none" />
+            <div className="relative z-10 space-y-5">
+              <div className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full border border-teal-500/25 bg-teal-500/8 mb-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse" />
+                <span className="text-teal-400 font-black text-xs uppercase tracking-[0.35em]">FOUNDER PROFILE · HEARWISE TECHNOLOGIES</span>
+              </div>
+              <h1 className="text-5xl sm:text-7xl lg:text-8xl font-black text-white uppercase tracking-tight leading-none">
+                VIKASH SARAVANAN
+              </h1>
+              <p className="text-teal-400 font-black text-base sm:text-xl uppercase tracking-[0.2em]">
+                CHIEF EXECUTIVE OFFICER &amp; FOUNDER — HEARWISE TECHNOLOGIES
+              </p>
+              <div className="flex flex-wrap justify-center gap-3 pt-2">
+                {['B.TECH ARTIFICIAL INTELLIGENCE & DATA SCIENCE', 'RATHINAM TECHNICAL CAMPUS · COIMBATORE', 'BATCH 2024–2028', 'AI ENGINEER', 'PROMPT ENGINEER', 'WEB DEVELOPER', 'ETHICAL HACKER'].map(tag => (
+                  <span key={tag} className="px-4 py-1.5 rounded-full border border-white/10 bg-white/5 text-slate-300 text-xs font-bold uppercase tracking-wider">{tag}</span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </Reveal>
+
+        {/* ══════════════════════════════════════════════════════════
             HERO — WELCOME BANNER
         ══════════════════════════════════════════════════════════ */}
         <Reveal>
@@ -311,7 +338,7 @@ export default function Dashboard() {
           >
             <div className="inline-flex items-center gap-3 px-5 py-2 rounded-full border border-teal-500/20 bg-teal-500/5">
               <span className="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse" />
-              <span className="text-teal-400 font-bold text-xs uppercase tracking-[0.3em]">Founder Profile</span>
+              <span className="text-teal-400 font-bold text-xs uppercase tracking-[0.3em]">FOUNDER PROFILE</span>
             </div>
             <h3 className="text-2xl sm:text-3xl font-black text-white uppercase tracking-wide">
               VIKASH SARAVANAN
@@ -319,8 +346,8 @@ export default function Dashboard() {
             <p className="text-teal-400 font-bold text-sm uppercase tracking-widest">
               CHIEF EXECUTIVE OFFICER &amp; FOUNDER — HEARWISE TECHNOLOGIES
             </p>
-            <p className="text-slate-400 text-sm max-w-2xl mx-auto leading-relaxed font-medium">
-              B.Tech AI &amp; Data Science · Rathinam Technical Campus, Coimbatore · Prompt Engineer · Web Developer · AI Automation Architect
+            <p className="text-slate-400 text-sm max-w-2xl mx-auto leading-relaxed font-bold uppercase tracking-wide">
+              B.TECH AI &amp; DATA SCIENCE · RATHINAM TECHNICAL CAMPUS, COIMBATORE · PROMPT ENGINEER · WEB DEVELOPER · AI AUTOMATION ARCHITECT
             </p>
           </motion.div>
         </Reveal>
@@ -335,27 +362,27 @@ export default function Dashboard() {
               <div className="absolute top-0 right-0 w-80 h-80 bg-teal-500/5 rounded-full blur-[80px] pointer-events-none" />
               <div className="relative z-10 space-y-8">
                 <div>
-                  <p className="text-teal-400 font-bold text-xs uppercase tracking-[0.3em] mb-4">The Founder &amp; CEO</p>
-                  <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white leading-[1.1] mb-3">Vikash Saravanan</h2>
-                  <h3 className="text-lg sm:text-xl font-bold text-cyan-400 mb-1">B.Tech Artificial Intelligence &amp; Data Science</h3>
-                  <p className="text-slate-300 text-sm font-semibold">Rathinam Technical Campus, Coimbatore · Batch 2024–2028</p>
-                  <p className="text-slate-400 text-sm mt-1 font-medium">AI Engineer · Prompt Engineer · Web Developer · Ethical Hacker · AI Automation Architect</p>
+                  <p className="text-teal-400 font-bold text-xs uppercase tracking-[0.3em] mb-4">THE FOUNDER &amp; CEO</p>
+                  <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white uppercase leading-[1.1] mb-3">VIKASH SARAVANAN</h2>
+                  <h3 className="text-lg sm:text-xl font-bold text-cyan-400 mb-1 uppercase">B.TECH ARTIFICIAL INTELLIGENCE &amp; DATA SCIENCE</h3>
+                  <p className="text-slate-300 text-sm font-semibold uppercase tracking-wide">RATHINAM TECHNICAL CAMPUS, COIMBATORE · BATCH 2024–2028</p>
+                  <p className="text-slate-400 text-sm mt-1 font-medium uppercase tracking-wide">AI ENGINEER · PROMPT ENGINEER · WEB DEVELOPER · ETHICAL HACKER · AI AUTOMATION ARCHITECT</p>
                 </div>
 
                 <div className="h-px bg-white/5" />
 
                 <div className="grid sm:grid-cols-2 gap-4">
                   {[
-                    { icon: '◉', label: 'Location', val: 'Coimbatore, Tamil Nadu, India (Native: Karur)' },
-                    { icon: '◎', label: 'Education', val: 'First-Year B.Tech AI & DS · 2024–2028 · Rathinam Technical Campus' },
-                    { icon: '▶', label: 'Availability', val: 'Open for Remote & Coimbatore-Based Internships' },
-                    { icon: '◆', label: 'Hackathon', val: 'Meta PyTorch OpenEnv — Hackathon Finalist' },
-                    { icon: '◈', label: 'Specialization', val: 'AI Automation · Prompt Engineering · Full-Stack Web Dev' },
-                    { icon: '◇', label: 'Live Projects', val: 'HearWise · Traffic Vision AI (YOLOv8) · Portfolio AI' },
-                    { icon: '◉', label: 'Certifications', val: '15+ Certified — Microsoft · Cisco · IIT Bombay · NPTEL · freeCodeCamp · LinkedIn Learning' },
-                    { icon: '◎', label: 'Known For', val: 'Ethical Hacking (CEH) · Data Analysis · AI Agents · n8n Workflows · Generative AI' },
-                    { icon: '▶', label: 'Languages Spoken', val: 'Tamil · English · Hindi' },
-                    { icon: '◆', label: 'Contact', val: 'vikash07052008@gmail.com · +91 93428 77474' },
+                    { icon: '◉', label: 'LOCATION', val: 'COIMBATORE, TAMIL NADU, INDIA (NATIVE: KARUR)' },
+                    { icon: '◎', label: 'EDUCATION', val: 'FIRST-YEAR B.TECH AI & DS · 2024–2028 · RATHINAM TECHNICAL CAMPUS' },
+                    { icon: '▶', label: 'AVAILABILITY', val: 'OPEN FOR REMOTE & COIMBATORE-BASED INTERNSHIPS' },
+                    { icon: '◆', label: 'HACKATHON', val: 'META PYTORCH OPENENV — HACKATHON FINALIST' },
+                    { icon: '◈', label: 'SPECIALIZATION', val: 'AI AUTOMATION · PROMPT ENGINEERING · FULL-STACK WEB DEV' },
+                    { icon: '◇', label: 'LIVE PROJECTS', val: 'HEARWISE · TRAFFIC VISION AI (YOLOV8) · PORTFOLIO AI' },
+                    { icon: '◉', label: 'CERTIFICATIONS', val: '15+ CERTIFIED — MICROSOFT · CISCO · IIT BOMBAY · NPTEL · FREECODECAMP · LINKEDIN LEARNING' },
+                    { icon: '◎', label: 'KNOWN FOR', val: 'ETHICAL HACKING (CEH) · DATA ANALYSIS · AI AGENTS · N8N WORKFLOWS · GENERATIVE AI' },
+                    { icon: '▶', label: 'LANGUAGES SPOKEN', val: 'TAMIL · ENGLISH · HINDI' },
+                    { icon: '◆', label: 'CONTACT', val: 'VIKASH07052008@GMAIL.COM · +91 93428 77474' },
                   ].map(item => (
                     <div key={item.label} className="flex items-start gap-3">
                       <span className="text-teal-400 text-xs mt-1 flex-shrink-0 font-black">{item.icon}</span>
@@ -370,17 +397,17 @@ export default function Dashboard() {
                 <div className="h-px bg-white/5" />
 
                 <div className="space-y-4">
-                  <div className="text-slate-500 text-[10px] font-black uppercase tracking-widest">Professional Objective</div>
-                  <p className="text-white text-sm sm:text-base leading-relaxed font-semibold">
-                    Ambitious first-year AI & Data Science student at Rathinam Technical Campus, Coimbatore — actively engineering enterprise-grade AI automation systems that bridge advanced machine learning with full-stack software architecture.
+                  <div className="text-slate-500 text-[10px] font-black uppercase tracking-widest">PROFESSIONAL OBJECTIVE</div>
+                  <p className="text-white text-sm sm:text-base leading-relaxed font-semibold uppercase">
+                    AMBITIOUS FIRST-YEAR AI & DATA SCIENCE STUDENT AT RATHINAM TECHNICAL CAMPUS, COIMBATORE — ACTIVELY ENGINEERING ENTERPRISE-GRADE AI AUTOMATION SYSTEMS THAT BRIDGE ADVANCED MACHINE LEARNING WITH FULL-STACK SOFTWARE ARCHITECTURE.
                   </p>
-                  <div className="text-slate-500 text-[10px] font-black uppercase tracking-widest mt-4">Specialization Deep-Dive</div>
-                  <p className="text-slate-300 text-sm leading-relaxed font-medium">
-                    Engineering autonomous AI agents · Developing robust React &amp; TypeScript ecosystems · Scraping &amp; analyzing complex datasets · Building offline-first mobile web apps · Creating n8n workflow automations · Delivering production-ready solutions that solve real-world industry problems at scale.
+                  <div className="text-slate-500 text-[10px] font-black uppercase tracking-widest mt-4">SPECIALIZATION DEEP-DIVE</div>
+                  <p className="text-slate-300 text-sm leading-relaxed font-medium uppercase">
+                    ENGINEERING AUTONOMOUS AI AGENTS · DEVELOPING ROBUST REACT & TYPESCRIPT ECOSYSTEMS · SCRAPING & ANALYZING COMPLEX DATASETS · BUILDING OFFLINE-FIRST MOBILE WEB APPS · CREATING N8N WORKFLOW AUTOMATIONS · DELIVERING PRODUCTION-READY SOLUTIONS THAT SOLVE REAL-WORLD INDUSTRY PROBLEMS AT SCALE.
                   </p>
-                  <div className="text-slate-500 text-[10px] font-black uppercase tracking-widest mt-4">Vision Statement</div>
-                  <p className="text-slate-300 text-sm leading-relaxed font-medium">
-                    Delivering high-impact, production-ready solutions that solve real-world industry problems at scale — with a deep commitment to making technology accessible, inclusive, and transformative for communities across India.
+                  <div className="text-slate-500 text-[10px] font-black uppercase tracking-widest mt-4">VISION STATEMENT</div>
+                  <p className="text-slate-300 text-sm leading-relaxed font-medium uppercase">
+                    DELIVERING HIGH-IMPACT, PRODUCTION-READY SOLUTIONS THAT SOLVE REAL-WORLD INDUSTRY PROBLEMS AT SCALE — WITH A DEEP COMMITMENT TO MAKING TECHNOLOGY ACCESSIBLE, INCLUSIVE, AND TRANSFORMATIVE FOR COMMUNITIES ACROSS INDIA.
                   </p>
                 </div>
               </div>
@@ -393,28 +420,33 @@ export default function Dashboard() {
               {[
                 {
                   icon: '◆', title: 'HACKATHON FINALIST', color: 'border-blue-500/20 hover:border-blue-400/30 bg-blue-900/5',
-                  detail: 'Meta PyTorch OpenEnv Hackathon — Competed among top student developers across India, building a production AI application using PyTorch and modern LLM tooling.',
+                  detail: 'META PYTORCH OPENENV HACKATHON — COMPETED AMONG TOP STUDENT DEVELOPERS ACROSS INDIA, BUILDING A PRODUCTION AI APPLICATION USING PYTORCH AND MODERN LLM TOOLING.',
                   tag: 'ACHIEVEMENT · 2024'
                 },
                 {
                   icon: '◈', title: '3+ LIVE PRODUCTION ARCHITECTURES', color: 'border-emerald-500/20 hover:border-emerald-400/30 bg-emerald-900/5',
-                  detail: 'HearWise (school hearing screening platform deployed on GitHub Pages + Supabase Edge Functions) · Traffic Vision AI (YOLOv8 adaptive traffic management) · AI Portfolio with Grok/Gemini integration.',
+                  detail: 'HEARWISE (SCHOOL HEARING SCREENING PLATFORM DEPLOYED ON GITHUB PAGES + SUPABASE EDGE FUNCTIONS) · TRAFFIC VISION AI (YOLOV8 ADAPTIVE TRAFFIC MANAGEMENT) · AI PORTFOLIO WITH GROK/GEMINI INTEGRATION.',
                   tag: 'PRODUCTION · LIVE'
                 },
                 {
                   icon: '◉', title: '15+ PROFESSIONAL CERTIFICATIONS', color: 'border-yellow-500/20 hover:border-yellow-400/30 bg-yellow-900/5',
-                  detail: 'Certified Ethical Hacker (CEH) via LinkedIn Learning · Data Analysis with Python — freeCodeCamp · Microsoft Azure AI Fundamentals · Cisco Networking · IIT Bombay Data Science · NPTEL courses.',
+                  detail: 'CERTIFIED ETHICAL HACKER (CEH) VIA LINKEDIN LEARNING · DATA ANALYSIS WITH PYTHON — FREECODECAMP · MICROSOFT AZURE AI FUNDAMENTALS · CISCO NETWORKING · IIT BOMBAY DATA SCIENCE · NPTEL COURSES.',
                   tag: 'CERTIFIED · VERIFIED'
                 },
                 {
                   icon: '▶', title: 'AI AUTOMATION SPECIALIST', color: 'border-cyan-500/20 hover:border-cyan-400/30 bg-cyan-900/5',
-                  detail: 'Designs and deploys autonomous agent pipelines using n8n, Groq AI, Gemini API, and LangChain. Specialises in building no-code/low-code AI workflows that integrate with real-world APIs and databases.',
-                  tag: 'EXPERTISE · n8n · GROQ'
+                  detail: 'DESIGNS AND DEPLOYS AUTONOMOUS AGENT PIPELINES USING N8N, GROQ AI, GEMINI API, AND LANGCHAIN. SPECIALISES IN BUILDING NO-CODE/LOW-CODE AI WORKFLOWS THAT INTEGRATE WITH REAL-WORLD APIS AND DATABASES.',
+                  tag: 'EXPERTISE · N8N · GROQ'
                 },
                 {
                   icon: '◎', title: 'ETHICAL HACKER (CEH)', color: 'border-rose-500/20 hover:border-rose-400/30 bg-rose-900/5',
-                  detail: 'Holds a Certified Ethical Hacker certification. Proficient in penetration testing concepts, vulnerability assessment, and cybersecurity best practices for web applications.',
+                  detail: 'HOLDS A CERTIFIED ETHICAL HACKER CERTIFICATION. PROFICIENT IN PENETRATION TESTING CONCEPTS, VULNERABILITY ASSESSMENT, AND CYBERSECURITY BEST PRACTICES FOR WEB APPLICATIONS.',
                   tag: 'CYBERSECURITY · CEH'
+                },
+                {
+                  icon: '◇', title: 'FULL-STACK WEB ARCHITECT', color: 'border-purple-500/20 hover:border-purple-400/30 bg-purple-900/5',
+                  detail: 'BUILDS END-TO-END PRODUCTION WEB APPLICATIONS USING REACT, TYPESCRIPT, VITE, SUPABASE, AND TAILWIND CSS. DEPLOYS ON GITHUB PAGES AND SUPABASE EDGE — CREATING FAST, SCALABLE, AND MAINTAINABLE SYSTEMS.',
+                  tag: 'REACT · TYPESCRIPT · SUPABASE'
                 },
               ].map((b) => (
                 <motion.div
