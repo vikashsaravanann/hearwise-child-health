@@ -159,6 +159,19 @@ export default function Dashboard() {
               <p className="text-teal-400 font-black text-base sm:text-xl uppercase tracking-[0.2em]">
                 CHIEF EXECUTIVE OFFICER &amp; FOUNDER — HEARWISE TECHNOLOGIES
               </p>
+              
+              <div className="flex justify-center gap-4 pt-4 pb-2">
+                <a href="https://vikashsaravanann.github.io/Portfolio_Information/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-6 py-3 rounded-full border border-teal-500/20 bg-teal-500/5 text-teal-300 hover:text-white hover:bg-teal-500/20 hover:border-teal-400/40 text-sm font-bold uppercase tracking-wider transition-all shadow-lg shadow-teal-900/20">
+                  <span>🌐</span> PORTFOLIO
+                </a>
+                <a href="https://www.linkedin.com/in/vikash-saravanan-j7528/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-6 py-3 rounded-full border border-blue-500/20 bg-blue-500/5 text-blue-300 hover:text-white hover:bg-blue-500/20 hover:border-blue-400/40 text-sm font-bold uppercase tracking-wider transition-all shadow-lg shadow-blue-900/20">
+                  <span>🔗</span> LINKEDIN
+                </a>
+                <a href="https://github.com/vikashsaravanann/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-6 py-3 rounded-full border border-purple-500/20 bg-purple-500/5 text-purple-300 hover:text-white hover:bg-purple-500/20 hover:border-purple-400/40 text-sm font-bold uppercase tracking-wider transition-all shadow-lg shadow-purple-900/20">
+                  <span>💻</span> GITHUB
+                </a>
+              </div>
+
               <div className="flex flex-wrap justify-center gap-3 pt-2">
                 {['B.TECH ARTIFICIAL INTELLIGENCE & DATA SCIENCE', 'RATHINAM TECHNICAL CAMPUS · COIMBATORE', 'BATCH 2024–2028', 'AI ENGINEER', 'PROMPT ENGINEER', 'WEB DEVELOPER', 'ETHICAL HACKER'].map(tag => (
                   <span key={tag} className="px-4 py-1.5 rounded-full border border-white/10 bg-white/5 text-slate-300 text-xs font-bold uppercase tracking-wider">{tag}</span>
