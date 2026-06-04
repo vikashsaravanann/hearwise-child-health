@@ -87,7 +87,7 @@ export default function Login() {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/hearwise-child-health/auth/callback`,
+          redirectTo: `${window.location.origin}${import.meta.env.BASE_URL}#/auth/callback`,
           queryParams: {
             access_type: 'offline',
             prompt: 'consent',
@@ -125,7 +125,7 @@ export default function Login() {
         email: email.toLowerCase().trim(),
         options: {
           shouldCreateUser: true,
-          emailRedirectTo: `${window.location.origin}${import.meta.env.BASE_URL}auth/callback`,
+          emailRedirectTo: `${window.location.origin}${import.meta.env.BASE_URL}#/auth/callback`,
         },
       });
       if (error) {
