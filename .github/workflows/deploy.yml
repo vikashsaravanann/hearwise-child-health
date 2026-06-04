@@ -41,8 +41,8 @@ jobs:
           VITE_SUPABASE_URL: ${{ secrets['VITE_SUPABASE_URL'] }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets['VITE_SUPABASE_ANON_KEY'] }}
           VITE_ADMIN_EMAIL: ${{ secrets['VITE_ADMIN_EMAIL'] }}
-          VITE_ADMIN_PASSWORD: ${{ secrets[format('VITE_ADMIN_{0}', 'PASSWORD')] }}
-          VITE_GEMINI_API_KEY: ${{ secrets[format('VITE_{0}_API_KEY', 'GEMINI')] }}
+          VITE_ADMIN_PASSWORD: ${{ secrets.VITE_ADMIN_PASSWORD }}
+          VITE_GEMINI_API_KEY: ${{ secrets.VITE_GEMINI_API_KEY }}
           VITE_GROQ_API_KEY: ${{ secrets['VITE_GROQ_API_KEY'] }}
         run: |
           echo "VITE_SUPABASE_URL=$VITE_SUPABASE_URL" >> .env
