@@ -60,7 +60,7 @@ export default function ResultsPage() {
     }
   }, [results]);
 
-  if (!results) {
+  if (!results || !student) {
     navigate('/');
     return null;
   }
