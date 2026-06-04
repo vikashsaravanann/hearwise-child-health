@@ -60,7 +60,7 @@ export default function ResultsPage() {
     }
   }, [results]);
 
-  if (!results || !student) {
+  if (!results) {
     navigate('/');
     return null;
   }
@@ -91,13 +91,15 @@ export default function ResultsPage() {
     const leftResult = isEarNormal(results.left) ? t('normal', lang) : t('mildConcernLabel', lang);
     const rightResult = isEarNormal(results.right) ? t('normal', lang) : t('mildConcernLabel', lang);
     const overallLabel = results.overall === 'normal' ? t('normal', lang) : results.overall === 'mild' ? t('mildConcernLabel', lang) : t('referToDoctor', lang);
-    const text = `${t('hearingReportTitle', lang)}\n${t('student', lang)}: ${student.name}\n${t('age', lang)}: ${student.age}\n${t('school', lang)}: ${session?.schoolName ?? '-'}\n${t('date', lang)}: ${new Date().toLocaleDateString()}\n${t('leftEar', lang)}: ${leftResult}\n${t('rightEar', lang)}: ${rightResult}\n${t('overallResult', lang)}: ${overallLabel}\n\n${t('poweredByHearWise', lang)}`;
+    const studentName = student?.name || t('unknownStudent', lang) || 'Unknown Student';
+    const studentAge = student?.age || 'N/A';
+    const text = `${t('hearingReportTitle', lang)}\n${t('student', lang)}: ${studentName}\n${t('age', lang)}: ${studentAge}\n${t('school', lang)}: ${session?.schoolName ?? '-'}\n${t('date', lang)}: ${new Date().toLocaleDateString()}\n${t('leftEar', lang)}: ${leftResult}\n${t('rightEar', lang)}: ${rightResult}\n${t('overallResult', lang)}: ${overallLabel}\n\n${t('poweredByHearWise', lang)}`;
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
   };
 
   const screeningResultData: ReportData = {
-    childName: student.name,
-    age: student.age.toString(),
+    childName: student?.name || t('unknownStudent', lang) || 'Unknown Student',
+    age: student?.age?.toString() || 'N/A',
     schoolName: session?.schoolName || 'N/A',
     className: 'N/A',
     testDate: new Date().toLocaleDateString('en-IN'),
@@ -168,6 +170,26 @@ export default function ResultsPage() {
               </div>
             </div>
           )}
+        </div>
+
+        {/* Thank-You Card */}
+        <div className="glass-panel w-full p-6 sm:p-8 border-2 border-white/50 shadow-xl rounded-[2.5rem] bg-white/70 backdrop-blur-md mb-8 text-center transition-all duration-300 hover:shadow-2xl">
+          <h2 className="text-2xl sm:text-3xl font-black text-blue-900 mb-2" style={{ fontFamily: 'Fredoka, sans-serif' }}>
+            Thank You for Visiting! 🎉
+          </h2>
+          <p className="text-sm font-bold text-blue-800/60 mb-6 max-w-xl mx-auto">
+            Thank you for completing your HearWise hearing screening. Early detection is key to hearing health, speech development, and academic success.
+          </p>
+          <div className="flex flex-wrap justify-center gap-4 text-left">
+            <div className="bg-white/40 px-6 py-4 rounded-2xl border border-white/40 min-w-[220px] shadow-sm">
+              <p className="text-xs text-blue-800/60 font-black uppercase tracking-wider mb-1">Student / Subject</p>
+              <p className="text-base font-black text-blue-900">{student?.name || t('unknownStudent', lang) || 'Guest User'}</p>
+            </div>
+            <div className="bg-white/40 px-6 py-4 rounded-2xl border border-white/40 min-w-[220px] shadow-sm">
+              <p className="text-xs text-blue-800/60 font-black uppercase tracking-wider mb-1">Teacher / Screener</p>
+              <p className="text-base font-black text-blue-900">{session?.teacherName || 'Guest'}</p>
+            </div>
+          </div>
         </div>
 
         {/* Clinical Frequency Boards */}

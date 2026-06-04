@@ -40,10 +40,10 @@ export default function ThankYouPage() {
         
         <div className="bg-white/40 p-5 sm:p-6 rounded-3xl border-2 border-white/50 mb-8">
           <p className="text-xl font-bold text-blue-800 mb-2">
-            Student: <span className="text-blue-600">{student?.name || '---'}</span>
+            Student: <span className="text-blue-600">{student?.name || t('unknownStudent', lang) || 'Guest User'}</span>
           </p>
           <p className="text-xl font-bold text-blue-800">
-            Teacher: <span className="text-blue-600">{session?.teacherName || '---'}</span>
+            Teacher/Screener: <span className="text-blue-600">{session?.teacherName || 'Guest'}</span>
           </p>
         </div>
 
