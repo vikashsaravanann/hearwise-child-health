@@ -12,8 +12,15 @@
           var decoded = l.search.slice(1).split('&').map(function(s) {
             return s.replace(/~and~/g, '&')
           }).join('?');
+          window.history.replaceState(null, null,
               l.pathname.slice(0, l.pathname.endsWith('/') ? -1 : undefined) + decoded + l.hash
           );
+        }
+
+        // Redirect /auth/callback to /#/auth/callback for HashRouter compatibility
+        if (l.pathname.endsWith('/auth/callback')) {
+          var base = l.pathname.replace(/\/auth\/callback$/, '');
+          window.history.replaceState(null, null, base + '/#/auth/callback' + l.search + l.hash);
         }
       }(window.location))
     </script>
@@ -22,12 +29,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <script type="module" crossorigin src="/assets/index-cwNLv3Gb.js"></script>
-    <link rel="modulepreload" crossorigin href="/assets/router-CwYRw2Dy.js">
-    <link rel="modulepreload" crossorigin href="/assets/ui-CaZNHlsb.js">
-    <link rel="modulepreload" crossorigin href="/assets/charts-Ch4D_6c5.js">
-    <link rel="modulepreload" crossorigin href="/assets/supabase-DFdX1Aey.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-MlwqkxHb.css">
+    <script type="module" crossorigin src="/hearwise-child-health/assets/index-CSKNhDgb.js"></script>
+    <link rel="modulepreload" crossorigin href="/hearwise-child-health/assets/router-CwYRw2Dy.js">
+    <link rel="modulepreload" crossorigin href="/hearwise-child-health/assets/ui-CaZNHlsb.js">
+    <link rel="modulepreload" crossorigin href="/hearwise-child-health/assets/charts-Ch4D_6c5.js">
+    <link rel="modulepreload" crossorigin href="/hearwise-child-health/assets/supabase-DFdX1Aey.js">
+    <link rel="stylesheet" crossorigin href="/hearwise-child-health/assets/index-DgA8RafU.css">
   </head>
   <body>
     <div id="root"></div>
