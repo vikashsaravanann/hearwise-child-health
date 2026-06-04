@@ -140,7 +140,7 @@ export default function Dashboard() {
               <p className="text-teal-400 font-black text-base sm:text-xl uppercase tracking-[0.2em]">
                 CHIEF EXECUTIVE OFFICER &amp; FOUNDER — HEARWISE TECHNOLOGIES
               </p>
-              
+
               <div className="flex justify-center gap-4 pt-4 pb-2">
                 <a href="https://vikashsaravanann.github.io/Portfolio_Information/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-6 py-3 rounded-full border border-teal-500/20 bg-teal-500/5 text-teal-300 hover:text-white hover:bg-teal-500/20 hover:border-teal-400/40 text-sm font-bold uppercase tracking-wider transition-all shadow-lg shadow-teal-900/20">
                   <span>🌐</span> PORTFOLIO
@@ -191,11 +191,10 @@ export default function Dashboard() {
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.15, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
                 whileHover={{ y: -8, scale: 1.02 }}
-                className={`rounded-3xl overflow-hidden cursor-pointer group ${
-                  photo.center
-                    ? 'shadow-[0_0_60px_rgba(6,182,212,0.2),_0_20px_60px_rgba(0,0,0,0.6)] border-2 border-cyan-500/20'
-                    : 'shadow-[0_20px_60px_rgba(0,0,0,0.5)] border border-white/8'
-                }`}
+                className={`rounded-3xl overflow-hidden cursor-pointer group ${photo.center
+                  ? 'shadow-[0_0_60px_rgba(6,182,212,0.2),_0_20px_60px_rgba(0,0,0,0.6)] border-2 border-cyan-500/20'
+                  : 'shadow-[0_20px_60px_rgba(0,0,0,0.5)] border border-white/8'
+                  }`}
               >
                 {/* Photo — NO text inside or below */}
                 <div className="w-full aspect-[3/4] overflow-hidden">
@@ -255,7 +254,7 @@ export default function Dashboard() {
                 <div className="grid sm:grid-cols-2 gap-4">
                   {[
                     { icon: '◉', label: 'LOCATION', val: 'COIMBATORE, TAMIL NADU, INDIA (NATIVE: KARUR)' },
-                    { icon: '◎', label: 'EDUCATION', val: 'FIRST-YEAR B.TECH AI & DS · 2024–2028 · RATHINAM TECHNICAL CAMPUS' },
+                    { icon: '◎', label: 'EDUCATION', val: 'FIRST-YEAR B.TECH AI & DS · 2025–2029 · RATHINAM TECHNICAL CAMPUS' },
                     { icon: '▶', label: 'AVAILABILITY', val: 'OPEN FOR REMOTE & COIMBATORE-BASED INTERNSHIPS' },
                     { icon: '◆', label: 'HACKATHON', val: 'META PYTORCH OPENENV — HACKATHON FINALIST' },
                     { icon: '◈', label: 'SPECIALIZATION', val: 'AI AUTOMATION · PROMPT ENGINEERING · FULL-STACK WEB DEV' },
@@ -447,10 +446,9 @@ export default function Dashboard() {
                   transition={{ delay: i * 0.08 }}
                   className="flex items-start gap-5 p-5 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-white/10 transition-colors"
                 >
-                  <div className={`w-2.5 h-2.5 rounded-full flex-shrink-0 mt-1.5 ${
-                    item.type === 'success' ? 'bg-teal-400' :
+                  <div className={`w-2.5 h-2.5 rounded-full flex-shrink-0 mt-1.5 ${item.type === 'success' ? 'bg-teal-400' :
                     item.type === 'warning' ? 'bg-orange-400' : 'bg-blue-400'
-                  }`} />
+                    }`} />
                   <div className="flex-1">
                     <div className="text-white font-bold text-base">{item.event}</div>
                     <div className="text-slate-400 text-sm mt-0.5">{item.detail}</div>

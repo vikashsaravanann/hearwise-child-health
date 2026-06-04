@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useSession } from '@/contexts/SessionContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { t } from '@/lib/i18n';
 import { getParentSummary } from '@/lib/clinicalSafety';
 import type { TestResult } from '@/lib/testEngine';
@@ -39,6 +40,7 @@ export default function ResultsPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { lang, student, session } = useSession();
+  const { user } = useAuth();
   const state = location.state as { results?: TestResult } | null;
   const results = state?.results;
 
