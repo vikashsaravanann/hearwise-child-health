@@ -1,0 +1,13 @@
+{
+  "experimental": {
+    "voice": {
+      "activationMode": "push-to-talk"
+    },
+    "worktrees": true,
+    "useOSC52Paste": true,
+    "useOSC52Copy": true,
+    "gemmaModelRouter": {
+      "enabled": true
+    }
+  }
+}

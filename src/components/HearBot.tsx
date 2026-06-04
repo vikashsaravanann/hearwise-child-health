@@ -26,48 +26,50 @@ interface Message {
   time: string;
 }
 
-const SYSTEM_PROMPT = `You are HearBot, the official AI assistant and virtual tour guide of HearWise Technologies — India's first mobile-based school hearing screening platform. Your tone must be highly professional, clinical, polite, and authoritative. You are addressing school principals, government health officials, and parents. Avoid being overly casual. Your primary job is to guide users through the website, explaining what each section does and how to use it.
+const SYSTEM_PROMPT = `You are HearBot, the friendly and knowledgeable AI assistant for HearWise Technologies. You speak in a warm, helpful, and encouraging tone. You always use relevant emojis naturally in your responses to make conversations feel friendly and engaging. Never use markdown symbols like **, *, #, or backticks in your responses. Write in plain, clear, readable sentences only.
 
-ABOUT HEARWISE:
-- Founded by Vikash Saravanan in Chennai, Tamil Nadu.
-- Mission: "Hear Every Child. Reach Every School."
-- Platform: India's first offline-capable (PWA) school hearing screening tool requiring only a smartphone and headphones. Screens 50+ kids per hour for free.
+=== ABOUT HEARWISE TECHNOLOGIES ===
 
-PLATFORM TOUR GUIDE - HOW TO NAVIGATE THE WEBSITE:
-If a user asks how to use the website, where to go, or what features exist, actively guide them to these specific pages:
+HearWise Technologies is India's first mobile-based school hearing screening platform, founded in 2024 and headquartered in Coimbatore, Tamil Nadu, India. The platform helps school teachers screen children for hearing loss using just a smartphone and standard headphones — no expensive equipment needed. The mission is to eliminate undetected childhood hearing loss in India, one school at a time.
 
-1. THE SCREENING FLOW (For Teachers/Admins):
-- "Setup Session" (/setup): Start here to enter school, teacher, and ambient noise details.
-- "Student Entry" (/student-entry): Enter the child's name, age, gender, and roll number.
-- "Headphone Check" (/headphone-check): A quick stereo test to ensure Left/Right earbuds are worn correctly.
-- "Ocean Levels" (/ocean-levels): The core test. 5 frequency levels (Nature sounds: waves, birds, etc.) tested on Left and Right ears.
-- "Session Summary" (/session-summary): View all kids tested today and generate/download professional PDF reports for parents.
+The live platform is at: https://vikashsaravanann.github.io/hearwise-child-health/
 
-2. LEARNING & GAMIFICATION (For Kids):
-- "Games" (/games): Play 'Sound Match' and 'Rhythm Master' to learn about sounds interactively.
-- "Trophies" (/trophies): View achievements and badges earned by taking care of hearing health.
+=== HOW THE HEARING TEST WORKS ===
 
-3. EXPLORE & EDUCATION (For Everyone):
-- "Ear Care" (/ear-care): Tips on how to clean and protect your ears.
-- "Education" (/education): Interactive modules explaining the anatomy of the ear and how hearing works.
-- "Sound Explorer" (/sound-explorer): A decibel scale showing safe vs. dangerous noise levels (e.g., leaves rustling vs. rock concerts).
-- "My Report" (/my-report): Parents can enter their child's ID to download their screening results PDF.
+The hearing test uses nature-based sounds to keep children calm and engaged. The sounds include ocean waves, bird sounds, water sounds, and wind chimes. The test has 5 levels for the left ear and 5 levels for the right ear — 10 total checks per child. Stereo panning ensures sounds play in the correct ear. A child hears each sound and raises their hand or says YES if they heard it. The teacher marks PASS or REFER for each level. If a child receives a REFER result, parents are advised to visit a qualified audiologist. The platform generates a downloadable PDF report after each test.
 
-4. HEARING HEALTH RESOURCES:
-- "Headphone Safety" (/headphone-safety): The 60/60 rule (60% volume for 60 mins maximum).
-- "Self Check" (/self-check): A quick questionnaire to see if you might have hearing loss symptoms.
-- "Book Appointment" (/book-appointment): Connect with our verified network of Audiologists across Tamil Nadu.
+=== ABOUT THE PLATFORM FEATURES ===
 
-5. ADMIN DASHBOARD (/admin):
-- A secure, password-protected area for school principals and government officials.
-- Features beautiful analytics charts showing screening metrics, referral rates, and student demographics.
+HearWise includes: a bilingual interface in English and Tamil, a professional admin dashboard accessible only to the admin, HearBot AI chatbot for assistance, a Learning Hub with an interactive hearing quiz, a Features page explaining the platform, Google OAuth and Email OTP login, school registration form, teacher training module with a 5-question quiz, an audiologist referral directory for Tamil Nadu, a testimonials section, real-time impact statistics from Supabase, parent PDF report download, and PWA support so the app can be installed on Android phones and used offline.
 
-YOUR PERSONALITY & RULES:
-- Maintain a highly professional, clinical, and respectful tone at all times.
-- When answering, format your responses clearly, using professional bullet points if listing features.
-- If they ask "what can I do here?" or "guide me", give them a quick, structured tour of the 3 main areas: Screening, Kids Games, and Education.
-- Never make up URLs or features that don't exist.
-- Keep answers concise but highly informative. Use professional formatting.`;
+=== ABOUT VIKASH SARAVANAN — FOUNDER AND CEO ===
+
+Vikash Saravanan is the Founder and CEO of HearWise Technologies. He is a first-year B.Tech Artificial Intelligence and Data Science student at Rathinam Technical Campus, Coimbatore, Tamil Nadu (Class of 2029). He is originally from Karur, Tamil Nadu.
+
+Vikash is an AI Engineer, Prompt Engineer, and Full-Stack Web Developer. He is passionate about building scalable AI-powered systems that solve real-world problems — especially in healthcare and education.
+
+He built HearWise entirely himself — from the React and Supabase architecture to the nature-sound hearing test and the admin dashboard. His goal is to screen 1 million children in India by 2027 through HearWise.
+
+Vikash was a Hackathon Finalist at the Meta PyTorch OpenEnv Hackathon organized by Scaler School of Technology (team name: Fresh Tensors). He has 15 or more professional certifications in areas including Data Analysis (Microsoft and LinkedIn), Full-Stack Development, Networking (Cisco Academy), Machine Learning, Generative AI, Design Thinking (IIT Bombay), Ethical Hacking, and more.
+
+His top technical skills include Python, React, TypeScript, Vite, Tailwind CSS, Supabase, n8n automation, YOLOv8 computer vision, and advanced prompt engineering.
+
+His other projects include: Traffic Vision AI (an intelligent traffic management system using YOLOv8 and reinforcement learning), and a Support Ticket Triage Simulation for the Meta PyTorch OpenEnv Hackathon (a stateful REST API built with FastAPI, Docker, and GitHub Actions for training AI agents).
+
+Vikash is available for remote and Coimbatore-based internships and collaborations. You can find him at:
+Portfolio: https://vikashsaravanann.github.io/Portfolio_Information/
+GitHub: https://github.com/vikashsaravanann
+LinkedIn: https://linkedin.com/in/vikash-saravanan-j7528
+Instagram: @startupwithvikash
+Email: vikash07052008@gmail.com
+
+His vision: "To leverage raw data to engineer scalable, real-world solutions that address complex systemic challenges in healthcare, urban infrastructure, and education."
+
+=== HOW YOU SHOULD RESPOND ===
+
+Always use relevant emojis. For example: 👂 when talking about hearing, 🏫 for schools, 🧒 for children, 📄 for reports, 🌊 for ocean sounds, 🐦 for bird sounds, 💧 for water sounds, 🎵 for sounds in general, 🇮🇳 for India, 💙 for care and support, ✅ for pass results, ⚠️ for refer results, 👨💻 for Vikash or tech topics, 🚀 for achievements, 🎯 for goals.
+
+Never use asterisks, hashtags, backticks, or any markdown symbols. Write in natural, friendly plain text. Keep responses concise — 2 to 4 sentences for simple questions, up to 8 sentences for complex ones. Always end with an encouraging or helpful closing line when relevant.`;
 
 const QUICK_QUESTIONS = [
   'What is HearWise?',
@@ -76,6 +78,26 @@ const QUICK_QUESTIONS = [
   'What are warning signs?',
   'How do I register my school?',
 ];
+
+
+function cleanBotText(text: string): string {
+  return text
+    // Remove markdown bold (**text**)
+    .replace(/\*\*(.*?)\*\*/g, '$1')
+    // Remove markdown italic (*text*)
+    .replace(/\*(.*?)\*/g, '$1')
+    // Remove markdown code blocks
+    .replace(/```[\s\S]*?```/g, '')
+    // Remove inline code backticks
+    .replace(/`([^`]+)`/g, '$1')
+    // Remove markdown headers (##, ###)
+    .replace(/^#{1,6}\s/gm, '')
+    // Remove horizontal rules
+    .replace(/^---+$/gm, '')
+    // Clean multiple newlines to max 2
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
 
 function getTime() {
   return new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
@@ -157,14 +179,13 @@ export default function HearBot() {
       }
 
       const data = await response.json();
-      const reply =
-        data?.choices?.[0]?.message?.content ||
-        "I'm sorry, I couldn't process that. Please try again.";
+      const rawReply = data?.choices?.[0]?.message?.content || "I'm sorry, I couldn't process that. Please try again.";
+      const reply = cleanBotText(rawReply);
 
       setMessages(prev => [...prev, { id: (Date.now() + 1).toString(), role: 'bot', text: reply, time: getTime() }]);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("HearBot API Error:", err);
-      if (err.message === 'MISSING_API_KEY') {
+      if (err instanceof Error && err.message === 'MISSING_API_KEY') {
         setMessages(prev => [...prev, {
           id: (Date.now() + 1).toString(),
           role: 'bot',
@@ -175,7 +196,7 @@ export default function HearBot() {
         setMessages(prev => [...prev, {
           id: (Date.now() + 1).toString(),
           role: 'bot',
-          text: `I'm having trouble connecting right now. Error: ${err.message || 'Unknown network error'}`,
+          text: `I'm having trouble connecting right now. Error: ${err instanceof Error ? err.message : 'Unknown network error'}`,
           time: getTime(),
         }]);
       }
@@ -193,10 +214,19 @@ export default function HearBot() {
         {!open && (
           <motion.button
             initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
+            animate={{
+              scale: [1, 1.05, 1],
+              opacity: 1,
+              boxShadow: [
+                '0 4px 24px rgba(13,148,136,0.3)',
+                '0 4px 32px rgba(13,148,136,0.5)',
+                '0 4px 24px rgba(13,148,136,0.3)',
+              ]
+            }}
+            transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
             exit={{ scale: 0, opacity: 0 }}
-            whileHover={{ scale: 1.08 }}
-            whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: 1.12 }}
+            whileTap={{ scale: 0.9 }}
             onClick={() => setOpen(true)}
             className="relative w-16 h-16 rounded-full shadow-2xl shadow-teal-500/40 overflow-hidden border-2 border-teal-400/50 bg-[#020817]"
           >
@@ -216,7 +246,7 @@ export default function HearBot() {
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.25, ease: 'easeOut' }}
             className="absolute bottom-0 right-0 w-[370px] max-w-[calc(100vw-24px)] flex flex-col rounded-3xl overflow-hidden shadow-2xl shadow-black/60"
-            style={{ height: '540px' }}
+            style={{ height: '540px', fontFamily: "'DM Sans', sans-serif" }}
           >
             {/* Background */}
             <div className="absolute inset-0 bg-black" />
@@ -228,7 +258,21 @@ export default function HearBot() {
                 <span className="absolute bottom-0.5 right-0.5 w-2.5 h-2.5 rounded-full bg-teal-400 border border-black" />
               </div>
               <div className="flex-1 min-w-0">
-                <div className="text-white font-black text-sm uppercase tracking-widest">HEARBOT</div>
+                <div className="flex items-center gap-2">
+                  <div className="text-white font-black text-sm uppercase tracking-widest" style={{ fontFamily: "'Syne', sans-serif" }}>HEARBOT</div>
+                  {loading && (
+                    <div className="flex gap-1">
+                      {[0, 1, 2].map(i => (
+                        <motion.div
+                          key={i}
+                          className="w-1.5 h-1.5 rounded-full bg-teal-400"
+                          animate={{ scale: [1, 1.4, 1], opacity: [0.5, 1, 0.5] }}
+                          transition={{ duration: 0.8, delay: i * 0.2, repeat: Infinity }}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
                 <div className="text-white/70 text-xs uppercase tracking-wider">ONLINE · HEARWISE AI</div>
               </div>
               <button
@@ -255,12 +299,16 @@ export default function HearBot() {
                   )}
                   <div className={`max-w-[78%] flex flex-col gap-1 ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
                     <div
-                      className={`px-4 py-3 rounded-2xl text-sm leading-relaxed ${
-                        msg.role === 'user'
-                          ? 'bg-gradient-to-br from-teal-500 to-cyan-500 text-black font-semibold rounded-tr-sm'
-                          : 'bg-[#111] border border-[#333] text-white rounded-tl-sm'
-                      }`}
-                      style={{ fontFamily: "'Sika', sans-serif" }}
+                      className={msg.role === 'user' ? "ml-auto max-w-xs px-4 py-3 rounded-2xl rounded-tr-sm text-sm leading-relaxed text-white" : "mr-auto max-w-xs px-4 py-3 rounded-2xl rounded-tl-sm text-sm leading-relaxed text-slate-200"}
+                      style={msg.role === 'user' ? {
+                        background: 'linear-gradient(135deg, #0d9488 0%, #0891b2 100%)',
+                        fontFamily: "'DM Sans', sans-serif",
+                        boxShadow: '0 2px 12px rgba(13,148,136,0.3)',
+                      } : {
+                        background: 'rgba(255,255,255,0.06)',
+                        border: '1px solid rgba(255,255,255,0.08)',
+                        fontFamily: "'DM Sans', sans-serif",
+                      }}
                     >
                       {msg.role === 'bot' && msg.id !== '0' ? <Typewriter text={msg.text} /> : msg.text}
                     </div>
