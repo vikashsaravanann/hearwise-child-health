@@ -90,14 +90,9 @@ export default function Dashboard() {
           )}
         </AnimatePresence>
 
-        <motion.aside
-          initial={false}
-          animate={{ x: sidebarOpen ? 0 : '-100%' }}
-          transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-          className="fixed left-0 top-0 bottom-0 w-72 z-50 lg:translate-x-0 lg:static lg:flex lg:flex-col"
-        >
+        {/* Desktop sidebar — always visible */}
+        <aside className="hidden lg:flex lg:flex-col w-72 flex-shrink-0 h-screen sticky top-0 z-50">
           <div className="h-full bg-black/80 backdrop-blur-xl border-r border-white/8 flex flex-col">
-
             {/* Sidebar header */}
             <div className="p-6 border-b border-white/8">
               <div className="flex items-center gap-3 mb-4">
@@ -105,15 +100,10 @@ export default function Dashboard() {
                   <img src={`${import.meta.env.BASE_URL}owl-mascot.png`} alt="HearWise" className="w-full h-full object-cover p-1" />
                 </div>
                 <div className="flex flex-col items-start gap-0.5">
-                  <span className="text-white font-black text-sm uppercase tracking-[0.15em] leading-tight">
-                    HEARWISE
-                  </span>
-                  <span className="text-teal-400 font-black text-[10px] uppercase tracking-[0.2em] leading-tight">
-                    TECHNOLOGIES
-                  </span>
+                  <span className="text-white font-black text-sm uppercase tracking-[0.15em] leading-tight">HEARWISE</span>
+                  <span className="text-teal-400 font-black text-[10px] uppercase tracking-[0.2em] leading-tight">TECHNOLOGIES</span>
                 </div>
               </div>
-              {/* Live clock */}
               <div className="rounded-xl bg-white/5 border border-white/8 p-3 text-center">
                 <div className="text-teal-400 font-black text-lg tracking-widest uppercase">
                   {now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true }).toUpperCase()}
@@ -123,29 +113,24 @@ export default function Dashboard() {
                 </div>
               </div>
             </div>
-
-            {/* Nav tabs */}
             <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
               {SIDEBAR_TABS.map(tab => (
                 <button
                   key={tab.id}
                   onClick={() => { setActiveTab(tab.id); setSidebarOpen(false); }}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all group ${
-                    activeTab === tab.id
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all group ${activeTab === tab.id
                       ? 'bg-teal-500/15 border border-teal-500/30 text-teal-400'
                       : 'text-slate-400 hover:text-white hover:bg-white/5'
-                  }`}
+                    }`}
                 >
                   <span className="text-base flex-shrink-0">{tab.icon}</span>
                   <span className="font-black text-xs uppercase tracking-widest">{tab.label}</span>
                   {activeTab === tab.id && (
-                    <motion.div layoutId="sidebar-active" className="ml-auto w-1.5 h-1.5 rounded-full bg-teal-400" />
+                    <motion.div layoutId="sidebar-active-desktop" className="ml-auto w-1.5 h-1.5 rounded-full bg-teal-400" />
                   )}
                 </button>
               ))}
             </nav>
-
-            {/* Sidebar footer — sign out */}
             <div className="p-4 border-t border-white/8">
               <button
                 onClick={() => { signOut(); navigate('/login'); }}
@@ -156,8 +141,71 @@ export default function Dashboard() {
               </button>
             </div>
           </div>
-        </motion.aside>
+        </aside>
+
+        {/* Mobile sidebar — slide in/out */}
+        <AnimatePresence>
+          {sidebarOpen && (
+            <motion.aside
+              initial={{ x: '-100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '-100%' }}
+              transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+              className="fixed left-0 top-0 bottom-0 w-72 z-50 lg:hidden flex flex-col"
+            >
+              <div className="h-full bg-black/80 backdrop-blur-xl border-r border-white/8 flex flex-col">
+                <div className="p-6 border-b border-white/8">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 rounded-xl overflow-hidden flex-shrink-0 bg-white/5 border border-white/10">
+                      <img src={`${import.meta.env.BASE_URL}owl-mascot.png`} alt="HearWise" className="w-full h-full object-cover p-1" />
+                    </div>
+                    <div className="flex flex-col items-start gap-0.5">
+                      <span className="text-white font-black text-sm uppercase tracking-[0.15em] leading-tight">HEARWISE</span>
+                      <span className="text-teal-400 font-black text-[10px] uppercase tracking-[0.2em] leading-tight">TECHNOLOGIES</span>
+                    </div>
+                  </div>
+                  <div className="rounded-xl bg-white/5 border border-white/8 p-3 text-center">
+                    <div className="text-teal-400 font-black text-lg tracking-widest uppercase">
+                      {now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true }).toUpperCase()}
+                    </div>
+                    <div className="text-slate-500 text-[10px] uppercase tracking-widest mt-0.5">
+                      {now.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }).toUpperCase()}
+                    </div>
+                  </div>
+                </div>
+                <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+                  {SIDEBAR_TABS.map(tab => (
+                    <button
+                      key={tab.id}
+                      onClick={() => { setActiveTab(tab.id); setSidebarOpen(false); }}
+                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all group ${activeTab === tab.id
+                          ? 'bg-teal-500/15 border border-teal-500/30 text-teal-400'
+                          : 'text-slate-400 hover:text-white hover:bg-white/5'
+                        }`}
+                    >
+                      <span className="text-base flex-shrink-0">{tab.icon}</span>
+                      <span className="font-black text-xs uppercase tracking-widest">{tab.label}</span>
+                      {activeTab === tab.id && (
+                        <motion.div layoutId="sidebar-active-mobile" className="ml-auto w-1.5 h-1.5 rounded-full bg-teal-400" />
+                      )}
+                    </button>
+                  ))}
+                </nav>
+                <div className="p-4 border-t border-white/8">
+                  <button
+                    onClick={() => { signOut(); navigate('/login'); }}
+                    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-400 hover:bg-red-500/10 transition-all"
+                  >
+                    <span>🚪</span>
+                    <span className="font-black text-xs uppercase tracking-widest">SIGN OUT</span>
+                  </button>
+                </div>
+              </div>
+            </motion.aside>
+          )}
+        </AnimatePresence>
       </>
+
 
       {/* ── MAIN CONTENT ──────────────────────────── */}
       <main className="flex-1 overflow-y-auto min-h-screen">
@@ -298,10 +346,9 @@ export default function Dashboard() {
                         transition={{ delay: i * 0.08 }}
                         className="flex items-start gap-4 p-4 rounded-xl bg-white/3 border border-white/5"
                       >
-                        <div className={`w-2 h-2 rounded-full flex-shrink-0 mt-1.5 ${
-                          item.type === 'success' ? 'bg-teal-400' :
-                          item.type === 'warning' ? 'bg-orange-400' : 'bg-blue-400'
-                        }`} />
+                        <div className={`w-2 h-2 rounded-full flex-shrink-0 mt-1.5 ${item.type === 'success' ? 'bg-teal-400' :
+                            item.type === 'warning' ? 'bg-orange-400' : 'bg-blue-400'
+                          }`} />
                         <div className="flex-1 min-w-0">
                           <div className="text-white font-black text-sm">{item.event}</div>
                           <div className="text-slate-400 text-xs mt-1">{item.detail}</div>
@@ -398,7 +445,7 @@ export default function Dashboard() {
                         <h4 className="text-white font-bold text-sm sm:text-base mb-1">Hackathon Finalist</h4>
                         <p className="text-slate-500 text-xs sm:text-sm">Meta PyTorch (OpenEnv)</p>
                       </motion.div>
-                      
+
                       <motion.div whileHover={{ scale: 1.02 }} className="rounded-3xl border border-white/10 bg-[#0a0f1a]/80 backdrop-blur-xl p-6 text-center flex flex-col items-center justify-center min-h-[140px] shadow-lg hover:border-emerald-500/30 transition-colors">
                         <div className="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center mb-3">
                           <span className="text-emerald-400 text-2xl">⚙️</span>
@@ -424,13 +471,13 @@ export default function Dashboard() {
                         <div className="text-slate-500 text-[10px] uppercase font-bold tracking-widest mb-1">FOCUS</div>
                         <div className="text-white font-bold text-xs">AI Automation</div>
                       </motion.div>
-                      
+
                       <motion.div whileHover={{ scale: 1.05 }} className="rounded-2xl border border-white/10 bg-[#0a0f1a]/80 backdrop-blur-xl p-4 text-center hover:border-blue-500/30">
                         <div className="text-blue-400 mb-2 text-xl">🧠</div>
                         <div className="text-slate-500 text-[10px] uppercase font-bold tracking-widest mb-1">SPECIALIZATION</div>
                         <div className="text-white font-bold text-xs">Prompt Eng</div>
                       </motion.div>
-                      
+
                       <motion.div whileHover={{ scale: 1.05 }} className="rounded-2xl border border-white/10 bg-[#0a0f1a]/80 backdrop-blur-xl p-4 text-center hover:border-emerald-500/30">
                         <div className="text-emerald-400 mb-2 text-xl">{'</>'}</div>
                         <div className="text-slate-500 text-[10px] uppercase font-bold tracking-widest mb-1">TOP SKILLS</div>
@@ -482,7 +529,7 @@ export default function Dashboard() {
                   <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-blue-500/10 rounded-full blur-[100px] pointer-events-none group-hover:bg-blue-500/20 transition-all" />
                   <div className="flex flex-col md:flex-row gap-8 items-start relative z-10">
                     <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-400 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/30 flex-shrink-0">
-                      <svg width="36" height="36" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                      <svg width="36" height="36" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" /></svg>
                     </div>
                     <div>
                       <h3 className="text-blue-400 font-black text-sm uppercase tracking-[0.3em] mb-2">PROFESSIONAL NETWORK</h3>
@@ -504,7 +551,7 @@ export default function Dashboard() {
                   <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[500px] h-96 bg-white/5 rounded-full blur-[100px] pointer-events-none group-hover:bg-white/10 transition-all" />
                   <div className="flex flex-col md:flex-row gap-8 items-start relative z-10">
                     <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center text-white shadow-lg shadow-black flex-shrink-0">
-                      <svg width="36" height="36" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                      <svg width="36" height="36" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" /></svg>
                     </div>
                     <div>
                       <h3 className="text-gray-300 font-black text-sm uppercase tracking-[0.3em] mb-2">OPEN SOURCE REPOSITORIES</h3>
