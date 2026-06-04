@@ -84,23 +84,6 @@ export default function Navbar() {
 
             {/* Desktop right side */}
             <div className="hidden lg:flex items-center gap-3">
-              {/* Language switcher */}
-              <div className="flex items-center gap-1 rounded-full border border-white/10 bg-white/5 p-1">
-                {LANG_OPTIONS.map(l => (
-                  <button
-                    key={l}
-                    onClick={() => setLang(l)}
-                    className={`px-2.5 py-1 rounded-full text-xs font-bold transition-all ${
-                      lang === l
-                        ? 'bg-teal-500 text-black'
-                        : 'text-slate-400 hover:text-white'
-                    }`}
-                  >
-                    {l}
-                  </button>
-                ))}
-              </div>
-
               {/* Auth buttons */}
               {user ? (
                 <div className="flex items-center gap-2">
@@ -131,21 +114,6 @@ export default function Navbar() {
 
             {/* Mobile right side */}
             <div className="flex lg:hidden items-center gap-3">
-              {/* Language switcher — compact on mobile */}
-              <div className="flex items-center gap-0.5 rounded-full border border-white/10 bg-white/5 p-0.5">
-                {LANG_OPTIONS.map(l => (
-                  <button
-                    key={l}
-                    onClick={() => setLang(l)}
-                    className={`px-2 py-1 rounded-full text-[10px] font-bold transition-all ${
-                      lang === l ? 'bg-teal-500 text-black' : 'text-slate-400'
-                    }`}
-                  >
-                    {l}
-                  </button>
-                ))}
-              </div>
-
               {/* Hamburger button */}
               <button
                 onClick={() => setMenuOpen(o => !o)}

@@ -1,750 +1,659 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { useState, useEffect, useRef } from 'react';
+import { motion, useInView, AnimatePresence } from 'framer-motion';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import {
-  RefreshCw, Shield, LogOut, CheckCircle, AlertTriangle, User,
-  Mail, Smartphone, Key, Lock, PlayCircle, GitCommit, Copy, Ear
-} from 'lucide-react';
-import Loader from '../components/Loader';
-import {
-  PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid
-} from 'recharts';
 
-// --- TYPES ---
-interface DashboardData {
-  stats: {
-    totalChildren: number;
-    totalSchools: number;
-    passRate: number;
-    referRate: number;
-    todayCount: number;
-    totalUsers: number;
-  };
-  loginLogs: any[];
-  screenings: any[];
-  videoViews: any[];
-  teacherSessions: any[];
-  timelineEvents: any[];
-  loginChartData: any[];
-  dailySignups: any[];
-  healthChecks: any[];
-  envChecks: any[];
-  routeChecks: any[];
-  githubCommits: any[];
+// ─── Animated counter hook ───────────────────────────────
+function useCounter(end: number, duration = 2000) {
+  const [count, setCount] = useState(0);
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true });
+
+  useEffect(() => {
+    if (!inView) return;
+    let start = 0;
+    const step = end / (duration / 16);
+    const timer = setInterval(() => {
+      start += step;
+      if (start >= end) { setCount(end); clearInterval(timer); }
+      else setCount(Math.floor(start));
+    }, 16);
+    return () => clearInterval(timer);
+  }, [inView, end, duration]);
+
+  return { count, ref };
 }
 
-// --- CONSTANTS ---
-const SECTION_STYLE = {
-  background: 'linear-gradient(135deg, rgba(255,255,255,0.025) 0%, rgba(255,255,255,0.01) 100%)',
-  border: '1px solid rgba(255,255,255,0.07)',
-  borderRadius: '20px',
-  padding: '32px',
-  marginBottom: '24px'
-};
-
-const PAGE_BG = '#0a0f1e';
-const NAV_BG = 'rgba(10, 15, 30, 0.97)';
-const ANIM_VIEWPORT = { once: true, margin: '-60px' };
-
-export default function Dashboard() {
-  const { user, signOut } = useAuth();
-  const navigate = useNavigate();
-
-  const [loading, setLoading] = useState(true);
-  const [data, setData] = useState<DashboardData | null>(null);
-  const [time, setTime] = useState(new Date());
-  const [expandedRowId, setExpandedRowId] = useState<string | null>(null);
-  const [aiAdvice, setAiAdvice] = useState('');
-  const [aiLoading, setAiLoading] = useState(false);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
-
-  // Time update
-  useEffect(() => {
-    const timer = setInterval(() => setTime(new Date()), 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  // Fetch all data
-  useEffect(() => {
-    fetchAllDashboardData();
-  }, []);
-
-  async function fetchAllDashboardData() {
-    setLoading(true);
-    try {
-      const [
-        statsData,
-        logsData,
-        screeningsData,
-        videoData,
-        teacherData,
-        timelineData,
-        healthData,
-        commitsData
-      ] = await Promise.all([
-        fetchStats(),
-        fetchLoginLogs(),
-        fetchScreenings(),
-        fetchVideoViews(),
-        fetchTeacherSessions(),
-        fetchActivityTimeline(),
-        fetchHealthChecks(),
-        fetchGitHubCommits(),
-      ]);
-
-      setData({
-        stats: statsData,
-        loginLogs: logsData.logs,
-        loginChartData: logsData.chartData,
-        dailySignups: logsData.dailySignups,
-        screenings: screeningsData,
-        videoViews: videoData,
-        teacherSessions: teacherData,
-        timelineEvents: timelineData,
-        healthChecks: healthData.tables,
-        envChecks: healthData.envs,
-        routeChecks: healthData.routes,
-        githubCommits: commitsData,
-      });
-    } catch (e: any) {
-      console.error('Failed to load dashboard data:', e);
-      setErrorMsg(e.message || String(e));
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  // --- FETCHERS ---
-  async function fetchStats() {
-    const { count: totalChildren } = await supabase.from('screening_results').select('*', { count: 'exact', head: true });
-    const { count: totalSchools } = await supabase.from('schools').select('*', { count: 'exact', head: true });
-    const { count: passCount } = await supabase.from('screening_results').select('*', { count: 'exact', head: true }).eq('overall_result', 'pass');
-    const { count: referCount } = await supabase.from('screening_results').select('*', { count: 'exact', head: true }).eq('overall_result', 'refer');
-    
-    const today = new Date().toISOString().split('T')[0];
-    const { count: todayCount } = await supabase.from('screening_results').select('*', { count: 'exact', head: true }).gte('created_at', today);
-    let totalUsers = 0;
-    try {
-      const res = await supabase.from('profiles').select('*', { count: 'exact', head: true });
-      totalUsers = res.count || 0;
-    } catch (e) {
-      // Ignore
-    }
-
-    const total = (passCount || 0) + (referCount || 0);
-    const passRate = total > 0 ? Math.round(((passCount || 0) / total) * 100) : 0;
-    const referRate = 100 - passRate;
-
-    return {
-      totalChildren: totalChildren || 0,
-      totalSchools: totalSchools || 0,
-      passRate,
-      referRate,
-      todayCount: todayCount || 0,
-      totalUsers: totalUsers || 0,
-    };
-  }
-
-  async function fetchLoginLogs() {
-    const { data: logs } = await supabase
-      .from('login_logs')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(50);
-      
-    // Chart data
-    const methodCounts = (logs || []).reduce((acc: any, log: any) => {
-      acc[log.login_method] = (acc[log.login_method] || 0) + 1;
-      return acc;
-    }, {});
-    
-    const chartData = [
-      { name: 'Google', value: methodCounts['google'] || 0, color: '#3b82f6' },
-      { name: 'Email OTP', value: methodCounts['email_otp'] || 0, color: '#0d9488' },
-      { name: 'Phone OTP', value: methodCounts['phone_otp'] || 0, color: '#22c55e' },
-      { name: 'Email/Pass', value: methodCounts['email_password'] || 0, color: '#a855f7' },
-    ];
-
-    return { logs: logs || [], chartData, dailySignups: [] };
-  }
-
-  async function fetchScreenings() {
-    const { data } = await supabase
-      .from('screening_results')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(100);
-    return data || [];
-  }
-
-  async function fetchVideoViews() {
-    const { data } = await supabase
-      .from('video_views')
-      .select('*')
-      .order('watched_at', { ascending: false })
-      .limit(100);
-      
-    // Group
-    const grouped = (data || []).reduce((acc: any, row: any) => {
-      if (!acc[row.video_title]) acc[row.video_title] = { count: 0, emails: [] };
-      acc[row.video_title].count += 1;
-      if (row.viewer_email && !acc[row.video_title].emails.includes(row.viewer_email)) {
-        acc[row.video_title].emails.push(row.viewer_email);
-      }
-      return acc;
-    }, {});
-    
-    return Object.entries(grouped).map(([title, val]: any) => ({ title, count: val.count, emails: val.emails }));
-  }
-
-  async function fetchTeacherSessions() {
-    const { data } = await supabase
-      .from('school_registrations') // fallback table
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(50);
-    return data || [];
-  }
-
-  async function fetchActivityTimeline() {
-    const { data: logs } = await supabase.from('login_logs').select('id, email, login_method, created_at').order('created_at', { ascending: false }).limit(10);
-    const { data: screens } = await supabase.from('screening_results').select('id, child_name, school_name, overall_result, created_at').order('created_at', { ascending: false }).limit(10);
-    
-    let events = [
-      ...(logs || []).map((l: any) => ({
-        id: 'l'+l.id, type: 'login', date: new Date(l.created_at || Date.now()), data: l
-      })),
-      ...(screens || []).map((s: any) => ({
-        id: 's'+s.id, type: 'screening', date: new Date(s.created_at || Date.now()), data: s
-      }))
-    ];
-    events.sort((a, b) => b.date.getTime() - a.date.getTime());
-    return events.slice(0, 20);
-  }
-
-  async function fetchHealthChecks() {
-    const checks = [
-      { name: 'screening_results', query: () => supabase.from('screening_results').select('id').limit(1) },
-      { name: 'schools', query: () => supabase.from('schools').select('id').limit(1) },
-      { name: 'login_logs', query: () => supabase.from('login_logs').select('id').limit(1) },
-      { name: 'video_views', query: () => supabase.from('video_views').select('id').limit(1) },
-      { name: 'audiologist_applications', query: () => supabase.from('audiologist_applications').select('id').limit(1) },
-      { name: 'school_registrations', query: () => supabase.from('school_registrations').select('id').limit(1) },
-    ];
-
-    const results = await Promise.allSettled(checks.map(async (c) => {
-      try {
-        const { error } = await c.query();
-        return { name: c.name, status: error ? 'error' : 'ok', message: error?.message || 'Operational' };
-      } catch (e: any) {
-        return { name: c.name, status: 'error', message: e.message };
-      }
-    }));
-    
-    const tables = results.map((r: any) => r.value);
-    
-    const envs = [
-      { name: 'VITE_SUPABASE_URL', value: import.meta.env.VITE_SUPABASE_URL },
-      { name: 'VITE_SUPABASE_ANON_KEY', value: !!import.meta.env.VITE_SUPABASE_ANON_KEY },
-      { name: 'VITE_ADMIN_EMAIL', value: import.meta.env.VITE_ADMIN_EMAIL },
-      { name: 'VITE_ANTHROPIC_API_KEY', value: !!import.meta.env.VITE_ANTHROPIC_API_KEY },
-    ];
-    
-    const routes = [
-      { path: '/', exists: true },
-      { path: '/login', exists: true },
-      { path: '/dashboard', exists: true },
-    ];
-    
-    return { tables, envs, routes };
-  }
-
-  async function fetchGitHubCommits() {
-    try {
-      const res = await fetch('https://api.github.com/repos/vikashsaravanann/hearwise-child-health/commits?per_page=8');
-      if (res.ok) return await res.json();
-    } catch (e) {}
-    return [];
-  }
-
-  async function handleAskAi() {
-    setAiLoading(true);
-    try {
-      const errors = data?.healthChecks.filter(c => c.status === 'error').map(c => `${c.name}: ${c.message}`).join('\\n') || 'No errors found.';
-      const res = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': import.meta.env.VITE_ANTHROPIC_API_KEY,
-          'anthropic-version': '2023-06-01',
-          'anthropic-dangerously-allow-browser': 'true'
-        },
-        body: JSON.stringify({
-          model: 'claude-3-5-sonnet-20241022',
-          max_tokens: 1000,
-          system: "You are a helpful technical assistant for HearWise Technologies, a React + TypeScript + Supabase web app. When given a list of errors from the platform's dashboard health check, you give clear, actionable, numbered steps to fix each error. Write in plain English. No markdown symbols. Use emojis for each step. Be specific to Supabase, React, and Vite.",
-          messages: [{ role: 'user', content: `These errors were found in the HearWise platform health check:\\n\\n${errors}\\n\\nPlease tell me exactly how to fix each one, step by step.` }]
-        })
-      });
-      const aiData = await res.json();
-      setAiAdvice(aiData.content?.[0]?.text || 'No advice could be loaded.');
-    } catch (e) {
-      setAiAdvice('Error calling AI advisor. Ensure VITE_ANTHROPIC_API_KEY is valid.');
-    } finally {
-      setAiLoading(false);
-    }
-  }
-
-  if (loading || (!data && !errorMsg)) {
-    return (
-      <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#020817] overflow-hidden">
-        {/* Animated gradient orbs */}
-        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-teal-500/10 rounded-full blur-[120px] animate-pulse pointer-events-none" />
-        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-cyan-500/8 rounded-full blur-[100px] animate-pulse pointer-events-none" style={{ animationDelay: '2s' }} />
-        <div className="absolute top-1/2 left-0 w-[300px] h-[300px] bg-blue-600/6 rounded-full blur-[80px] animate-pulse pointer-events-none" style={{ animationDelay: '4s' }} />
-
-        <div
-          className="absolute inset-0 pointer-events-none opacity-[0.03]"
-          style={{
-            backgroundImage: `linear-gradient(rgba(20,184,166,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(20,184,166,0.5) 1px, transparent 1px)`,
-            backgroundSize: '60px 60px'
-          }}
-        />
-        
-        <div className="relative z-10">
-          <Loader text="LOADING DASHBOARD DATA..." />
-        </div>
-      </div>
-    );
-  }
-
-  if (errorMsg) {
-    return (
-      <div className="fixed inset-0 z-50 flex flex-col items-center justify-center p-6 text-center"
-        style={{ background: 'rgba(10,15,30,0.95)', backdropFilter: 'blur(12px)' }}>
-        <AlertTriangle className="w-16 h-16 text-red-500 mb-4" />
-        <h2 className="text-2xl font-bold text-white mb-2">Error Loading Dashboard</h2>
-        <p className="text-slate-400 mb-6">{errorMsg}</p>
-        <button onClick={() => { setErrorMsg(null); fetchAllDashboardData(); }} className="px-6 py-2 bg-teal-500 hover:bg-teal-400 text-black font-bold rounded-lg transition-colors">
-          Retry Loading
-        </button>
-      </div>
-    );
-  }
-
-  if (!data) return null;
-
-  // --- RENDER HELPERS ---
-  const SectionHeader = ({ num, title, sub }: any) => (
-    <div className="mb-6">
-      <div className="flex items-center gap-3 mb-1">
-        <span className="text-teal-400 font-bold text-lg opacity-80">0{num}</span>
-        <div className="h-px bg-gradient-to-r from-teal-400/50 to-transparent flex-1" />
-      </div>
-      <h2 style={{ fontFamily: "'Syne', sans-serif" }} className="text-2xl font-bold text-white mb-1">
-        {title}
-      </h2>
-      <p className="text-slate-400 text-sm" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-        {sub}
-      </p>
-    </div>
+// ─── Section reveal animation ────────────────────────────
+function RevealSection({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: '-80px' });
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 40 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.7, delay, ease: [0.25, 0.46, 0.45, 0.94] }}
+    >
+      {children}
+    </motion.div>
   );
+}
+
+// ─── Main Dashboard ──────────────────────────────────────
+export default function Dashboard() {
+  const { user, isAdmin, signOut } = useAuth();
+  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState('overview');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [now, setNow] = useState(new Date());
+
+  // Live clock
+  useEffect(() => {
+    const t = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(t);
+  }, []);
+
+  // Guard
+  useEffect(() => {
+    if (!isAdmin) navigate('/', { replace: true });
+  }, [isAdmin, navigate]);
+
+  const SIDEBAR_TABS = [
+    { id: 'overview', icon: '⚡', label: 'OVERVIEW' },
+    { id: 'founder', icon: '👤', label: 'FOUNDER' },
+    { id: 'analytics', icon: '📊', label: 'ANALYTICS' },
+    { id: 'platform', icon: '🦉', label: 'PLATFORM' },
+    { id: 'links', icon: '🔗', label: 'SOCIAL LINKS' },
+    { id: 'settings', icon: '⚙️', label: 'SETTINGS' },
+  ];
+
+  // ── STAT CARDS DATA ──────────────────────────────────
+  const { count: childrenCount, ref: childrenRef } = useCounter(1247);
+  const { count: schoolsCount, ref: schoolsRef } = useCounter(38);
+  const { count: detectedCount, ref: detectedRef } = useCounter(94);
+  const { count: certsCount, ref: certsRef } = useCounter(15);
 
   return (
-    <div className="min-h-screen text-slate-200" style={{ background: PAGE_BG, fontFamily: "'DM Sans', sans-serif" }}>
-      
-      {/* 0 — STICKY HEADER */}
-      <header className="sticky top-0 z-50 flex items-center justify-between px-6 py-4"
-        style={{ background: NAV_BG, backdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-        <div className="flex items-center gap-4">
-          <motion.img
-            src={`${import.meta.env.BASE_URL}owl-mascot.png`}
-            className="w-10 h-10 object-contain"
-            animate={{ y: [0, -5, 0] }}
-            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-            onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-          />
-          <div>
-            <h1 className="text-white font-bold text-xl" style={{ fontFamily: "'Syne', sans-serif" }}>HearWise</h1>
-            <p className="text-teal-400 text-[10px] uppercase tracking-widest font-bold">Admin Intelligence Centre</p>
-          </div>
-        </div>
-        
-        <div className="hidden md:block text-teal-400 text-sm font-medium">
-          {time.toLocaleDateString('en-GB', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' })} · {time.toLocaleTimeString('en-GB')}
-        </div>
-        
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-green-500/10 border border-green-500/20">
-            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-            <span className="text-xs font-semibold text-green-400">System Online</span>
-          </div>
-          <button onClick={fetchAllDashboardData} className="p-2 text-slate-400 hover:text-white transition-colors" title="Refresh Data">
-            <RefreshCw className="w-5 h-5" />
-          </button>
-          <div className="flex items-center gap-2 pl-4 border-l border-white/10">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-teal-500 to-blue-500 flex items-center justify-center font-bold text-xs text-white">
-              VS
-            </div>
-            <div className="hidden md:block text-xs">
-              <div className="font-bold text-white flex items-center gap-1">Vikash Saravanan <Shield className="w-3 h-3 text-teal-400" /></div>
-              <div className="text-slate-400">Admin</div>
-            </div>
-          </div>
-          <button onClick={() => signOut().then(() => navigate('/login'))} className="p-2 text-slate-400 hover:text-red-400 transition-colors" title="Sign Out">
-            <LogOut className="w-5 h-5" />
-          </button>
-        </div>
-      </header>
+    <div className="min-h-screen bg-[#020817] flex overflow-hidden">
 
-      <div className="max-w-7xl mx-auto p-5 sm:p-6 md:p-6 sm:p-8 space-y-12">
-        
-        {/* 1 — CEO PROFILE HERO CARD */}
-        <motion.section
-          initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={ANIM_VIEWPORT} transition={{ duration: 0.6, delay: 0.1 }}
-          style={{
-            background: 'linear-gradient(135deg, rgba(13,148,136,0.08) 0%, rgba(59,130,246,0.05) 50%, rgba(139,92,246,0.05) 100%)',
-            border: '1px solid rgba(13,148,136,0.2)',
-            borderRadius: '24px',
-            padding: '40px'
-          }}
-          className="flex flex-col lg:flex-row gap-10"
+      {/* ── SIDEBAR ─────────────────────────────── */}
+      <>
+        {/* Mobile overlay */}
+        <AnimatePresence>
+          {sidebarOpen && (
+            <motion.div
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              onClick={() => setSidebarOpen(false)}
+              className="fixed inset-0 bg-black/60 z-40 lg:hidden"
+            />
+          )}
+        </AnimatePresence>
+
+        <motion.aside
+          initial={false}
+          animate={{ x: sidebarOpen ? 0 : '-100%' }}
+          transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+          className="fixed left-0 top-0 bottom-0 w-72 z-50 lg:translate-x-0 lg:static lg:flex lg:flex-col"
         >
-          <div className="w-full lg:w-1/3 flex flex-col items-center lg:items-start text-center lg:text-left">
-            <div className="w-24 h-24 rounded-full flex items-center justify-center text-white text-2xl sm:text-3xl font-bold mb-6"
-              style={{ background: 'linear-gradient(135deg, #0d9488 0%, #3b82f6 50%, #8b5cf6 100%)', fontFamily: "'Syne', sans-serif" }}>
-              VS
-            </div>
-            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-3" style={{ fontFamily: "'Syne', sans-serif" }}>Vikash Saravanan</h2>
-            <div className="flex flex-wrap gap-2 mb-4 justify-center lg:justify-start">
-              <span className="px-3 py-1 text-xs font-bold rounded-full bg-teal-500/20 text-teal-400 border border-teal-500/30">Founder & CEO</span>
-              <span className="px-3 py-1 text-xs font-bold rounded-full bg-red-500/20 text-red-400 border border-red-500/30">Admin</span>
-              <span className="px-3 py-1 text-xs font-bold rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">AI Engineer</span>
-              <span className="px-3 py-1 text-xs font-bold rounded-full bg-purple-500/20 text-purple-400 border border-purple-500/30">Prompt Engineer</span>
-            </div>
-            <p className="text-slate-300 font-medium mb-1">HearWise Technologies Pvt. Ltd.</p>
-            <p className="text-slate-400 text-sm mb-1">Coimbatore, Tamil Nadu, India · Native: Karur</p>
-            <p className="text-slate-400 text-sm mb-4">B.Tech AI & Data Science — Rathinam Technical Campus (Class of 2029)</p>
-            <div className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-              <span className="text-xs font-semibold text-green-400">Available for Internships & Collaboration</span>
-            </div>
-          </div>
-          
-          <div className="flex-1">
-            <p className="text-slate-300 leading-relaxed mb-8">
-              Vikash Saravanan is an ambitious first-year B.Tech AI and Data Science student at Rathinam Technical Campus, Coimbatore. He is the sole founder and architect of HearWise Technologies — India's first mobile school hearing screening platform. As an AI Engineer, Prompt Engineer, and Full-Stack Web Developer, Vikash bridges advanced machine learning with full-stack software architecture. His mission is to engineer high-performance systems that solve real-world challenges in healthcare and education. He is intensely focused on securing high-impact internship opportunities and building production-ready AI systems.
-            </p>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-              <div className="p-4 rounded-xl bg-white/5 border border-white/10">
-                <p className="text-white font-bold mb-1">Hackathon Finalist</p>
-                <p className="text-xs text-slate-400">Meta PyTorch OpenEnv (Team: Fresh Tensors, Scaler)</p>
+          <div className="h-full bg-black/80 backdrop-blur-xl border-r border-white/8 flex flex-col">
+
+            {/* Sidebar header */}
+            <div className="p-6 border-b border-white/8">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-xl overflow-hidden flex-shrink-0 bg-white/5 border border-white/10">
+                  <img src={`${import.meta.env.BASE_URL}owl-mascot.png`} alt="HearWise" className="w-full h-full object-cover p-1" />
+                </div>
+                <div className="flex flex-col items-start gap-0.5">
+                  <span className="text-white font-black text-sm uppercase tracking-[0.15em] leading-tight">
+                    HEARWISE
+                  </span>
+                  <span className="text-teal-400 font-black text-[10px] uppercase tracking-[0.2em] leading-tight">
+                    TECHNOLOGIES
+                  </span>
+                </div>
               </div>
-              <div className="p-4 rounded-xl bg-white/5 border border-white/10">
-                <p className="text-white font-bold mb-1">15+ Certifications</p>
-                <p className="text-xs text-slate-400">Microsoft, LinkedIn, Cisco, IIT Bombay, freeCodeCamp</p>
-              </div>
-              <div className="p-4 rounded-xl bg-white/5 border border-white/10">
-                <p className="text-white font-bold mb-1">3+ Live Projects</p>
-                <p className="text-xs text-slate-400">HearWise, Traffic Vision AI, Support Ticket Triage</p>
-              </div>
-              <div className="p-4 rounded-xl bg-white/5 border border-white/10">
-                <p className="text-white font-bold mb-1">AI Automation Focus</p>
-                <p className="text-xs text-slate-400">Python, React, n8n, Supabase, Prompt Engineering</p>
+              {/* Live clock */}
+              <div className="rounded-xl bg-white/5 border border-white/8 p-3 text-center">
+                <div className="text-teal-400 font-black text-lg tracking-widest uppercase">
+                  {now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true }).toUpperCase()}
+                </div>
+                <div className="text-slate-500 text-[10px] uppercase tracking-widest mt-0.5">
+                  {now.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }).toUpperCase()}
+                </div>
               </div>
             </div>
-            
-            <div className="flex flex-wrap gap-2 mb-6">
-              {['Python', 'React', 'TypeScript', 'Supabase', 'n8n', 'YOLOv8', 'Prompt Engineering', 'Tailwind CSS', 'FastAPI', 'Docker'].map(s => (
-                <span key={s} className="px-2.5 py-1 text-[11px] font-semibold bg-white/10 rounded-lg text-slate-300 border border-white/5">{s}</span>
+
+            {/* Nav tabs */}
+            <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+              {SIDEBAR_TABS.map(tab => (
+                <button
+                  key={tab.id}
+                  onClick={() => { setActiveTab(tab.id); setSidebarOpen(false); }}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all group ${
+                    activeTab === tab.id
+                      ? 'bg-teal-500/15 border border-teal-500/30 text-teal-400'
+                      : 'text-slate-400 hover:text-white hover:bg-white/5'
+                  }`}
+                >
+                  <span className="text-base flex-shrink-0">{tab.icon}</span>
+                  <span className="font-black text-xs uppercase tracking-widest">{tab.label}</span>
+                  {activeTab === tab.id && (
+                    <motion.div layoutId="sidebar-active" className="ml-auto w-1.5 h-1.5 rounded-full bg-teal-400" />
+                  )}
+                </button>
               ))}
-            </div>
-            
-            <div className="flex flex-wrap gap-4 text-sm font-semibold">
-              <a href="https://vikashsaravanann.github.io/Portfolio_Information/" target="_blank" className="text-teal-400 hover:underline">Portfolio</a>
-              <a href="https://github.com/vikashsaravanann" target="_blank" className="text-blue-400 hover:underline">GitHub</a>
-              <a href="https://linkedin.com/in/vikash-saravanan-j7528" target="_blank" className="text-blue-500 hover:underline">LinkedIn</a>
-              <a href="#" className="text-pink-400 hover:underline">@startupwithvikash</a>
-              <a href="mailto:vikash07052008@gmail.com" className="text-purple-400 hover:underline">Email</a>
-            </div>
-          </div>
-        </motion.section>
+            </nav>
 
-        {/* 2 — HEARWISE PLATFORM OVERVIEW CARD */}
-        <motion.section initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={ANIM_VIEWPORT} transition={{ duration: 0.6 }} style={SECTION_STYLE}>
-          <div className="flex flex-col md:flex-row items-center gap-6 sm:p-8">
-            <motion.img src={`${import.meta.env.BASE_URL}owl-mascot.png`} className="w-32 h-32" animate={{ y: [0, -10, 0] }} transition={{ duration: 4, repeat: Infinity }} />
-            <div className="flex-1 grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 gap-6 sm:p-8">
-              <div>
-                <h3 className="text-2xl font-bold text-white mb-2" style={{ fontFamily: "'Syne', sans-serif" }}>HearWise Technologies</h3>
-                <p className="text-teal-400 font-semibold mb-4">India's First Mobile School Hearing Screening Platform</p>
-                <p className="text-slate-400 text-sm mb-2">Founded: 2024 · Coimbatore, Tamil Nadu</p>
-                <p className="text-slate-400 text-sm mb-2">Live at: <a href="https://vikashsaravanann.github.io/hearwise-child-health/" className="text-teal-400 underline">hearwise-child-health</a></p>
-                <p className="text-slate-400 text-sm">Stack: React 18 + Vite + TypeScript + Supabase + Tailwind + Framer Motion</p>
-              </div>
-              <div className="text-sm space-y-2 text-slate-300">
-                <p>👂 Hearing test with nature sounds (ocean, birds)</p>
-                <p>📱 Works on any Android smartphone</p>
-                <p>🏫 Designed for school teachers</p>
-                <p>🔬 5 levels per ear = 10 total checks</p>
-                <p>📄 Auto-generates PDF report</p>
-                <p>🤖 HearBot AI chatbot powered by Anthropic</p>
-                <p>📲 PWA — installable on Android, works offline</p>
-              </div>
+            {/* Sidebar footer — sign out */}
+            <div className="p-4 border-t border-white/8">
+              <button
+                onClick={() => { signOut(); navigate('/login'); }}
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-400 hover:bg-red-500/10 transition-all"
+              >
+                <span>🚪</span>
+                <span className="font-black text-xs uppercase tracking-widest">SIGN OUT</span>
+              </button>
             </div>
           </div>
-        </motion.section>
+        </motion.aside>
+      </>
 
-        {/* 3 — LIVE PLATFORM STATISTICS */}
-        <motion.section initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={ANIM_VIEWPORT} transition={{ duration: 0.6 }}>
-          <SectionHeader num="1" title="Live Platform Statistics" sub="Real-time data pulled from Supabase — refreshes on every page load" />
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {[
-              { label: "Children Screened", value: data.stats.totalChildren, icon: "👂", color: "#0d9488" },
-              { label: "Schools Onboarded", value: data.stats.totalSchools, icon: "🏫", color: "#3b82f6" },
-              { label: "Overall Pass Rate", value: data.stats.passRate + "%", icon: "✅", color: "#22c55e" },
-              { label: "Refer Rate", value: data.stats.referRate + "%", icon: "⚠️", color: "#f59e0b" },
-              { label: "Screened Today", value: data.stats.todayCount, icon: "📅", color: "#8b5cf6" },
-              { label: "Registered Users", value: data.stats.totalUsers, icon: "👤", color: "#ec4899" }
-            ].map((stat, i) => (
-              <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={ANIM_VIEWPORT} transition={{ delay: i * 0.08 }} className="relative bg-white/5 border border-white/10 p-5 rounded-2xl overflow-hidden group hover:-translate-y-1 transition-transform cursor-default">
-                <div className="absolute -top-4 -right-4 w-16 h-16 rounded-full opacity-20 blur-2xl" style={{ backgroundColor: stat.color }} />
-                <div className="text-2xl mb-2">{stat.icon}</div>
-                <div className="text-2xl sm:text-3xl font-bold text-white mb-1" style={{ fontFamily: "'Syne', sans-serif" }}>{stat.value}</div>
-                <div className="text-xs text-slate-400">{stat.label}</div>
-                <div className="absolute top-3 right-3 text-[9px] font-bold text-emerald-400 bg-emerald-400/10 px-1.5 py-0.5 rounded-full">↑ Live Data</div>
-              </motion.div>
-            ))}
+      {/* ── MAIN CONTENT ──────────────────────────── */}
+      <main className="flex-1 overflow-y-auto min-h-screen">
+
+        {/* Top bar */}
+        <div className="sticky top-0 z-30 bg-[#020817]/90 backdrop-blur-xl border-b border-white/8 px-4 sm:px-8 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            {/* Mobile sidebar toggle */}
+            <button
+              onClick={() => setSidebarOpen(o => !o)}
+              className="lg:hidden w-9 h-9 rounded-xl border border-white/15 bg-white/5 flex items-center justify-center text-slate-400"
+            >
+              ☰
+            </button>
+            <div>
+              <h1 className="text-white font-black text-base sm:text-lg uppercase tracking-widest">
+                {SIDEBAR_TABS.find(t => t.id === activeTab)?.label} DASHBOARD
+              </h1>
+              <p className="text-slate-600 text-[10px] uppercase tracking-widest">
+                HEARWISE TECHNOLOGIES · ADMIN PANEL
+              </p>
+            </div>
           </div>
-        </motion.section>
 
-        {/* 4 — USER LOGIN ACTIVITY TABLE */}
-        <motion.section initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={ANIM_VIEWPORT} transition={{ duration: 0.6 }} style={SECTION_STYLE}>
-          <SectionHeader num="2" title="User Login Activity" sub="Every user who has logged into HearWise — their email, login method, and last active time" />
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm text-left">
-              <thead>
-                <tr className="border-b border-white/10 text-slate-500 uppercase tracking-wider text-[11px]">
-                  <th className="px-4 py-3">Avatar</th>
-                  <th className="px-4 py-3">Full Name</th>
-                  <th className="px-4 py-3">Email / Phone</th>
-                  <th className="px-4 py-3">Login Method</th>
-                  <th className="px-4 py-3">Login Time</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/5">
-                {data.loginLogs.length === 0 && (
-                  <tr><td colSpan={5} className="py-8 text-center text-slate-500">No login activity yet.</td></tr>
-                )}
-                {data.loginLogs.map(log => (
-                  <tr key={log.id} className="hover:bg-teal-500/5 transition-colors">
-                    <td className="px-4 py-3">
-                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center font-bold text-white text-xs">
-                        {log.email?.charAt(0).toUpperCase() || 'U'}
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 text-white font-medium">{log.full_name || 'Anonymous'}</td>
-                    <td className="px-4 py-3 text-slate-300">{log.email || log.phone_number}</td>
-                    <td className="px-4 py-3">
-                      {log.login_method === 'google' && <span className="px-2.5 py-1 rounded-full bg-blue-500/20 text-blue-400 text-xs font-semibold">🔵 Google</span>}
-                      {log.login_method === 'email_otp' && <span className="px-2.5 py-1 rounded-full bg-teal-500/20 text-teal-400 text-xs font-semibold">📧 Email OTP</span>}
-                      {log.login_method === 'phone_otp' && <span className="px-2.5 py-1 rounded-full bg-green-500/20 text-green-400 text-xs font-semibold">📱 Phone OTP</span>}
-                    </td>
-                    <td className="px-4 py-3 text-slate-400 text-xs">{new Date(log.created_at).toLocaleString()}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          {/* Admin profile chip */}
+          <div className="flex items-center gap-3">
+            <div className="hidden sm:block text-right">
+              <div className="text-white font-black text-xs uppercase tracking-widest">VIKASH SARAVANAN</div>
+              <div className="text-teal-400 text-[10px] uppercase tracking-widest">FOUNDER & CEO</div>
+            </div>
+            <div className="w-9 h-9 rounded-full overflow-hidden border-2 border-teal-400/50">
+              <img
+                src={`${import.meta.env.BASE_URL}profile4.jpeg`}
+                alt="Vikash"
+                className="w-full h-full object-cover"
+                onError={e => { (e.target as HTMLImageElement).src = `${import.meta.env.BASE_URL}owl-mascot.png`; }}
+              />
+            </div>
           </div>
-        </motion.section>
+        </div>
 
-        {/* 5 — HEARING TEST RECORDS */}
-        <motion.section initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={ANIM_VIEWPORT} transition={{ duration: 0.6 }}>
-          <SectionHeader num="3" title="Hearing Test Records" sub="Every child screened — teacher name, student details, district, results per ear" />
-          <div className="space-y-3">
-            {data.screenings.length === 0 && (
-              <div className="p-6 sm:p-8 text-center text-slate-500 bg-white/5 rounded-xl border border-white/10">No hearing tests conducted yet.</div>
-            )}
-            {data.screenings.map(s => (
-              <div key={s.id} className="bg-white/5 border border-white/10 rounded-xl overflow-hidden cursor-pointer" onClick={() => setExpandedRowId(expandedRowId === s.id ? null : s.id)}>
-                <div className="px-6 py-4 flex items-center justify-between hover:bg-white/5">
-                  <div className="flex items-center gap-4">
-                    <span className="text-2xl">🧒</span>
-                    <div>
-                      <p className="text-white font-bold">{s.child_name}</p>
-                      <p className="text-xs text-slate-400">{s.child_age} yrs · Grade {s.child_grade} · {s.school_name}, {s.district}</p>
+        {/* ── TAB: OVERVIEW ──────────────────────── */}
+        <AnimatePresence mode="wait">
+          {activeTab === 'overview' && (
+            <motion.div
+              key="overview"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.4 }}
+              className="p-4 sm:p-8 space-y-8"
+            >
+              {/* Welcome banner */}
+              <RevealSection>
+                <div className="relative rounded-3xl overflow-hidden border border-teal-500/20 bg-gradient-to-br from-teal-500/10 to-cyan-500/5 p-6 sm:p-10">
+                  <div className="absolute top-0 right-0 w-64 h-64 bg-teal-500/10 rounded-full blur-[80px] pointer-events-none" />
+                  <div className="relative z-10">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-teal-500/30 bg-teal-500/10 text-teal-400 text-[10px] font-black uppercase tracking-widest mb-4">
+                      <span className="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse" />
+                      ADMIN ACCESS · SECURE
                     </div>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    {s.overall_result === 'pass' ? (
-                      <span className="px-3 py-1 rounded-full bg-green-500/20 text-green-400 text-xs font-bold flex items-center gap-1"><CheckCircle className="w-3 h-3"/> PASS</span>
-                    ) : (
-                      <span className="px-3 py-1 rounded-full bg-amber-500/20 text-amber-400 text-xs font-bold flex items-center gap-1"><AlertTriangle className="w-3 h-3"/> REFER</span>
-                    )}
-                    <span className="text-xs text-slate-500">{new Date(s.created_at).toLocaleDateString()}</span>
+                    <h2 className="text-2xl sm:text-4xl font-black text-white uppercase tracking-wider mb-2">
+                      WELCOME BACK,{' '}
+                      <span className="bg-gradient-to-r from-teal-400 to-cyan-400 bg-clip-text text-transparent">
+                        VIKASH
+                      </span>
+                    </h2>
+                    <p className="text-slate-400 text-sm sm:text-base uppercase tracking-widest">
+                      {now.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).toUpperCase()}
+                    </p>
                   </div>
                 </div>
-                {expandedRowId === s.id && (
-                  <motion.div initial={{ height: 0 }} animate={{ height: 'auto' }} className="px-6 py-4 border-t border-white/10 bg-black/20 flex flex-col md:flex-row gap-6 sm:p-8">
-                    <div className="flex-1 space-y-2 text-sm text-slate-300">
-                      <p><strong className="text-white">Location:</strong> {s.location || s.district}</p>
-                      <p><strong className="text-white">Teacher:</strong> {s.teacher_name} ({s.teacher_email})</p>
-                      <div className="pt-2">
-                        <p className="text-xs uppercase text-slate-500 font-bold mb-1">Left Ear Results</p>
-                        <div className="flex gap-2">
-                          {(s.left_ear_results || Array(5).fill('pass')).map((r: string, i: number) => (
-                            <span key={i} className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold ${r === 'pass' ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-red-500/20 text-red-400 border border-red-500/30'}`}>L{i+1}</span>
-                          ))}
-                        </div>
+              </RevealSection>
+
+              {/* Stats grid */}
+              <RevealSection delay={0.1}>
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                  {[
+                    { label: 'CHILDREN SCREENED', value: childrenCount, ref: childrenRef, suffix: '', color: 'text-teal-400', border: 'border-teal-500/20', bg: 'bg-teal-500/5', icon: '👂' },
+                    { label: 'SCHOOLS ONBOARDED', value: schoolsCount, ref: schoolsRef, suffix: '+', color: 'text-cyan-400', border: 'border-cyan-500/20', bg: 'bg-cyan-500/5', icon: '🏫' },
+                    { label: 'ISSUES DETECTED', value: detectedCount, ref: detectedRef, suffix: '', color: 'text-orange-400', border: 'border-orange-500/20', bg: 'bg-orange-500/5', icon: '⚠️' },
+                    { label: 'CERTIFICATIONS', value: certsCount, ref: certsRef, suffix: '+', color: 'text-emerald-400', border: 'border-emerald-500/20', bg: 'bg-emerald-500/5', icon: '🏆' },
+                  ].map((stat, i) => (
+                    <motion.div
+                      key={stat.label}
+                      ref={stat.ref}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: i * 0.1 }}
+                      whileHover={{ y: -4, scale: 1.02 }}
+                      className={`rounded-2xl border ${stat.border} ${stat.bg} p-5 sm:p-6 hover:shadow-lg transition-all cursor-default`}
+                    >
+                      <div className="text-2xl mb-2">{stat.icon}</div>
+                      <div className={`text-2xl sm:text-3xl font-black ${stat.color} mb-1`}>
+                        {stat.value.toLocaleString()}{stat.suffix}
                       </div>
-                      <div className="pt-2">
-                        <p className="text-xs uppercase text-slate-500 font-bold mb-1">Right Ear Results</p>
-                        <div className="flex gap-2">
-                          {(s.right_ear_results || Array(5).fill('pass')).map((r: string, i: number) => (
-                            <span key={i} className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold ${r === 'pass' ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-red-500/20 text-red-400 border border-red-500/30'}`}>L{i+1}</span>
-                          ))}
+                      <div className="text-slate-500 text-[9px] sm:text-[10px] uppercase tracking-widest">{stat.label}</div>
+                    </motion.div>
+                  ))}
+                </div>
+              </RevealSection>
+
+              {/* Progress / skill bars — portfolio style */}
+              <RevealSection delay={0.2}>
+                <div className="rounded-2xl border border-white/8 bg-white/3 p-6 sm:p-8">
+                  <h3 className="text-white font-black text-sm uppercase tracking-widest mb-6">
+                    PLATFORM HEALTH METRICS
+                  </h3>
+                  <div className="space-y-5">
+                    {[
+                      { label: 'TEST COMPLETION RATE', value: 94, color: 'from-teal-500 to-cyan-400' },
+                      { label: 'PLATFORM UPTIME', value: 99, color: 'from-emerald-500 to-teal-400' },
+                      { label: 'MOBILE USAGE', value: 87, color: 'from-cyan-500 to-blue-400' },
+                      { label: 'TEACHER SATISFACTION', value: 91, color: 'from-teal-400 to-emerald-400' },
+                    ].map((metric, i) => (
+                      <SkillBar key={metric.label} {...metric} delay={i * 0.1} />
+                    ))}
+                  </div>
+                </div>
+              </RevealSection>
+
+              {/* Recent activity */}
+              <RevealSection delay={0.3}>
+                <div className="rounded-2xl border border-white/8 bg-white/3 p-6 sm:p-8">
+                  <h3 className="text-white font-black text-sm uppercase tracking-widest mb-6">RECENT ACTIVITY</h3>
+                  <div className="space-y-3">
+                    {[
+                      { time: '09:42 AM', event: 'NEW SCHOOL REGISTERED', detail: 'PANCHAYAT UNION MIDDLE SCHOOL, KARUR', type: 'success' },
+                      { time: '08:15 AM', event: 'HEARING TEST COMPLETED', detail: '24 CHILDREN SCREENED — GRADE 3', type: 'info' },
+                      { time: 'YESTERDAY', event: 'ISSUE DETECTED', detail: '3 CHILDREN REFERRED TO AUDIOLOGIST', type: 'warning' },
+                      { time: 'YESTERDAY', event: 'REPORT DOWNLOADED', detail: 'PARENT PDF REPORT — RAJAN S.', type: 'info' },
+                    ].map((item, i) => (
+                      <motion.div
+                        key={i}
+                        initial={{ opacity: 0, x: -20 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: i * 0.08 }}
+                        className="flex items-start gap-4 p-4 rounded-xl bg-white/3 border border-white/5"
+                      >
+                        <div className={`w-2 h-2 rounded-full flex-shrink-0 mt-1.5 ${
+                          item.type === 'success' ? 'bg-teal-400' :
+                          item.type === 'warning' ? 'bg-orange-400' : 'bg-blue-400'
+                        }`} />
+                        <div className="flex-1 min-w-0">
+                          <div className="text-white font-black text-xs uppercase tracking-wider">{item.event}</div>
+                          <div className="text-slate-500 text-[10px] uppercase tracking-wider mt-0.5">{item.detail}</div>
                         </div>
+                        <div className="text-slate-600 text-[10px] uppercase tracking-widest flex-shrink-0">{item.time}</div>
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
+              </RevealSection>
+            </motion.div>
+          )}
+
+          {/* ── TAB: FOUNDER ─────────────────────── */}
+          {activeTab === 'founder' && (
+            <motion.div
+              key="founder"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.4 }}
+              className="p-4 sm:p-8 space-y-8"
+            >
+              <RevealSection>
+                {/* Founder hero card — vertical image layout like portfolio */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+                  {/* Vertical profile image card */}
+                  <motion.div
+                    whileHover={{ scale: 1.02 }}
+                    className="lg:col-span-1 rounded-3xl overflow-hidden border border-teal-500/30 bg-gradient-to-b from-teal-500/10 to-transparent relative"
+                    style={{ minHeight: '420px' }}
+                  >
+                    <img
+                      src={`${import.meta.env.BASE_URL}profile4.jpeg`}
+                      alt="Vikash Saravanan — Founder & CEO"
+                      className="w-full h-full object-cover object-top absolute inset-0"
+                      onError={e => {
+                        (e.target as HTMLImageElement).src = `${import.meta.env.BASE_URL}owl-mascot.png`;
+                        (e.target as HTMLImageElement).className = 'w-full h-full object-contain p-8';
+                      }}
+                    />
+                    {/* Overlay gradient at bottom */}
+                    <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black/80 to-transparent" />
+                    <div className="absolute bottom-0 left-0 right-0 p-5">
+                      <div className="inline-flex px-2 py-1 rounded-full bg-teal-400/90 text-black text-[10px] font-black uppercase tracking-widest mb-1">
+                        FOUNDER & CEO
                       </div>
                     </div>
                   </motion.div>
-                )}
-              </div>
-            ))}
-          </div>
-        </motion.section>
 
-        {/* 6 — VIDEO VIEWS */}
-        <motion.section initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={ANIM_VIEWPORT} transition={{ duration: 0.6 }} style={SECTION_STYLE}>
-          <SectionHeader num="4" title="Video Engagement Tracker" sub="Track which explainer videos users are watching" />
-          <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:p-6">
-            {data.videoViews.length === 0 && <p className="text-slate-500 col-span-3">No video view data yet.</p>}
-            {data.videoViews.map((v, i) => (
-              <div key={i} className="bg-white/5 border border-white/10 p-5 rounded-2xl">
-                <PlayCircle className="w-8 h-8 text-teal-400 mb-3" />
-                <h3 className="text-white font-bold mb-2 line-clamp-2">{v.title}</h3>
-                <div className="text-2xl sm:text-3xl font-bold text-teal-400 mb-4" style={{ fontFamily: "'Syne', sans-serif" }}>{v.count} Views</div>
-                <div className="space-y-1">
-                  <p className="text-xs text-slate-500 font-bold uppercase mb-2">Recent Viewers:</p>
-                  {v.emails.slice(0,5).map((e: string, j: number) => <p key={j} className="text-xs text-slate-300 truncate">{e}</p>)}
-                  {v.emails.length > 5 && <p className="text-xs text-teal-400">+{v.emails.length - 5} more</p>}
-                </div>
-              </div>
-            ))}
-          </div>
-        </motion.section>
+                  {/* Info card */}
+                  <div className="lg:col-span-2 space-y-4">
+                    <div className="rounded-2xl border border-white/10 bg-white/3 p-6 sm:p-8">
+                      <h2 className="text-3xl sm:text-4xl font-black text-white uppercase tracking-wider mb-1">
+                        VIKASH SARAVANAN
+                      </h2>
+                      <p className="text-teal-400 font-black text-sm uppercase tracking-widest mb-5">
+                        AI ENGINEER · PROMPT ENGINEER · WEB DEVELOPER
+                      </p>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5">
+                        {[
+                          { icon: '📍', label: 'LOCATION', value: 'COIMBATORE, TAMIL NADU, INDIA' },
+                          { icon: '🎓', label: 'EDUCATION', value: 'B.TECH AI & DATA SCIENCE — CLASS OF 2029' },
+                          { icon: '🏛️', label: 'COLLEGE', value: 'RATHINAM TECHNICAL CAMPUS' },
+                          { icon: '🏠', label: 'NATIVE', value: 'KARUR, TAMIL NADU' },
+                          { icon: '💼', label: 'STATUS', value: 'OPEN FOR REMOTE INTERNSHIPS' },
+                          { icon: '🚀', label: 'SPECIALIZATION', value: 'ENTERPRISE AI AUTOMATION' },
+                        ].map(item => (
+                          <div key={item.label} className="flex items-start gap-3 p-3 rounded-xl bg-white/3 border border-white/5">
+                            <span className="text-lg flex-shrink-0">{item.icon}</span>
+                            <div>
+                              <div className="text-slate-500 text-[9px] uppercase tracking-widest">{item.label}</div>
+                              <div className="text-white font-bold text-xs uppercase tracking-wider mt-0.5">{item.value}</div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      <p className="text-slate-400 text-sm leading-relaxed uppercase">
+                        Ambitious B.Tech AI & Data Science undergraduate building enterprise-grade AI automation systems.
+                        Hackathon finalist at Meta PyTorch OpenEnv × Scaler. 15+ professional certifications.
+                        3+ production-ready live projects. Bridging the gap between advanced machine learning and
+                        full-stack software architecture.
+                      </p>
+                    </div>
 
-        {/* 7 & 8 — TIMELINE & CHARTS */}
-        <div className="grid grid-cols-1 lg:grid-cols-1 sm:grid-cols-2 gap-6 sm:p-8">
-          <motion.section initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={ANIM_VIEWPORT} transition={{ duration: 0.6 }} style={SECTION_STYLE} className="h-[600px] flex flex-col">
-            <SectionHeader num="5" title="Recent Platform Activity" sub="A live feed of everything happening on HearWise right now" />
-            <div className="flex-1 overflow-y-auto space-y-6 pr-2">
-              {data.timelineEvents.map((ev, i) => (
-                <div key={ev.id} className="flex gap-4 relative">
-                  <div className="absolute left-[11px] top-5 sm:p-6 bottom-[-24px] w-px bg-white/10" />
-                  <div className={`w-6 h-6 rounded-full flex items-center justify-center z-10 flex-shrink-0 ${ev.type === 'login' ? 'bg-blue-500/20 text-blue-400' : 'bg-purple-500/20 text-purple-400'}`}>
-                    {ev.type === 'login' ? <User className="w-3 h-3" /> : <Ear className="w-3 h-3" />}
+                    {/* Achievement badges */}
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                      {[
+                        { icon: '🏆', title: 'HACKATHON', subtitle: 'FINALIST', detail: 'META PYTORCH OPENENV' },
+                        { icon: '📜', title: '15+', subtitle: 'CERTIFICATIONS', detail: 'PROFESSIONAL CERTS' },
+                        { icon: '⚡', title: '3+', subtitle: 'LIVE PROJECTS', detail: 'PRODUCTION READY' },
+                        { icon: '🎯', title: 'AI FOCUS', subtitle: 'AUTOMATION', detail: 'N8N + LLM AGENTS' },
+                      ].map(badge => (
+                        <div key={badge.title} className="p-4 rounded-2xl border border-white/8 bg-white/3 text-center hover:border-teal-500/30 hover:bg-teal-500/5 transition-all">
+                          <div className="text-2xl mb-1">{badge.icon}</div>
+                          <div className="text-white font-black text-sm uppercase">{badge.title}</div>
+                          <div className="text-teal-400 text-[10px] font-black uppercase tracking-widest">{badge.subtitle}</div>
+                          <div className="text-slate-600 text-[9px] uppercase tracking-wider mt-0.5">{badge.detail}</div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-sm text-slate-300">
-                      {ev.type === 'login' ? (
-                        <span><strong className="text-white">{ev.data.email}</strong> logged in via {ev.data.login_method}</span>
-                      ) : (
-                        <span>Hearing test {ev.data.overall_result} for <strong className="text-white">{ev.data.child_name}</strong> at {ev.data.school_name}</span>
-                      )}
-                    </p>
-                    <p className="text-xs text-slate-500 mt-1">{ev.date.toLocaleString()}</p>
+                </div>
+              </RevealSection>
+
+              {/* Journey timeline */}
+              <RevealSection delay={0.15}>
+                <div className="rounded-2xl border border-white/8 bg-white/3 p-6 sm:p-8">
+                  <h3 className="text-white font-black text-sm uppercase tracking-widest mb-8">MY JOURNEY</h3>
+                  <div className="space-y-6">
+                    {[
+                      { date: 'JANUARY 2025', title: 'ENTERPRISE AI AUTOMATION', desc: 'Began intensive focus on building complex n8n workflows and autonomous AI agents for real-world enterprise scaling.', color: 'bg-teal-400' },
+                      { date: 'AUGUST 2025', title: 'CERTIFICATIONS & GROWTH', desc: 'Completed 15+ major certifications in AI engineering, network infrastructure, cybersecurity, and data science from Microsoft, LinkedIn, Cisco, and IIT Bombay.', color: 'bg-cyan-400' },
+                      { date: 'DECEMBER 2025', title: 'DESIGN THINKING — IIT BOMBAY', desc: 'Certified in Design Thinking, applying human-centric principles to AI solution architecture and product development.', color: 'bg-blue-400' },
+                      { date: '2026 — ONGOING', title: 'PROMPT ENGINEERING + HEARWISE', desc: 'Crafting sophisticated LLM prompts and building HearWise — India\'s first school hearing screening platform. Building in public at @startupwithvikash.', color: 'bg-emerald-400' },
+                    ].map((item, i) => (
+                      <motion.div
+                        key={item.date}
+                        initial={{ opacity: 0, x: -20 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: i * 0.1 }}
+                        className="flex gap-5"
+                      >
+                        <div className="flex flex-col items-center flex-shrink-0">
+                          <div className={`w-3 h-3 rounded-full ${item.color} shadow-lg`} />
+                          {i < 3 && <div className="w-px flex-1 bg-white/10 mt-2" />}
+                        </div>
+                        <div className="pb-6">
+                          <div className="text-teal-400 text-[10px] font-black uppercase tracking-widest mb-1">{item.date}</div>
+                          <div className="text-white font-black text-sm uppercase tracking-wider mb-1">{item.title}</div>
+                          <div className="text-slate-400 text-xs leading-relaxed uppercase">{item.desc}</div>
+                        </div>
+                      </motion.div>
+                    ))}
                   </div>
                 </div>
-              ))}
-            </div>
-          </motion.section>
+              </RevealSection>
 
-          <motion.section initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={ANIM_VIEWPORT} transition={{ duration: 0.6 }} style={SECTION_STYLE}>
-            <SectionHeader num="6" title="Login Method Analytics" sub="How users choose to sign in" />
-            <div className="h-64 mb-8">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie data={data.loginChartData} cx="50%" cy="50%" innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="value">
-                    {data.loginChartData.map((entry, index) => <Cell key={`cell-${index}`} fill={entry.color} />)}
-                  </Pie>
-                  <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b' }} itemStyle={{ color: '#fff' }} />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {data.loginChartData.map(d => (
-                <div key={d.name} className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full" style={{ backgroundColor: d.color }} />
-                  <span className="text-sm text-slate-300">{d.name} ({d.value})</span>
+              {/* Skills */}
+              <RevealSection delay={0.2}>
+                <div className="rounded-2xl border border-white/8 bg-white/3 p-6 sm:p-8">
+                  <h3 className="text-white font-black text-sm uppercase tracking-widest mb-6">TECHNICAL SKILLS</h3>
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    {[
+                      { skill: 'PYTHON', level: 85, color: 'from-teal-500 to-cyan-400' },
+                      { skill: 'SQL', level: 80, color: 'from-cyan-500 to-blue-400' },
+                      { skill: 'HTML / CSS', level: 90, color: 'from-blue-500 to-teal-400' },
+                      { skill: 'JAVASCRIPT / REACT', level: 85, color: 'from-teal-400 to-emerald-400' },
+                      { skill: 'SUPABASE', level: 75, color: 'from-emerald-500 to-teal-400' },
+                      { skill: 'N8N AUTOMATION', level: 88, color: 'from-cyan-400 to-teal-500' },
+                    ].map((s, i) => <SkillBar key={s.skill} label={s.skill} value={s.level} color={s.color} delay={i * 0.08} />)}
+                  </div>
                 </div>
-              ))}
-            </div>
-          </motion.section>
-        </div>
+              </RevealSection>
+            </motion.div>
+          )}
 
-        {/* 10 — WEBSITE ERROR MONITOR */}
-        <motion.section initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={ANIM_VIEWPORT} transition={{ duration: 0.6 }} style={SECTION_STYLE}>
-          <SectionHeader num="7" title="Website Health & Error Monitor" sub="Live detection of errors, warnings, and issues" />
-          
-          <div className="mb-6"><h3 className="text-white font-bold mb-3 uppercase text-sm tracking-widest text-slate-400">Database Tables Health</h3>
-            <div className="grid grid-cols-2 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {data.healthChecks.map((c, i) => (
-                <div key={i} className={`p-4 rounded-xl border ${c.status === 'ok' ? 'bg-green-500/10 border-green-500/20 text-green-400' : 'bg-red-500/10 border-red-500/20 text-red-400'}`}>
-                  <div className="flex items-center gap-2 font-bold mb-1">{c.status === 'ok' ? <CheckCircle className="w-4 h-4"/> : <AlertTriangle className="w-4 h-4"/>} {c.name}</div>
-                  <div className="text-xs opacity-80">{c.message}</div>
-                </div>
-              ))}
-            </div>
-          </div>
+          {/* ── TAB: SOCIAL LINKS ────────────────── */}
+          {activeTab === 'links' && (
+            <motion.div
+              key="links"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.4 }}
+              className="p-4 sm:p-8 space-y-6"
+            >
+              <RevealSection>
+                <h2 className="text-2xl sm:text-3xl font-black text-white uppercase tracking-wider mb-2">
+                  SOCIAL & PROFESSIONAL LINKS
+                </h2>
+                <p className="text-slate-500 text-xs uppercase tracking-widest">ALL PLATFORMS — VIKASH SARAVANAN</p>
+              </RevealSection>
 
-          <div className="mb-8"><h3 className="text-white font-bold mb-3 uppercase text-sm tracking-widest text-slate-400">Environment Config</h3>
-            <div className="flex flex-wrap gap-3">
-              {data.envChecks.map(c => (
-                <div key={c.name} className={`px-3 py-1.5 rounded-lg text-xs font-bold ${c.value ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
-                  {c.name}: {c.value ? 'SET' : 'MISSING'}
-                </div>
-              ))}
-            </div>
-          </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
-          <div className="bg-teal-900/20 border border-teal-500/30 rounded-2xl p-5 sm:p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-white font-bold flex items-center gap-2">🤖 AI Fix Advisor</h3>
-              <button onClick={handleAskAi} disabled={aiLoading} className="px-4 py-2 bg-teal-500 hover:bg-teal-400 text-black font-bold rounded-lg text-sm disabled:opacity-50 transition-colors">
-                {aiLoading ? 'Analyzing...' : 'Ask AI for Help'}
-              </button>
-            </div>
-            {aiAdvice && (
-              <div className="p-4 bg-black/30 rounded-xl text-sm text-teal-100 whitespace-pre-wrap leading-relaxed border border-teal-500/20">
-                {aiAdvice}
+                {/* LinkedIn */}
+                <RevealSection delay={0.05}>
+                  <a href="https://linkedin.com/in/vikash-saravanan-j7528" target="_blank" rel="noopener noreferrer">
+                    <motion.div whileHover={{ y: -4, scale: 1.01 }} className="rounded-2xl border border-blue-500/30 bg-blue-500/5 hover:bg-blue-500/10 transition-all p-6 cursor-pointer h-full">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="w-10 h-10 rounded-xl bg-blue-500/20 border border-blue-500/30 flex items-center justify-center">
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="#3b82f6"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+                        </div>
+                        <div>
+                          <div className="text-blue-400 font-black text-sm uppercase tracking-widest">LINKEDIN</div>
+                          <div className="text-slate-500 text-[10px] uppercase tracking-wider">PROFESSIONAL NETWORK</div>
+                        </div>
+                      </div>
+                      <div className="text-white font-bold text-xs uppercase tracking-wide mb-2">VIKASH SARAVANAN</div>
+                      <p className="text-slate-400 text-xs leading-relaxed uppercase">
+                        B.Tech AI & Data Science student. Hackathon finalist at Meta PyTorch OpenEnv × Scaler.
+                        15+ professional certifications. Open for remote internships in AI engineering and web development.
+                        Building HearWise — India's first school hearing screening platform.
+                        Connect for AI/ML, React, and startup opportunities.
+                      </p>
+                      <div className="mt-4 text-blue-400 text-[10px] uppercase tracking-widest font-black">OPEN PROFILE →</div>
+                    </motion.div>
+                  </a>
+                </RevealSection>
+
+                {/* GitHub */}
+                <RevealSection delay={0.1}>
+                  <a href="https://github.com/vikashsaravanann" target="_blank" rel="noopener noreferrer">
+                    <motion.div whileHover={{ y: -4, scale: 1.01 }} className="rounded-2xl border border-white/15 bg-white/3 hover:bg-white/6 transition-all p-6 cursor-pointer h-full">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="w-10 h-10 rounded-xl bg-white/10 border border-white/15 flex items-center justify-center">
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                        </div>
+                        <div>
+                          <div className="text-white font-black text-sm uppercase tracking-widest">GITHUB</div>
+                          <div className="text-slate-500 text-[10px] uppercase tracking-wider">CODE REPOSITORIES</div>
+                        </div>
+                      </div>
+                      <div className="text-white font-bold text-xs uppercase tracking-wide mb-2">@VIKASHSARAVANANN</div>
+                      <p className="text-slate-400 text-xs leading-relaxed uppercase">
+                        Open source projects including HearWise (India's first school hearing screening platform),
+                        Traffic Vision AI (YOLOv8 adaptive traffic management), Meta PyTorch OpenEnv hackathon project,
+                        and personal portfolio. React + TypeScript + Supabase + Python ecosystem.
+                      </p>
+                      <div className="mt-4 text-slate-400 text-[10px] uppercase tracking-widest font-black">VIEW REPOSITORIES →</div>
+                    </motion.div>
+                  </a>
+                </RevealSection>
+
+                {/* Instagram */}
+                <RevealSection delay={0.15}>
+                  <a href="https://www.instagram.com/startupwithvikash/" target="_blank" rel="noopener noreferrer">
+                    <motion.div whileHover={{ y: -4, scale: 1.01 }} className="rounded-2xl border border-pink-500/30 bg-pink-500/5 hover:bg-pink-500/10 transition-all p-6 cursor-pointer h-full">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 border border-pink-500/30 flex items-center justify-center text-lg">
+                          📸
+                        </div>
+                        <div>
+                          <div className="text-pink-400 font-black text-sm uppercase tracking-widest">INSTAGRAM</div>
+                          <div className="text-slate-500 text-[10px] uppercase tracking-wider">BUILD IN PUBLIC</div>
+                        </div>
+                      </div>
+                      <div className="text-white font-bold text-xs uppercase tracking-wide mb-2">@STARTUPWITHVIKASH</div>
+                      <p className="text-slate-400 text-xs leading-relaxed uppercase">
+                        Documenting the engineering journey of building HearWise and other AI projects in public.
+                        Sharing how I use Cursor AI, Gemini, Perplexity, n8n, and Gamma to ship production-ready
+                        code rapidly. Behind-the-scenes of building India's first school hearing screening startup.
+                        Follow for startup building, AI tools, and tech entrepreneur content.
+                      </p>
+                      <div className="mt-4 text-pink-400 text-[10px] uppercase tracking-widest font-black">FOLLOW →</div>
+                    </motion.div>
+                  </a>
+                </RevealSection>
+
+                {/* Portfolio */}
+                <RevealSection delay={0.2}>
+                  <a href="https://vikashsaravanann.github.io/Portfolio_Information/" target="_blank" rel="noopener noreferrer">
+                    <motion.div whileHover={{ y: -4, scale: 1.01 }} className="rounded-2xl border border-teal-500/30 bg-teal-500/5 hover:bg-teal-500/10 transition-all p-6 cursor-pointer h-full">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="w-10 h-10 rounded-xl bg-teal-500/20 border border-teal-500/30 flex items-center justify-center text-lg">🌐</div>
+                        <div>
+                          <div className="text-teal-400 font-black text-sm uppercase tracking-widest">PORTFOLIO</div>
+                          <div className="text-slate-500 text-[10px] uppercase tracking-wider">FULL PROFILE</div>
+                        </div>
+                      </div>
+                      <div className="text-white font-bold text-xs uppercase tracking-wide mb-2">VIKASH SARAVANAN — PORTFOLIO</div>
+                      <p className="text-slate-400 text-xs leading-relaxed uppercase">
+                        Complete professional portfolio — projects (HearWise, Traffic Vision AI, Meta PyTorch OpenEnv),
+                        15+ certifications (Microsoft, LinkedIn, Cisco, IIT Bombay, freeCodeCamp), technical skills
+                        (Python, React, TypeScript, Supabase, n8n, YOLOv8), personal gallery, journey timeline,
+                        and contact. Resume available for download.
+                      </p>
+                      <div className="mt-4 text-teal-400 text-[10px] uppercase tracking-widest font-black">VISIT PORTFOLIO →</div>
+                    </motion.div>
+                  </a>
+                </RevealSection>
+
               </div>
-            )}
-            {!aiAdvice && <p className="text-slate-400 text-sm">Click the button to send any detected errors above to Anthropic Claude for automated fix instructions.</p>}
-          </div>
-        </motion.section>
 
-        {/* 11 — GITHUB COMMITS */}
-        <motion.section initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={ANIM_VIEWPORT} transition={{ duration: 0.6 }} style={SECTION_STYLE}>
-          <SectionHeader num="8" title="Latest GitHub Activity" sub="Most recent code updates to the HearWise repository" />
-          <div className="space-y-4">
-            {data.githubCommits.map((c: any) => (
-              <a key={c.sha} href={c.html_url} target="_blank" className="block p-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-colors">
-                <div className="flex items-start gap-4">
-                  <GitCommit className="w-5 h-5 text-teal-400 mt-0.5" />
-                  <div className="flex-1">
-                    <p className="text-white font-bold mb-1">{c.commit.message}</p>
-                    <p className="text-xs text-slate-400">Author: {c.commit.author.name} · {new Date(c.commit.author.date).toLocaleString()}</p>
+              {/* GDC / Centre of Excellence section */}
+              <RevealSection delay={0.25}>
+                <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-6 sm:p-8">
+                  <h3 className="text-emerald-400 font-black text-sm uppercase tracking-widest mb-4">
+                    🏛 GDC / CENTRE OF EXCELLENCE — AI SKILLS HUB
+                  </h3>
+                  <p className="text-slate-400 text-sm leading-relaxed mb-4 uppercase">
+                    Secured institutional commitment to the AI Skills Hub at Rathinam Technical Campus —
+                    Centre of Excellence for AI and Data Science. Premium access to enterprise-grade AI tooling,
+                    mentorship from industry professionals, and collaborative research environments.
+                    Building the next generation of AI engineers from Tamil Nadu.
+                  </p>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    {[
+                      'AI SKILLS HUB ACCESS',
+                      'ENTERPRISE AI TOOLING',
+                      'INDUSTRY MENTORSHIP',
+                      'RESEARCH COLLABORATION',
+                      'HACKATHON NETWORK',
+                      'STARTUP INCUBATION',
+                    ].map(item => (
+                      <div key={item} className="flex items-center gap-2 text-slate-300 text-[10px] uppercase tracking-wider">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 flex-shrink-0" />
+                        {item}
+                      </div>
+                    ))}
                   </div>
-                  <span className="px-2 py-1 bg-black/40 text-slate-400 rounded text-xs font-mono">{c.sha.substring(0,7)}</span>
                 </div>
-              </a>
-            ))}
-          </div>
-        </motion.section>
+              </RevealSection>
+            </motion.div>
+          )}
 
+          {/* Other tabs — analytics, platform, settings — add placeholder for now */}
+          {['analytics', 'platform', 'settings'].includes(activeTab) && (
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              className="p-4 sm:p-8 flex items-center justify-center min-h-[60vh]"
+            >
+              <div className="text-center">
+                <div className="text-6xl mb-4">{SIDEBAR_TABS.find(t => t.id === activeTab)?.icon}</div>
+                <h2 className="text-white font-black text-xl uppercase tracking-widest mb-2">
+                  {SIDEBAR_TABS.find(t => t.id === activeTab)?.label}
+                </h2>
+                <p className="text-slate-500 text-sm uppercase tracking-widest">COMING SOON</p>
+              </div>
+            </motion.div>
+          )}
+
+        </AnimatePresence>
+      </main>
+    </div>
+  );
+}
+
+// ─── Skill Bar component ──────────────────────────────────
+function SkillBar({ label, value, color, delay = 0 }: { label: string; value: number; color: string; delay?: number }) {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true });
+  return (
+    <div ref={ref} className="space-y-2">
+      <div className="flex items-center justify-between">
+        <span className="text-slate-300 font-bold text-xs uppercase tracking-widest">{label}</span>
+        <span className="text-teal-400 font-black text-xs">{value}%</span>
+      </div>
+      <div className="h-1.5 rounded-full bg-white/8 overflow-hidden">
+        <motion.div
+          className={`h-full rounded-full bg-gradient-to-r ${color}`}
+          initial={{ width: 0 }}
+          animate={inView ? { width: `${value}%` } : {}}
+          transition={{ duration: 1.2, delay, ease: [0.25, 0.46, 0.45, 0.94] }}
+        />
       </div>
     </div>
   );

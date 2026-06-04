@@ -10,10 +10,10 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { RequireAuth, RequireAdmin } from "@/components/ProtectedRoute";
 import OfflineBadge from "@/components/OfflineBadge";
 import SWUpdatePrompt from "@/components/SWUpdatePrompt";
-import LanguageToggle from "@/components/LanguageToggle";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import HearBot from "@/components/HearBot";
-import MobileBottomNav from "@/components/MobileBottomNav";
+import HearBot from './components/HearBot';
+import LanguageSwitcher from './components/LanguageSwitcher';
+import MobileBottomNav from './components/MobileBottomNav';
 import Loader from "@/components/Loader";
 import LandingPage from "./pages/LandingPage";
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
@@ -121,8 +121,8 @@ const App = () => (
           <Toaster />
           <Sonner />
           <OfflineBadge />
-          <LanguageToggle />
           <HashRouter>
+            <LanguageSwitcher />
             <MobileBottomNav />
             <HearBot />
             <main className="pb-20 lg:pb-0">
