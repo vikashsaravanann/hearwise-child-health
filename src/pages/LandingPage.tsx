@@ -227,7 +227,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-6">
           
           {/* Hero Section */}
-          <section className="grid lg:grid-cols-1 sm:grid-cols-2 gap-16 items-center">
+          <section className="grid lg:grid-cols-2 sm:grid-cols-2 gap-16 items-center">
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
