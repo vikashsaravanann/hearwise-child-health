@@ -5,36 +5,14 @@ import { useAuth } from '@/contexts/AuthContext';
 import { t } from '@/lib/i18n';
 import { getParentSummary } from '@/lib/clinicalSafety';
 import type { TestResult } from '@/lib/testEngine';
-import AnimatedOwl from '@/components/owl/AnimatedOwl';
 import LanguageToggle from '@/components/LanguageToggle';
 import { Button } from '@/components/ui/button';
-import { Share2, ArrowRight, UserRoundPlus, Home, Volume2, ShieldCheck, HeartPulse, Hospital } from 'lucide-react';
-import OceanBackground from '@/components/OceanBackground';
+import { Share2, ArrowRight, UserRoundPlus, Home, ShieldCheck, Hospital } from 'lucide-react';
 import DownloadReportButton from '@/components/DownloadReportButton';
 import type { ReportData } from '@/utils/generateReport';
 const freqs = ['500', '1000', '2000', '4000'] as const;
 
-function FreqBar({ label, passed }: { label: string; passed: boolean }) {
-  return (
-    <div className="flex items-center gap-3 w-full bg-white/40 p-3 rounded-xl border border-white/30 backdrop-blur-sm transition-all duration-300 hover:bg-white/60">
-      <span className="w-16 text-xs font-black text-blue-900/60 tracking-wider">{label} Hz</span>
-      <div className="flex-1 h-3 rounded-full bg-blue-100/50 overflow-hidden border border-blue-200">
-        <div className={`h-full rounded-full transition-all duration-1000 ${
-          passed 
-            ? 'bg-gradient-to-r from-green-400 to-emerald-500 shadow-[0_0_8px_rgba(52,211,153,0.4)]' 
-            : 'bg-gradient-to-r from-rose-400 to-red-500'
-        }`} style={{ width: '100%' }} />
-      </div>
-      <span className={`text-xs font-black px-2 py-0.5 rounded-full ${
-        passed 
-          ? 'bg-emerald-100 text-emerald-700' 
-          : 'bg-rose-100 text-rose-700'
-      }`}>
-        {passed ? 'PASS' : 'REFER'}
-      </span>
-    </div>
-  );
-}
+
 
 export default function ResultsPage() {
   const navigate = useNavigate();
@@ -44,33 +22,12 @@ export default function ResultsPage() {
   const state = location.state as { results?: TestResult } | null;
   const results = state?.results;
 
-  const [confetti, setConfetti] = useState<Array<{ id: number; left: number; delay: number; symbol: string }>>([]);
 
-  useEffect(() => {
-    if (results?.overall === 'normal') {
-      const symbols = ['🎉', '⭐', '🐚', '🐠', '🌊'];
-      setConfetti(
-        Array.from({ length: 20 }, (_, i) => ({
-          id: i,
-          left: Math.random() * 100,
-          delay: Math.random() * 0.8,
-          symbol: symbols[Math.floor(Math.random() * symbols.length)],
-        }))
-      );
-    }
-  }, [results]);
 
   if (!results || !student) {
     navigate('/');
     return null;
   }
-
-  const owlMood = results.overall === 'normal' ? 'celebrating' : results.overall === 'mild' ? 'encouraging' : 'thinking';
-  const bgColor = results.overall === 'normal' 
-    ? 'bg-gradient-to-br from-emerald-500/10 to-teal-500/10 border-emerald-400/50 shadow-emerald-500/10' 
-    : results.overall === 'mild' 
-    ? 'bg-gradient-to-br from-amber-500/10 to-orange-500/10 border-amber-400/50 shadow-amber-500/10' 
-    : 'bg-gradient-to-br from-rose-500/10 to-red-500/10 border-rose-400/50 shadow-rose-500/10';
 
   const titleMessage = results.overall === 'normal' 
     ? (lang === 'ta' ? 'அருமை! கேள்வித்திறன் சாதாரணம்' : 'EXCELLENT HEARING!') 
@@ -118,129 +75,132 @@ export default function ResultsPage() {
   };
 
   return (
-    <div className="page-shell relative min-h-screen flex flex-col justify-between overflow-x-hidden pb-12">
-      <div className="fixed inset-0 pointer-events-none opacity-40 blur-sm">
-        <OceanBackground />
-      </div>
-
-      {/* Confetti Rain for normal results */}
-      {confetti.map((c) => (
-        <div key={c.id} className="fixed pointer-events-none animate-float-up text-2xl select-none"
-          style={{ left: `${c.left}%`, bottom: '-50px', animationDelay: `${c.delay}s` }}>
-          {c.symbol}
-        </div>
-      ))}
-
+    <div className="page-shell relative min-h-screen flex flex-col justify-between overflow-x-hidden pb-12 bg-gray-50">
       {/* Top Bar */}
-      <header className="relative z-10 w-full max-w-5xl mx-auto px-4 pt-6 flex justify-between items-center">
+      <header className="relative z-10 w-full max-w-5xl mx-auto px-4 pt-6 flex justify-between items-center mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center shadow-md">
-            <span className="text-xl">🌊</span>
+          <div className="w-10 h-10 rounded-xl bg-gray-900 flex items-center justify-center shadow-md">
+            <span className="text-xl text-white font-black">HW</span>
           </div>
-          <span className="text-xl font-black text-blue-900 tracking-tight">HearWise Results</span>
+          <span className="text-xl font-bold text-gray-900 tracking-tight">HearWise Technologies</span>
         </div>
         <div className="flex items-center gap-4">
           <LanguageToggle />
         </div>
       </header>
 
-      {/* Main Results Panel */}
-      <main className="relative z-10 w-full max-w-4xl mx-auto px-4 flex flex-col items-center my-8">
+      {/* Main Clinical Receipt Panel */}
+      <main className="relative z-10 w-full max-w-3xl mx-auto px-4 flex flex-col items-center mb-8">
         
-        {/* Core Result Header Card */}
-        <div className={`glass-panel w-full p-6 sm:p-8 border-4 shadow-2xl backdrop-blur-xl rounded-[3rem] text-center mb-8 flex flex-col items-center gap-4 transition-all duration-300 ${bgColor}`}>
-          <div className="relative mb-2">
-            <div className="absolute inset-0 bg-blue-300/20 rounded-full blur-2xl animate-pulse" />
-            <AnimatedOwl state={owlMood} size={110} />
-          </div>
-          <div>
-            <h1 className="text-3xl sm:text-3xl sm:text-4xl font-black text-blue-900 tracking-tight mb-2">
-              {titleMessage}
+        <div className="w-full bg-white border-2 border-black p-8 sm:p-10 shadow-2xl relative">
+          {/* Header */}
+          <div className="text-center border-b-2 border-black pb-6 mb-6">
+            <h1 className="text-3xl sm:text-4xl font-black text-black tracking-widest uppercase mb-2">
+              HEARWISE TECHNOLOGIES
             </h1>
-            <p className="text-lg font-bold text-blue-800/60 max-w-xl mx-auto">
-              {descMessage}
+            <p className="text-sm font-bold text-gray-700 uppercase tracking-widest">
+              Digital Pure Tone Audiometry - Screening Report
             </p>
           </div>
 
-          {/* Gamified Star Badges */}
-          {results.overall === 'normal' && (
-            <div className="mt-2 flex flex-col items-center gap-2">
-              <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-yellow-300/20 border-2 border-yellow-400 text-yellow-800 text-base font-black shadow-lg shadow-yellow-500/10">
-                ⭐ Super Listener Badge unlocked! ⭐
-              </div>
+          {/* Demographics */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 mb-8">
+            <div className="flex border-b border-gray-300 pb-1">
+              <span className="w-32 font-bold text-gray-600 uppercase text-xs tracking-wider self-end">Teacher Name:</span>
+              <span className="flex-1 font-black text-black text-base">{session?.teacherName || 'N/A'}</span>
             </div>
-          )}
-        </div>
-
-        {/* Thank-You Card */}
-        <div className="glass-panel w-full p-6 sm:p-8 border-2 border-white/50 shadow-xl rounded-[2.5rem] bg-white/70 backdrop-blur-md mb-8 text-center transition-all duration-300 hover:shadow-2xl">
-          <h2 className="text-2xl sm:text-3xl font-black text-blue-900 mb-2" style={{ fontFamily: 'Fredoka, sans-serif' }}>
-            Thank You for Visiting! 🎉
-          </h2>
-          <p className="text-sm font-bold text-blue-800/60 mb-6 max-w-xl mx-auto">
-            Thank you for completing your HearWise hearing screening. Early detection is key to hearing health, speech development, and academic success.
-          </p>
-          <div className="flex flex-wrap justify-center gap-4 text-left">
-            <div className="bg-white/40 px-6 py-4 rounded-2xl border border-white/40 min-w-[220px] shadow-sm">
-              <p className="text-xs text-blue-800/60 font-black uppercase tracking-wider mb-1">Student / Subject</p>
-              <p className="text-base font-black text-blue-900">{student?.name || t('unknownStudent', lang) || 'Guest User'}</p>
+            <div className="flex border-b border-gray-300 pb-1">
+              <span className="w-32 font-bold text-gray-600 uppercase text-xs tracking-wider self-end">Student Name:</span>
+              <span className="flex-1 font-black text-black text-base">{student?.name || 'N/A'}</span>
             </div>
-            <div className="bg-white/40 px-6 py-4 rounded-2xl border border-white/40 min-w-[220px] shadow-sm">
-              <p className="text-xs text-blue-800/60 font-black uppercase tracking-wider mb-1">Teacher / Screener</p>
-              <p className="text-base font-black text-blue-900">{session?.teacherName || 'Guest'}</p>
+            <div className="flex border-b border-gray-300 pb-1">
+              <span className="w-32 font-bold text-gray-600 uppercase text-xs tracking-wider self-end">Age:</span>
+              <span className="flex-1 font-black text-black text-base">{student?.age || 'N/A'}</span>
+            </div>
+            <div className="flex border-b border-gray-300 pb-1">
+              <span className="w-32 font-bold text-gray-600 uppercase text-xs tracking-wider self-end">Grade:</span>
+              <span className="flex-1 font-black text-black text-base">{session?.classGrade || 'N/A'}</span>
+            </div>
+            <div className="flex border-b border-gray-300 pb-1">
+              <span className="w-32 font-bold text-gray-600 uppercase text-xs tracking-wider self-end">Roll Number:</span>
+              <span className="flex-1 font-black text-black text-base">{student?.rollNumber || 'N/A'}</span>
+            </div>
+            <div className="flex border-b border-gray-300 pb-1">
+              <span className="w-32 font-bold text-gray-600 uppercase text-xs tracking-wider self-end">School:</span>
+              <span className="flex-1 font-black text-black text-base">{session?.schoolName || 'N/A'}</span>
+            </div>
+            <div className="flex border-b border-gray-300 pb-1">
+              <span className="w-32 font-bold text-gray-600 uppercase text-xs tracking-wider self-end">District:</span>
+              <span className="flex-1 font-black text-black text-base">{session?.district || 'N/A'}</span>
+            </div>
+            <div className="flex border-b border-gray-300 pb-1">
+              <span className="w-32 font-bold text-gray-600 uppercase text-xs tracking-wider self-end">State/Country:</span>
+              <span className="flex-1 font-black text-black text-base">Tamil Nadu, India</span>
+            </div>
+            <div className="flex border-b border-gray-300 pb-1">
+              <span className="w-32 font-bold text-gray-600 uppercase text-xs tracking-wider self-end">Date:</span>
+              <span className="flex-1 font-black text-black text-base">{new Date().toLocaleDateString('en-IN')}</span>
             </div>
           </div>
-        </div>
 
-        {/* Clinical Frequency Boards */}
-        <div className="grid w-full gap-5 sm:p-6 md:grid-cols-1 sm:grid-cols-2 mb-8">
-          {/* Left Ear Board */}
-          <div className="glass-panel p-6 sm:p-6 sm:p-8 border-2 border-white/50 shadow-xl rounded-[2.5rem] bg-white/70 backdrop-blur-md">
-            <div className="flex items-center gap-3 mb-6">
-              <span className="text-2xl sm:text-3xl">👂</span>
+          {/* Clinical Result */}
+          <div className="border-2 border-black p-6 mb-8 bg-gray-50 text-center">
+            <h2 className="text-sm font-bold text-gray-600 uppercase tracking-widest mb-2">Overall Assessment</h2>
+            <div className={`text-2xl sm:text-3xl font-black uppercase tracking-wide ${results.overall === 'normal' ? 'text-green-700' : 'text-red-700'}`}>
+              {titleMessage}
+            </div>
+            <p className="mt-4 text-base font-bold text-gray-800 leading-relaxed">
+              {parentSummary}
+            </p>
+          </div>
+
+          {/* Frequencies Details Table */}
+          <div className="mb-8">
+            <h3 className="text-sm font-bold text-gray-600 uppercase tracking-widest mb-3 border-b-2 border-black pb-1">Frequency Sweep Details (40 dB HL)</h3>
+            <div className="grid grid-cols-2 gap-6">
               <div>
-                <h3 className="text-lg font-black text-blue-900 leading-tight">{t('leftEar', lang)}</h3>
-                <p className="text-xs text-blue-800/40 font-bold uppercase tracking-wider">Frequency Sweep</p>
+                <h4 className="font-black text-black mb-2 uppercase text-sm">Left Ear</h4>
+                {freqs.map(f => (
+                  <div key={`l-${f}`} className="flex justify-between items-center py-1 border-b border-gray-200">
+                    <span className="font-bold text-gray-700 text-sm">{f} Hz</span>
+                    <span className={`font-black text-sm uppercase ${results.left[f] ? 'text-green-700' : 'text-red-700'}`}>
+                      {results.left[f] ? 'PASS' : 'REFER'}
+                    </span>
+                  </div>
+                ))}
               </div>
-            </div>
-            <div className="flex flex-col gap-3">
-              {freqs.map(f => <FreqBar key={`l-${f}`} label={f} passed={results.left[f]} />)}
-            </div>
-          </div>
-
-          {/* Right Ear Board */}
-          <div className="glass-panel p-6 sm:p-6 sm:p-8 border-2 border-white/50 shadow-xl rounded-[2.5rem] bg-white/70 backdrop-blur-md">
-            <div className="flex items-center gap-3 mb-6">
-              <span className="text-2xl sm:text-3xl">👂</span>
               <div>
-                <h3 className="text-lg font-black text-blue-900 leading-tight">{t('rightEar', lang)}</h3>
-                <p className="text-xs text-blue-800/40 font-bold uppercase tracking-wider">Frequency Sweep</p>
+                <h4 className="font-black text-black mb-2 uppercase text-sm">Right Ear</h4>
+                {freqs.map(f => (
+                  <div key={`r-${f}`} className="flex justify-between items-center py-1 border-b border-gray-200">
+                    <span className="font-bold text-gray-700 text-sm">{f} Hz</span>
+                    <span className={`font-black text-sm uppercase ${results.right[f] ? 'text-green-700' : 'text-red-700'}`}>
+                      {results.right[f] ? 'PASS' : 'REFER'}
+                    </span>
+                  </div>
+                ))}
               </div>
             </div>
-            <div className="flex flex-col gap-3">
-              {freqs.map(f => <FreqBar key={`r-${f}`} label={f} passed={results.right[f]} />)}
-            </div>
           </div>
-        </div>
 
-        {/* Parent Guidance & Clinical Context Panel */}
-        <div className="glass-panel w-full p-6 sm:p-6 sm:p-8 border-2 border-white/50 shadow-xl rounded-[2.5rem] bg-white/70 backdrop-blur-md mb-8">
-          <div className="flex items-center gap-3 mb-4">
-            <HeartPulse className="w-6 h-6 text-blue-600" />
-            <h4 className="text-md font-black text-blue-900">{t('parentGuidance', lang)}</h4>
+          {/* Footer of Receipt */}
+          <div className="text-center mt-12 pt-6 border-t-2 border-black">
+            <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">
+              Generated by HearWise Technologies Pvt. Ltd.
+            </p>
+            <p className="text-xs font-bold text-gray-400 mt-1">
+              Note: This is a screening report, not a diagnostic medical evaluation.
+            </p>
           </div>
-          <p className="text-sm font-bold text-blue-800/70 leading-relaxed bg-white/30 p-5 rounded-2xl border border-white/40">
-            {parentSummary}
-          </p>
         </div>
 
         {/* Action Controls */}
-        <div className="w-full flex flex-col sm:flex-row flex-wrap gap-4 justify-center">
+        <div className="w-full flex flex-col sm:flex-row flex-wrap gap-4 justify-center mt-8">
           <DownloadReportButton result={screeningResultData} />
 
           {results.overall !== 'normal' && (
             <Button 
-              className="bg-amber-600 hover:bg-amber-500 text-white font-medium"
+              className="bg-red-700 hover:bg-red-800 text-white font-bold h-14 px-8 rounded-none border-2 border-transparent"
               onClick={() => navigate('/audiologists?refer=true')}
             >
               <Hospital className="mr-2 h-4 w-4" />
@@ -249,26 +209,26 @@ export default function ResultsPage() {
           )}
 
           <Button 
-            className="h-16 px-8 rounded-2xl text-lg font-black shadow-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-blue-500/20 active:scale-95 transition-all flex items-center justify-center gap-2"
+            className="bg-black hover:bg-gray-800 text-white font-bold h-14 px-8 rounded-none border-2 border-black"
             onClick={() => navigate('/student-entry')}
           >
-            <UserRoundPlus className="w-5 h-5" />
+            <UserRoundPlus className="mr-2 h-5 w-5" />
             {t('nextStudent', lang)}
-            <ArrowRight className="w-5 h-5" />
+            <ArrowRight className="ml-2 h-5 w-5" />
           </Button>
 
           <Button 
             variant="outline" 
-            className="h-16 px-8 rounded-2xl text-lg font-black border-2 border-white/60 bg-white/40 hover:bg-white/60 text-blue-800 shadow-lg flex items-center justify-center gap-2 transition-all"
+            className="h-14 px-8 rounded-none text-base font-bold border-2 border-black text-black hover:bg-gray-100"
             onClick={shareWhatsApp}
           >
-            <Share2 className="w-5 h-5 text-emerald-600 animate-pulse" />
+            <Share2 className="mr-2 h-5 w-5" />
             {t('shareWhatsApp', lang)}
           </Button>
 
           <Button 
             variant="ghost" 
-            className="h-16 px-6 rounded-2xl text-base font-bold text-blue-900/60 hover:text-blue-900 hover:bg-white/40 transition-all"
+            className="h-14 px-6 rounded-none text-base font-bold text-gray-500 hover:text-black hover:bg-gray-200"
             onClick={() => navigate('/session-summary')}
           >
             <Home className="w-4 h-4 mr-2" />
@@ -280,19 +240,11 @@ export default function ResultsPage() {
 
       {/* Verification footer */}
       <footer className="relative z-10 w-full max-w-5xl mx-auto px-4 flex justify-center text-center mt-6">
-        <p className="text-[10px] font-black text-blue-800/30 uppercase tracking-[0.25em] flex items-center gap-1.5">
-          <ShieldCheck className="w-3.5 h-3.5 text-blue-400" />
-          HearWise Technologies Pvt. Ltd. • All clinical logs stored securely
+        <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.25em] flex items-center gap-1.5">
+          <ShieldCheck className="w-3.5 h-3.5 text-gray-400" />
+          HearWise Technologies Pvt. Ltd. • ISO 8253 Screening Protocol
         </p>
       </footer>
-
-      <style>{`
-        @keyframes float-up {
-          0% { transform: translateY(0) scale(1); opacity: 1; }
-          100% { transform: translateY(-500px) scale(1.3); opacity: 0; }
-        }
-        .animate-float-up { animation: float-up 3s ease-out forwards; }
-      `}</style>
     </div>
   );
 }

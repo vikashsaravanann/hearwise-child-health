@@ -154,7 +154,7 @@ export default function ActiveTestPage() {
         toast({ title: t('saveQueuedForSync', lang) });
       }
 
-      navigate('/results', { state: { results } });
+      navigate('/thank-you', { state: { results } });
     } else {
       setStepIndex(nextIdx);
     }
