@@ -127,12 +127,11 @@ export default function OceanTestPage() {
         const finalScore = score + (isCorrect ? 1 : 0);
         const levelNum = parseInt(level || '1');
         if (levelNum < 5) {
+          // Temporarily hold score to pass to the level result after bubble game finishes
+          setScore(finalScore); 
           setShowBubbleGame(true);
-          setTimeout(() => {
-            navigate('/thank-you', { state: { score: finalScore, level: levelNum } });
-          }, 11500);
         } else {
-          navigate('/thank-you', { state: { score: finalScore, level: levelNum } });
+          navigate(`/level-result/${levelNum}?score=${finalScore}`);
         }
       }
     }, 1200);
