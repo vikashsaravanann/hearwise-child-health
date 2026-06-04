@@ -10,7 +10,7 @@ export default function LanguageToggle() {
   };
 
   return (
-    <div className="fixed top-4 right-4 z-[100] flex items-center gap-1 rounded-full border border-white/20 bg-black/40 backdrop-blur-md p-1 shadow-lg">
+    <div className="fixed bottom-4 left-4 z-[100] flex items-center gap-1 rounded-full border border-white/20 bg-black/60 backdrop-blur-md p-1 shadow-xl">
       <button
         onClick={() => setLang('en')}
         className={`rounded-full px-3 py-1 font-bold transition-all uppercase tracking-widest text-xs ${lang === 'en' ? 'bg-cyan-500 text-[#000b1d] shadow-md' : 'text-white/70 hover:text-white hover:bg-white/10'}`}

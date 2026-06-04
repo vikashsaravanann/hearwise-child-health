@@ -97,7 +97,9 @@ export default function Dashboard() {
       <header className="sticky top-0 z-50 border-b border-white/8 bg-[#05070f]/80 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-teal-400 to-cyan-600 flex items-center justify-center text-lg">🦉</div>
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-teal-400 to-cyan-600 flex items-center justify-center overflow-hidden p-0.5">
+              <img src={`${BASE}owl-mascot.png`} alt="HearWise" className="w-full h-full object-contain" />
+            </div>
             <div>
               <span className="font-black text-white text-base tracking-tight">HEARWISE</span>
               <span className="text-teal-400 font-black text-base tracking-tight"> TECHNOLOGIES</span>
@@ -133,7 +135,7 @@ export default function Dashboard() {
               </div>
               <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black text-white mb-4 tracking-tight leading-none">
                 WELCOME BACK,{' '}
-                <span className="bg-gradient-to-r from-teal-400 via-cyan-400 to-teal-300 bg-clip-text text-transparent">VIKASH</span>
+                <span className="bg-gradient-to-r from-teal-400 via-cyan-400 to-teal-300 bg-clip-text text-transparent">VIKASH SARAVANAN</span>
               </h1>
               <p className="text-slate-400 text-base sm:text-lg font-medium max-w-xl mx-auto">
                 {now.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).toUpperCase()}
@@ -248,43 +250,45 @@ export default function Dashboard() {
             3 HUGE PHOTOS
         ══════════════════════════════════════════════════════════ */}
         <Reveal>
-          <div className="relative flex justify-center items-center h-[480px] sm:h-[700px] lg:h-[800px]">
-            {/* Left photo */}
-            <motion.div
-              whileHover={{ scale: 1.04, zIndex: 30, rotate: 0 }}
-              initial={{ rotate: -12, y: 30 }}
-              animate={{ rotate: -10, y: 20 }}
-              transition={{ type: 'spring', stiffness: 80 }}
-              className="absolute left-[2%] sm:left-[8%] w-[180px] sm:w-[300px] lg:w-[380px] h-[280px] sm:h-[440px] lg:h-[560px] rounded-[2rem] overflow-hidden border-[6px] border-[#05070f] shadow-[0_30px_80px_rgba(0,0,0,0.7)] z-10 cursor-pointer"
-            >
-              <img src={`${BASE}img1.jpg`} alt="Vikash" className="w-full h-full object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#05070f]/40 to-transparent" />
-            </motion.div>
-
-            {/* Right photo */}
-            <motion.div
-              whileHover={{ scale: 1.04, zIndex: 30, rotate: 0 }}
-              initial={{ rotate: 12, y: 30 }}
-              animate={{ rotate: 10, y: 20 }}
-              transition={{ type: 'spring', stiffness: 80 }}
-              className="absolute right-[2%] sm:right-[8%] w-[180px] sm:w-[300px] lg:w-[380px] h-[280px] sm:h-[440px] lg:h-[560px] rounded-[2rem] overflow-hidden border-[6px] border-[#05070f] shadow-[0_30px_80px_rgba(0,0,0,0.7)] z-10 cursor-pointer"
-            >
-              <img src={`${BASE}img3.jpg`} alt="Vikash" className="w-full h-full object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#05070f]/40 to-transparent" />
-            </motion.div>
-
-            {/* Center photo — largest */}
-            <motion.div
-              whileHover={{ scale: 1.03, zIndex: 40 }}
-              className="relative z-20 w-[220px] sm:w-[380px] lg:w-[480px] h-[340px] sm:h-[540px] lg:h-[680px] rounded-[2.5rem] overflow-hidden border-[8px] border-[#05070f] shadow-[0_40px_120px_rgba(6,182,212,0.25),_0_0_0_1px_rgba(6,182,212,0.15)] cursor-pointer"
-            >
-              <img src={`${BASE}profile4.jpeg`} alt="Vikash Saravanan" className="w-full h-full object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#05070f]/50 via-transparent to-transparent" />
-              <div className="absolute bottom-6 left-6 right-6">
-                <div className="text-white font-black text-xl sm:text-2xl leading-tight">Vikash Saravanan</div>
-                <div className="text-teal-400 font-semibold text-sm mt-1">Founder & CEO, HearWise Technologies</div>
-              </div>
-            </motion.div>
+          {/* 3 vertical photo cards — clean, upright, side by side */}
+          <div className="grid grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+            {[
+              { src: `${BASE}img1.jpg`, alt: 'Vikash at Campus', label: 'Campus Life', sub: 'Coimbatore, Tamil Nadu' },
+              { src: `${BASE}profile4.jpeg`, alt: 'Vikash Saravanan', label: 'Vikash Saravanan', sub: 'Founder & CEO · HearWise Technologies', center: true },
+              { src: `${BASE}img3.jpg`, alt: 'Vikash at Work', label: 'Engineering Mode', sub: 'Building India\'s First Hearing Platform' },
+            ].map((photo, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.15, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+                whileHover={{ y: -8, scale: 1.02 }}
+                className={`rounded-3xl overflow-hidden cursor-pointer group ${
+                  photo.center
+                    ? 'shadow-[0_0_60px_rgba(6,182,212,0.2),_0_20px_60px_rgba(0,0,0,0.6)] border-2 border-cyan-500/20'
+                    : 'shadow-[0_20px_60px_rgba(0,0,0,0.5)] border border-white/8'
+                }`}
+              >
+                {/* Photo — NO text overlay */}
+                <div className="w-full aspect-[3/4] overflow-hidden">
+                  <img
+                    src={photo.src}
+                    alt={photo.alt}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  />
+                </div>
+                {/* Caption BELOW photo */}
+                <div className={`p-4 sm:p-5 ${
+                  photo.center ? 'bg-gradient-to-b from-cyan-950/40 to-[#05070f]' : 'bg-[#05070f]'
+                }`}>
+                  <div className={`font-black text-sm sm:text-base leading-tight ${
+                    photo.center ? 'text-white' : 'text-slate-200'
+                  }`}>{photo.label}</div>
+                  <div className="text-slate-500 text-xs mt-1 leading-snug font-medium">{photo.sub}</div>
+                </div>
+              </motion.div>
+            ))}
           </div>
         </Reveal>
 
@@ -292,53 +296,80 @@ export default function Dashboard() {
             ABOUT THE FOUNDER
         ══════════════════════════════════════════════════════════ */}
         <Reveal>
-          <div className="grid lg:grid-cols-2 gap-8">
-            {/* Bio Card */}
-            <div className="rounded-3xl border border-white/8 bg-white/[0.02] p-8 sm:p-12 space-y-6 relative overflow-hidden group hover:border-teal-500/20 transition-colors">
+          <div className="grid lg:grid-cols-12 gap-8">
+            {/* ── Bio Card ── */}
+            <div className="lg:col-span-7 rounded-3xl border border-teal-500/10 bg-gradient-to-br from-teal-900/10 to-[#05070f] p-8 sm:p-12 relative overflow-hidden group hover:border-teal-500/20 transition-all">
               <div className="absolute top-0 right-0 w-80 h-80 bg-teal-500/5 rounded-full blur-[80px] pointer-events-none" />
-              <div className="relative z-10">
-                <p className="text-xs font-bold uppercase tracking-[0.3em] text-teal-400 mb-3">The Founder</p>
-                <h2 className="text-3xl sm:text-4xl font-black text-white leading-tight mb-2">B.Tech AI & Data Science</h2>
-                <h3 className="text-xl sm:text-2xl font-black text-cyan-400 mb-8">Prompt Engineer & Web Developer</h3>
-                <div className="space-y-5">
+              <div className="relative z-10 space-y-8">
+                <div>
+                  <p className="text-teal-400 font-bold text-xs uppercase tracking-[0.3em] mb-4">The Founder & CEO</p>
+                  <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white leading-[1.1] mb-3">Vikash Saravanan</h2>
+                  <h3 className="text-lg sm:text-xl font-semibold text-cyan-400 mb-1">B.Tech AI &amp; Data Science Student</h3>
+                  <p className="text-slate-400 text-sm font-medium">Prompt Engineer · Web Developer · AI Automation Specialist</p>
+                </div>
+
+                <div className="h-px bg-white/5" />
+
+                <div className="grid sm:grid-cols-2 gap-5">
                   {[
-                    { icon: '📍', label: 'Location', val: 'Coimbatore, Tamil Nadu (Native: Karur)' },
-                    { icon: '💼', label: 'Availability', val: 'Open for Remote & Coimbatore Internships' },
-                    { icon: '🎯', label: 'Objective', val: 'Ambitious first-year student building enterprise-grade AI automation systems.' },
-                    { icon: '🚀', label: 'Vision', val: 'Delivering production-ready solutions solving real-world industry problems at scale.' },
+                    { icon: '📍', label: 'Location', val: 'Coimbatore, TN (Native: Karur)' },
+                    { icon: '🎓', label: 'Education', val: 'First-Year, AI & DS · 2024–2028' },
+                    { icon: '💼', label: 'Open For', val: 'Remote & Coimbatore Internships' },
+                    { icon: '🏆', label: 'Achievement', val: 'Meta PyTorch OpenEnv Finalist' },
+                    { icon: '🤖', label: 'Expertise', val: 'AI Agents, React, Python, n8n' },
+                    { icon: '🚀', label: 'Live Projects', val: 'HearWise · Traffic Vision AI' },
+                    { icon: '📜', label: 'Certifications', val: '15+ from Microsoft, Cisco, IIT' },
+                    { icon: '🌐', label: 'Languages', val: 'Tamil · English · Hindi' },
                   ].map(item => (
-                    <div key={item.label} className="flex items-start gap-4">
-                      <span className="text-xl mt-0.5 flex-shrink-0">{item.icon}</span>
+                    <div key={item.label} className="flex items-start gap-3">
+                      <span className="text-base mt-0.5 flex-shrink-0">{item.icon}</span>
                       <div>
-                        <span className="text-white font-bold text-sm">{item.label}: </span>
-                        <span className="text-slate-400 text-sm leading-relaxed">{item.val}</span>
+                        <div className="text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-0.5">{item.label}</div>
+                        <div className="text-white text-sm font-semibold leading-snug">{item.val}</div>
                       </div>
                     </div>
                   ))}
                 </div>
+
+                <div className="h-px bg-white/5" />
+
+                <div>
+                  <div className="text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-3">Mission Statement</div>
+                  <p className="text-slate-300 text-sm sm:text-base leading-relaxed font-normal">
+                    Ambitious first-year student actively building enterprise-grade AI automation systems. Bridging the gap between advanced machine learning and full-stack software architecture — engineering autonomous agents, developing robust React ecosystems, and delivering high-impact, production-ready solutions that solve real-world industry problems at scale.
+                  </p>
+                </div>
               </div>
             </div>
 
-            {/* Badges grid */}
-            <div className="grid grid-cols-2 gap-5">
+            {/* ── Right Column ── */}
+            <div className="lg:col-span-5 flex flex-col gap-5">
+              {/* Skill badges */}
+              <div className="rounded-2xl border border-white/8 bg-white/[0.02] p-6 sm:p-8">
+                <div className="text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-4">Core Technologies</div>
+                <div className="flex flex-wrap gap-2">
+                  {['Python', 'React', 'TypeScript', 'Supabase', 'n8n', 'Framer Motion', 'Vite', 'Groq AI', 'Tailwind CSS', 'PostgreSQL', 'Cursor AI', 'Gemini API'].map(tech => (
+                    <span key={tech} className="px-3 py-1.5 rounded-xl border border-white/10 bg-white/5 text-slate-300 text-xs font-semibold hover:border-teal-500/30 hover:text-teal-300 transition-colors">{tech}</span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Achievement cards */}
               {[
-                { icon: '🏆', title: 'Hackathon Finalist', sub: 'Meta PyTorch OpenEnv', color: 'border-blue-500/20 hover:border-blue-400/40' },
-                { icon: '⚙️', title: 'Production Ready', sub: '3+ Live Architectures', color: 'border-emerald-500/20 hover:border-emerald-400/40' },
-                { icon: '🌟', title: '15+ Certifications', sub: 'Microsoft · Cisco · IIT', color: 'border-yellow-500/20 hover:border-yellow-400/40' },
-                { icon: '🤖', title: 'AI Automation', sub: 'Python · React · n8n', color: 'border-cyan-500/20 hover:border-cyan-400/40' },
-              ].map((b, i) => (
+                { icon: '🏆', title: 'Hackathon Finalist', sub: 'Meta PyTorch OpenEnv', color: 'border-blue-500/20 hover:border-blue-400/30 hover:bg-blue-900/10' },
+                { icon: '⚙️', title: '3+ Live Architectures', sub: 'Production-ready deployments on GitHub Pages & Supabase', color: 'border-emerald-500/20 hover:border-emerald-400/30 hover:bg-emerald-900/10' },
+                { icon: '🌟', title: '15+ Certifications', sub: 'Microsoft · Cisco · IIT Bombay · NPTEL', color: 'border-yellow-500/20 hover:border-yellow-400/30 hover:bg-yellow-900/10' },
+              ].map((b) => (
                 <motion.div
                   key={b.title}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
-                  whileHover={{ y: -4 }}
-                  className={`rounded-2xl border ${b.color} bg-white/[0.02] p-6 text-center flex flex-col items-center justify-center gap-3 transition-all cursor-default`}
+                  whileHover={{ y: -3 }}
+                  className={`rounded-2xl border ${b.color} bg-white/[0.02] p-5 flex items-center gap-4 transition-all cursor-default`}
                 >
-                  <span className="text-4xl">{b.icon}</span>
-                  <div className="text-white font-black text-base leading-tight">{b.title}</div>
-                  <div className="text-slate-500 text-xs font-semibold">{b.sub}</div>
+                  <span className="text-3xl flex-shrink-0">{b.icon}</span>
+                  <div>
+                    <div className="text-white font-bold text-sm leading-tight">{b.title}</div>
+                    <div className="text-slate-500 text-xs font-medium mt-0.5 leading-snug">{b.sub}</div>
+                  </div>
                 </motion.div>
               ))}
             </div>

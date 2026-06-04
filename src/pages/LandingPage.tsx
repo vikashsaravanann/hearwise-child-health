@@ -94,6 +94,9 @@ export default function LandingPage() {
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-[#000b1d] text-white font-sans selection:bg-cyan-500/30">
       
+      {/* Language Translator — fixed bottom-left on all pages */}
+      <LanguageToggle />
+
       {/* Reverting to the premium dark background as before */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         <div className="absolute inset-0 bg-[#000b1d]" />
