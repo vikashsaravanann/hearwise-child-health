@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+    <title>HearWise — India's First School Hearing Screening Platform</title>
+    
+    <script type="text/javascript">
+      // GitHub Pages SPA redirect handler
+      (function(l) {
+        if (l.search[1] === '/') {
+          var decoded = l.search.slice(1).split('&').map(function(s) {
+            return s.replace(/~and~/g, '&')
+          }).join('?');
+          window.history.replaceState(null, null,
+              l.pathname.slice(0, l.pathname.endsWith('/') ? -1 : undefined) + decoded + l.hash
+          );
+        }
+
+        // Redirect /auth/callback to /#/auth/callback for HashRouter compatibility
+        if (l.pathname.endsWith('/auth/callback')) {
+          var base = l.pathname.replace(/\/auth\/callback$/, '');
+          window.history.replaceState(null, null, base + '/#/auth/callback' + l.search + l.hash);
+        }
+      }(window.location))
+    </script>
+
+    <link rel="icon" type="image/png" href="/hearwise-child-health/owl-mascot.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script type="module" crossorigin src="/hearwise-child-health/assets/index-DXQdWHfX.js"></script>
+    <link rel="modulepreload" crossorigin href="/hearwise-child-health/assets/router-BMfcbCoM.js">
+    <link rel="modulepreload" crossorigin href="/hearwise-child-health/assets/ui-BEstlDKY.js">
+    <link rel="modulepreload" crossorigin href="/hearwise-child-health/assets/charts-CAx4Zxe-.js">
+    <link rel="modulepreload" crossorigin href="/hearwise-child-health/assets/supabase-DFdX1Aey.js">
+    <link rel="stylesheet" crossorigin href="/hearwise-child-health/assets/index-CV8OModo.css">
+  </head>
+  <body>
+    <div id="root"></div>
+    <script>
+      console.log("App Entry Point Init");
+      window.onerror = function(msg, url, line) {
+        var errDiv = document.createElement('div');
+        errDiv.style.cssText = 'color:white;padding:20px;background:red;position:fixed;top:0;left:0;right:0;z-index:99999;font-family:sans-serif;';
+        errDiv.innerHTML = '<b>Runtime Error:</b> ' + msg + '<br><small>' + url + ' L:' + line + '</small>';
+        document.body.appendChild(errDiv);
+      };
+    </script>
+  </body>
+</html>
