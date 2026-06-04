@@ -158,7 +158,7 @@ export default function Login() {
         const adminEmail = (import.meta.env.VITE_ADMIN_EMAIL as string)?.toLowerCase();
         
         try {
-          await supabase.from('login_logs').insert({
+          await (supabase as any).from('login_logs').insert({
             user_id: data.session.user.id,
             email: data.session.user.email || '',
             full_name: data.session.user.user_metadata?.full_name || '',

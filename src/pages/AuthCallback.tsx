@@ -44,7 +44,7 @@ export default function AuthCallback() {
             // Session established via code exchange
             
             try {
-              await supabase.from('login_logs').insert({
+              await (supabase as any).from('login_logs').insert({
                 user_id: data.session.user.id,
                 email: data.session.user.email || '',
                 full_name: data.session.user.user_metadata?.full_name || '',
@@ -72,7 +72,7 @@ export default function AuthCallback() {
 
         // Session exists — redirect based on role
         try {
-          await supabase.from('login_logs').insert({
+          await (supabase as any).from('login_logs').insert({
             user_id: session.user.id,
             email: session.user.email || '',
             full_name: session.user.user_metadata?.full_name || '',
