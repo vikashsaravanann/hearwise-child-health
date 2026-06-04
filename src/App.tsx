@@ -25,7 +25,7 @@ const OceanLevelSelectPage = React.lazy(() => import("./pages/OceanLevelSelectPa
 const OceanTestPage = React.lazy(() => import("./pages/OceanTestPage"));
 const LevelResultPage = React.lazy(() => import("./pages/LevelResultPage"));
 const SessionSummaryPage = React.lazy(() => import("./pages/SessionSummaryPage"));
-const AnimatedDashboardPage = React.lazy(() => import("./pages/AnimatedDashboardPage"));
+const Dashboard = React.lazy(() => import("./pages/Dashboard"));
 const GamesPage = React.lazy(() => import("./pages/Games"));
 const TrophiesPage = React.lazy(() => import("./pages/Trophies"));
 const EarCarePage = React.lazy(() => import("./pages/EarCare"));
@@ -48,19 +48,6 @@ const Blog = React.lazy(() => import("./pages/Blog"));
 const BlogPost = React.lazy(() => import("./pages/BlogPost"));
 const Audiologists = React.lazy(() => import("./pages/Audiologists"));
 const WaitlistPage = React.lazy(() => import("./pages/Waitlist"));
-const AdminLayout = React.lazy(() => import("./components/AdminLayout"));
-const AdminGuard = React.lazy(() => import("./components/AdminGuard"));
-const AdminOverviewPage = React.lazy(() => import("./pages/admin/AdminOverviewPage"));
-const AdminAnalyticsPage = React.lazy(() => import("./pages/admin/AdminAnalyticsPage"));
-const AdminSchoolsPage = React.lazy(() => import("./pages/admin/AdminSchoolsPage"));
-const AdminTeachersPage = React.lazy(() => import("./pages/admin/AdminTeachersPage"));
-const AdminStudentsPage = React.lazy(() => import("./pages/admin/AdminStudentsPage"));
-const AdminSessionsPage = React.lazy(() => import("./pages/admin/AdminSessionsPage"));
-const AdminReferralsPage = React.lazy(() => import("./pages/admin/AdminReferralsPage"));
-const AdminLoginsPage = React.lazy(() => import("./pages/admin/AdminLoginsPage"));
-const AdminSettingsPage = React.lazy(() => import("./pages/admin/AdminSettingsPage"));
-const AdminExportPage = React.lazy(() => import("./pages/admin/AdminExportPage"));
-const AboutDeveloperPage = React.lazy(() => import("./pages/admin/AboutDeveloperPage"));
 const PracticeRoundPage = React.lazy(() => import("./pages/PracticeRoundPage"));
 const ActiveTestPage = React.lazy(() => import("./pages/ActiveTestPage"));
 const ResultsPage = React.lazy(() => import("./pages/ResultsPage"));
@@ -100,7 +87,7 @@ const InnerRoutes = () => {
       <Route path="/ocean-test/:level" element={<ProtectedRoute><OceanTestPage /></ProtectedRoute>} />
       <Route path="/level-result/:level" element={<ProtectedRoute><LevelResultPage /></ProtectedRoute>} />
       <Route path="/session-summary" element={<ProtectedRoute><SessionSummaryPage /></ProtectedRoute>} />
-      <Route path="/dashboard" element={<ProtectedRoute adminOnly={true}><AnimatedDashboardPage /></ProtectedRoute>} />
+      <Route path="/dashboard" element={<RequireAdmin><Dashboard /></RequireAdmin>} />
       <Route path="/games" element={<ProtectedRoute><GamesPage /></ProtectedRoute>} />
       <Route path="/trophies" element={<ProtectedRoute><TrophiesPage /></ProtectedRoute>} />
       <Route path="/ear-care" element={<ProtectedRoute><EarCarePage /></ProtectedRoute>} />
@@ -119,29 +106,6 @@ const InnerRoutes = () => {
       <Route path="/active-test" element={<ProtectedRoute><ActiveTestPage /></ProtectedRoute>} />
       <Route path="/results" element={<ProtectedRoute><ResultsPage /></ProtectedRoute>} />
       <Route path="/thank-you" element={<ProtectedRoute><ThankYouPage /></ProtectedRoute>} />
-
-      {/* Admin */}
-      <Route
-        path="/admin"
-        element={
-          <AdminGuard>
-            <AdminLayout />
-          </AdminGuard>
-        }
-      >
-        <Route index element={<AdminOverviewPage />} />
-        <Route path="dashboard" element={<AdminOverviewPage />} />
-        <Route path="analytics" element={<AdminAnalyticsPage />} />
-        <Route path="schools" element={<AdminSchoolsPage />} />
-        <Route path="teachers" element={<AdminTeachersPage />} />
-        <Route path="students" element={<AdminStudentsPage />} />
-        <Route path="sessions" element={<AdminSessionsPage />} />
-        <Route path="referrals" element={<AdminReferralsPage />} />
-        <Route path="logins" element={<AdminLoginsPage />} />
-        <Route path="settings" element={<AdminSettingsPage />} />
-        <Route path="export" element={<AdminExportPage />} />
-        <Route path="about" element={<AboutDeveloperPage />} />
-      </Route>
 
       <Route path="*" element={<NotFound />} />
     </Routes>
