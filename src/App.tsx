@@ -82,6 +82,7 @@ const InnerRoutes = () => {
       <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/auth/callback" element={<AuthCallback />} />
+      <Route path="/hearwise-child-health/auth/callback" element={<AuthCallback />} />
       <Route path="/about" element={<AboutPage />} />
       <Route path="/hearing-health" element={<HearingHealthPage />} />
       <Route path="/onboarding" element={<SchoolOnboarding />} />

@@ -16,6 +16,12 @@
               l.pathname.slice(0, l.pathname.endsWith('/') ? -1 : undefined) + decoded + l.hash
           );
         }
+
+        // Redirect /auth/callback to /#/auth/callback for HashRouter compatibility
+        if (l.pathname.endsWith('/auth/callback')) {
+          var base = l.pathname.replace(/\/auth\/callback$/, '');
+          window.history.replaceState(null, null, base + '/#/auth/callback' + l.search + l.hash);
+        }
       }(window.location))
     </script>
 

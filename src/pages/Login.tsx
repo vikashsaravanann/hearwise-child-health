@@ -15,7 +15,17 @@ export default function Login() {
   const [error, setError] = useState('');
   const [mounted, setMounted] = useState(false);
 
-  useEffect(() => { setMounted(true); }, []);
+  useEffect(() => {
+    setMounted(true);
+
+    // Check if redirected back with an error
+    const params = new URLSearchParams(window.location.search);
+    const hashParams = new URLSearchParams(window.location.hash.slice(1));
+    const errorDesc = params.get('error_description') || hashParams.get('error_description');
+    if (errorDesc) {
+      setError(decodeURIComponent(errorDesc.replace(/\+/g, ' ')));
+    }
+  }, []);
 
   // Animated Purple Waveform Bars matching screenshot precisely
   const WaveformBars = () => (
@@ -77,18 +87,27 @@ export default function Login() {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: 'https://vikashsaravanann.github.io/hearwise-child-health/#/auth/callback',
-          queryParams: { access_type: 'offline', prompt: 'consent' },
+          redirectTo: `${window.location.origin}/hearwise-child-health/auth/callback`,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          },
         },
       });
+
       if (error) {
-        setError(`GOOGLE SIGN-IN FAILED: ${error.message.toUpperCase()}`);
+        console.error('Google OAuth error:', error.message);
+        setError('Google sign-in failed. Please try again.');
         setLoading(false);
         return;
       }
-      if (data?.url) window.location.href = data.url;
-    } catch {
-      setError('UNEXPECTED ERROR. PLEASE TRY AGAIN.');
+
+      if (data?.url) {
+        window.location.href = data.url;
+      }
+    } catch (err) {
+      console.error('Google login unexpected error:', err);
+      setError('Something went wrong. Please try again.');
       setLoading(false);
     }
   }
