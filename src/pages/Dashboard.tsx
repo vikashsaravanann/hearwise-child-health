@@ -65,7 +65,6 @@ export default function Dashboard() {
     { id: 'founder', icon: '👤', label: 'FOUNDER' },
     { id: 'analytics', icon: '📊', label: 'ANALYTICS' },
     { id: 'platform', icon: '🦉', label: 'PLATFORM' },
-    { id: 'links', icon: '🔗', label: 'SOCIAL LINKS' },
     { id: 'settings', icon: '⚙️', label: 'SETTINGS' },
   ];
 
@@ -304,10 +303,10 @@ export default function Dashboard() {
                           item.type === 'warning' ? 'bg-orange-400' : 'bg-blue-400'
                         }`} />
                         <div className="flex-1 min-w-0">
-                          <div className="text-white font-black text-xs uppercase tracking-wider">{item.event}</div>
-                          <div className="text-slate-500 text-[10px] uppercase tracking-wider mt-0.5">{item.detail}</div>
+                          <div className="text-white font-black text-sm">{item.event}</div>
+                          <div className="text-slate-400 text-xs mt-1">{item.detail}</div>
+                          <div className="text-slate-500 text-[10px] mt-2 font-bold tracking-widest">{item.time}</div>
                         </div>
-                        <div className="text-slate-600 text-[10px] uppercase tracking-widest flex-shrink-0">{item.time}</div>
                       </motion.div>
                     ))}
                   </div>
@@ -324,291 +323,251 @@ export default function Dashboard() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.4 }}
-              className="p-4 sm:p-8 space-y-8"
+              className="p-4 sm:p-8 space-y-16 pb-20"
             >
+              {/* 1. THREE IMAGE LAYOUT */}
               <RevealSection>
-                {/* Founder hero card — vertical image layout like portfolio */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-                  {/* Vertical profile image card */}
+                <div className="relative flex justify-center items-center h-[320px] sm:h-[500px] perspective-1000 mt-8 mb-12 sm:mb-20">
                   <motion.div
-                    whileHover={{ scale: 1.02 }}
-                    className="lg:col-span-1 rounded-3xl overflow-hidden border border-teal-500/30 bg-gradient-to-b from-teal-500/10 to-transparent relative"
-                    style={{ minHeight: '420px' }}
+                    whileHover={{ scale: 1.05, zIndex: 30, rotateZ: 0 }}
+                    className="absolute left-[10%] sm:left-[22%] w-[140px] sm:w-[260px] h-[200px] sm:h-[360px] rounded-3xl overflow-hidden border-8 border-[#020817] shadow-2xl z-10 transition-all duration-500"
+                    style={{ transform: 'rotate(-12deg) translateY(20px)' }}
                   >
-                    <img
-                      src={`${import.meta.env.BASE_URL}profile4.jpeg`}
-                      alt="Vikash Saravanan — Founder & CEO"
-                      className="w-full h-full object-cover object-top absolute inset-0"
-                      onError={e => {
-                        (e.target as HTMLImageElement).src = `${import.meta.env.BASE_URL}owl-mascot.png`;
-                        (e.target as HTMLImageElement).className = 'w-full h-full object-contain p-8';
-                      }}
-                    />
-                    {/* Overlay gradient at bottom */}
-                    <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black/80 to-transparent" />
-                    <div className="absolute bottom-0 left-0 right-0 p-5">
-                      <div className="inline-flex px-2 py-1 rounded-full bg-teal-400/90 text-black text-[10px] font-black uppercase tracking-widest mb-1">
-                        FOUNDER & CEO
-                      </div>
-                    </div>
+                    <img src={`${import.meta.env.BASE_URL}img1.jpg`} alt="Vikash" className="w-full h-full object-cover" />
                   </motion.div>
 
-                  {/* Info card */}
-                  <div className="lg:col-span-2 space-y-4">
-                    <div className="rounded-2xl border border-white/10 bg-white/3 p-6 sm:p-8">
-                      <h2 className="text-3xl sm:text-4xl font-black text-white uppercase tracking-wider mb-1">
-                        VIKASH SARAVANAN
+                  <motion.div
+                    whileHover={{ scale: 1.05, zIndex: 30, rotateZ: 0 }}
+                    className="absolute right-[10%] sm:right-[22%] w-[140px] sm:w-[260px] h-[200px] sm:h-[360px] rounded-3xl overflow-hidden border-8 border-[#020817] shadow-2xl z-10 transition-all duration-500"
+                    style={{ transform: 'rotate(12deg) translateY(20px)' }}
+                  >
+                    <img src={`${import.meta.env.BASE_URL}img3.jpg`} alt="Vikash" className="w-full h-full object-cover" />
+                  </motion.div>
+
+                  <motion.div
+                    whileHover={{ scale: 1.05, zIndex: 30 }}
+                    className="absolute z-20 w-[180px] sm:w-[320px] h-[260px] sm:h-[440px] rounded-[2rem] overflow-hidden border-8 border-[#020817] shadow-[0_20px_60px_rgba(6,182,212,0.25)] transition-all duration-500"
+                  >
+                    <img src={`${import.meta.env.BASE_URL}profile4.jpeg`} alt="Vikash Center" className="w-full h-full object-cover" />
+                  </motion.div>
+                </div>
+              </RevealSection>
+
+              {/* 2. MAIN PORTFOLIO WIDGET */}
+              <RevealSection delay={0.1}>
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                  {/* Left Column (Main Info Card) */}
+                  <div className="lg:col-span-6 xl:col-span-7">
+                    <div className="h-full rounded-3xl border border-white/10 bg-[#0a0f1a]/80 backdrop-blur-xl p-8 sm:p-10 shadow-2xl relative overflow-hidden group hover:border-cyan-500/30 transition-colors">
+                      <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-[80px] pointer-events-none transition-all group-hover:bg-cyan-500/20" />
+                      <h2 className="text-3xl sm:text-4xl font-black text-white mb-2 font-serif tracking-tight">
+                        B.Tech AI & Data Science Student
                       </h2>
-                      <p className="text-teal-400 font-black text-sm uppercase tracking-widest mb-5">
-                        AI ENGINEER · PROMPT ENGINEER · WEB DEVELOPER
-                      </p>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5">
+                      <h3 className="text-2xl sm:text-3xl font-black text-cyan-400 mb-10 font-serif">
+                        Prompt Engineer & Web D
+                      </h3>
+                      <div className="space-y-6">
                         {[
-                          { icon: '📍', label: 'LOCATION', value: 'COIMBATORE, TAMIL NADU, INDIA' },
-                          { icon: '🎓', label: 'EDUCATION', value: 'B.TECH AI & DATA SCIENCE — CLASS OF 2029' },
-                          { icon: '🏛️', label: 'COLLEGE', value: 'RATHINAM TECHNICAL CAMPUS' },
-                          { icon: '🏠', label: 'NATIVE', value: 'KARUR, TAMIL NADU' },
-                          { icon: '💼', label: 'STATUS', value: 'OPEN FOR REMOTE INTERNSHIPS' },
-                          { icon: '🚀', label: 'SPECIALIZATION', value: 'ENTERPRISE AI AUTOMATION' },
+                          { icon: '📍', title: 'Location:', value: 'Coimbatore, Tamil Nadu, India (Native: Karur)' },
+                          { icon: '💼', title: 'Availability:', value: 'Open for Remote & Coimbatore Internships' },
+                          { icon: '🎯', title: 'Objective:', value: 'Ambitious first-year student actively building enterprise-grade AI automation systems.' },
+                          { icon: '🧠', title: 'Specialization:', value: 'Bridging the gap between advanced machine learning and full-stack software architecture.' },
+                          { icon: '⚡', title: 'Execution:', value: 'Engineering autonomous agents, developing robust React ecosystems, and scraping/analyzing complex datasets.' },
+                          { icon: '🚀', title: 'Vision:', value: 'Delivering high-impact, production-ready solutions that solve real-world industry problems at scale.' },
                         ].map(item => (
-                          <div key={item.label} className="flex items-start gap-3 p-3 rounded-xl bg-white/3 border border-white/5">
-                            <span className="text-lg flex-shrink-0">{item.icon}</span>
+                          <div key={item.title} className="flex items-start gap-4">
+                            <span className="text-xl mt-0.5 text-cyan-400">{item.icon}</span>
                             <div>
-                              <div className="text-slate-500 text-[9px] uppercase tracking-widest">{item.label}</div>
-                              <div className="text-white font-bold text-xs uppercase tracking-wider mt-0.5">{item.value}</div>
+                              <span className="text-slate-200 font-bold text-sm sm:text-base mr-2">{item.title}</span>
+                              <span className="text-slate-400 text-sm sm:text-base leading-relaxed">{item.value}</span>
                             </div>
                           </div>
                         ))}
                       </div>
-                      <p className="text-slate-400 text-sm leading-relaxed uppercase">
-                        Ambitious B.Tech AI & Data Science undergraduate building enterprise-grade AI automation systems.
-                        Hackathon finalist at Meta PyTorch OpenEnv × Scaler. 15+ professional certifications.
-                        3+ production-ready live projects. Bridging the gap between advanced machine learning and
-                        full-stack software architecture.
-                      </p>
-                    </div>
-
-                    {/* Achievement badges */}
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                      {[
-                        { icon: '🏆', title: 'HACKATHON', subtitle: 'FINALIST', detail: 'META PYTORCH OPENENV' },
-                        { icon: '📜', title: '15+', subtitle: 'CERTIFICATIONS', detail: 'PROFESSIONAL CERTS' },
-                        { icon: '⚡', title: '3+', subtitle: 'LIVE PROJECTS', detail: 'PRODUCTION READY' },
-                        { icon: '🎯', title: 'AI FOCUS', subtitle: 'AUTOMATION', detail: 'N8N + LLM AGENTS' },
-                      ].map(badge => (
-                        <div key={badge.title} className="p-4 rounded-2xl border border-white/8 bg-white/3 text-center hover:border-teal-500/30 hover:bg-teal-500/5 transition-all">
-                          <div className="text-2xl mb-1">{badge.icon}</div>
-                          <div className="text-white font-black text-sm uppercase">{badge.title}</div>
-                          <div className="text-teal-400 text-[10px] font-black uppercase tracking-widest">{badge.subtitle}</div>
-                          <div className="text-slate-600 text-[9px] uppercase tracking-wider mt-0.5">{badge.detail}</div>
-                        </div>
-                      ))}
                     </div>
                   </div>
-                </div>
-              </RevealSection>
 
-              {/* Journey timeline */}
-              <RevealSection delay={0.15}>
-                <div className="rounded-2xl border border-white/8 bg-white/3 p-6 sm:p-8">
-                  <h3 className="text-white font-black text-sm uppercase tracking-widest mb-8">MY JOURNEY</h3>
-                  <div className="space-y-6">
-                    {[
-                      { date: 'JANUARY 2025', title: 'ENTERPRISE AI AUTOMATION', desc: 'Began intensive focus on building complex n8n workflows and autonomous AI agents for real-world enterprise scaling.', color: 'bg-teal-400' },
-                      { date: 'AUGUST 2025', title: 'CERTIFICATIONS & GROWTH', desc: 'Completed 15+ major certifications in AI engineering, network infrastructure, cybersecurity, and data science from Microsoft, LinkedIn, Cisco, and IIT Bombay.', color: 'bg-cyan-400' },
-                      { date: 'DECEMBER 2025', title: 'DESIGN THINKING — IIT BOMBAY', desc: 'Certified in Design Thinking, applying human-centric principles to AI solution architecture and product development.', color: 'bg-blue-400' },
-                      { date: '2026 — ONGOING', title: 'PROMPT ENGINEERING + HEARWISE', desc: 'Crafting sophisticated LLM prompts and building HearWise — India\'s first school hearing screening platform. Building in public at @startupwithvikash.', color: 'bg-emerald-400' },
-                    ].map((item, i) => (
-                      <motion.div
-                        key={item.date}
-                        initial={{ opacity: 0, x: -20 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: i * 0.1 }}
-                        className="flex gap-5"
-                      >
-                        <div className="flex flex-col items-center flex-shrink-0">
-                          <div className={`w-3 h-3 rounded-full ${item.color} shadow-lg`} />
-                          {i < 3 && <div className="w-px flex-1 bg-white/10 mt-2" />}
+                  {/* Right Column (Widgets) */}
+                  <div className="lg:col-span-6 xl:col-span-5 flex flex-col gap-6">
+                    {/* Top Row: Hackathon & Production */}
+                    <div className="grid grid-cols-2 gap-6">
+                      <motion.div whileHover={{ scale: 1.02 }} className="rounded-3xl border border-white/10 bg-[#0a0f1a]/80 backdrop-blur-xl p-6 text-center flex flex-col items-center justify-center min-h-[140px] shadow-lg hover:border-blue-500/30 transition-colors">
+                        <div className="w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center mb-3">
+                          <span className="text-blue-400 text-2xl">🏆</span>
                         </div>
-                        <div className="pb-6">
-                          <div className="text-teal-400 text-[10px] font-black uppercase tracking-widest mb-1">{item.date}</div>
-                          <div className="text-white font-black text-sm uppercase tracking-wider mb-1">{item.title}</div>
-                          <div className="text-slate-400 text-xs leading-relaxed uppercase">{item.desc}</div>
-                        </div>
+                        <h4 className="text-white font-bold text-sm sm:text-base mb-1">Hackathon Finalist</h4>
+                        <p className="text-slate-500 text-xs sm:text-sm">Meta PyTorch (OpenEnv)</p>
                       </motion.div>
-                    ))}
+                      
+                      <motion.div whileHover={{ scale: 1.02 }} className="rounded-3xl border border-white/10 bg-[#0a0f1a]/80 backdrop-blur-xl p-6 text-center flex flex-col items-center justify-center min-h-[140px] shadow-lg hover:border-emerald-500/30 transition-colors">
+                        <div className="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center mb-3">
+                          <span className="text-emerald-400 text-2xl">⚙️</span>
+                        </div>
+                        <h4 className="text-white font-bold text-sm sm:text-base mb-1">Production Ready</h4>
+                        <p className="text-slate-500 text-xs sm:text-sm">3+ Live Architectures</p>
+                      </motion.div>
+                    </div>
+
+                    {/* Middle Row: Certified Expert */}
+                    <motion.div whileHover={{ scale: 1.02 }} className="rounded-3xl border border-cyan-500/20 bg-gradient-to-r from-cyan-900/20 to-[#0a0f1a]/80 backdrop-blur-xl p-6 sm:p-8 flex items-center justify-center gap-6 min-h-[120px] shadow-xl shadow-cyan-900/10">
+                      <div className="text-cyan-400 text-5xl animate-pulse">🌟</div>
+                      <div>
+                        <h4 className="text-white font-black text-xl sm:text-2xl mb-1 tracking-wide">Certified Expert</h4>
+                        <p className="text-cyan-200/60 text-sm font-bold uppercase tracking-widest">15+ Professional Certifications</p>
+                      </div>
+                    </motion.div>
+
+                    {/* Bottom Row: Skills */}
+                    <div className="grid grid-cols-3 gap-4">
+                      <motion.div whileHover={{ scale: 1.05 }} className="rounded-2xl border border-white/10 bg-[#0a0f1a]/80 backdrop-blur-xl p-4 text-center hover:border-cyan-500/30">
+                        <div className="text-cyan-400 mb-2 text-xl">🤖</div>
+                        <div className="text-slate-500 text-[10px] uppercase font-bold tracking-widest mb-1">FOCUS</div>
+                        <div className="text-white font-bold text-xs">AI Automation</div>
+                      </motion.div>
+                      
+                      <motion.div whileHover={{ scale: 1.05 }} className="rounded-2xl border border-white/10 bg-[#0a0f1a]/80 backdrop-blur-xl p-4 text-center hover:border-blue-500/30">
+                        <div className="text-blue-400 mb-2 text-xl">🧠</div>
+                        <div className="text-slate-500 text-[10px] uppercase font-bold tracking-widest mb-1">SPECIALIZATION</div>
+                        <div className="text-white font-bold text-xs">Prompt Eng</div>
+                      </motion.div>
+                      
+                      <motion.div whileHover={{ scale: 1.05 }} className="rounded-2xl border border-white/10 bg-[#0a0f1a]/80 backdrop-blur-xl p-4 text-center hover:border-emerald-500/30">
+                        <div className="text-emerald-400 mb-2 text-xl">{'</>'}</div>
+                        <div className="text-slate-500 text-[10px] uppercase font-bold tracking-widest mb-1">TOP SKILLS</div>
+                        <div className="text-white font-bold text-xs">Python, React, n8n</div>
+                      </motion.div>
+                    </div>
+
+                    {/* Actions Row */}
+                    <div className="flex flex-wrap items-center gap-4 mt-auto pt-2">
+                      <a href="https://vikashsaravanann.github.io/Portfolio_Information/" target="_blank" rel="noopener noreferrer" className="flex-1 min-w-[120px] py-4 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-white font-black text-sm uppercase tracking-widest transition-all text-center shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:shadow-[0_0_30px_rgba(6,182,212,0.5)]">
+                        About Me
+                      </a>
+                      <a href="https://linkedin.com/in/vikash-saravanan-j7528" target="_blank" rel="noopener noreferrer" className="flex-1 min-w-[120px] py-4 rounded-xl border border-white/20 hover:border-cyan-400 hover:text-cyan-400 text-white font-bold text-sm transition-colors text-center">
+                        Hire Me
+                      </a>
+                      <a href="https://vikashsaravanann.github.io/Portfolio_Information/" target="_blank" rel="noopener noreferrer" className="flex-1 min-w-[120px] py-4 rounded-xl border border-white/20 hover:border-cyan-400 hover:text-cyan-400 text-white font-bold text-sm transition-colors text-center flex items-center justify-center gap-2">
+                        <span>📥</span> Resume
+                      </a>
+                    </div>
                   </div>
                 </div>
               </RevealSection>
 
-              {/* Skills */}
+              {/* 3. PORTFOLIO INFORMATION BLOCK */}
               <RevealSection delay={0.2}>
-                <div className="rounded-2xl border border-white/8 bg-white/3 p-6 sm:p-8">
-                  <h3 className="text-white font-black text-sm uppercase tracking-widest mb-6">TECHNICAL SKILLS</h3>
-                  <div className="grid sm:grid-cols-2 gap-4">
-                    {[
-                      { skill: 'PYTHON', level: 85, color: 'from-teal-500 to-cyan-400' },
-                      { skill: 'SQL', level: 80, color: 'from-cyan-500 to-blue-400' },
-                      { skill: 'HTML / CSS', level: 90, color: 'from-blue-500 to-teal-400' },
-                      { skill: 'JAVASCRIPT / REACT', level: 85, color: 'from-teal-400 to-emerald-400' },
-                      { skill: 'SUPABASE', level: 75, color: 'from-emerald-500 to-teal-400' },
-                      { skill: 'N8N AUTOMATION', level: 88, color: 'from-cyan-400 to-teal-500' },
-                    ].map((s, i) => <SkillBar key={s.skill} label={s.skill} value={s.level} color={s.color} delay={i * 0.08} />)}
+                <div className="rounded-[2.5rem] border border-cyan-500/20 bg-gradient-to-br from-[#0a0f1a] to-cyan-950/20 p-8 sm:p-12 relative overflow-hidden group hover:border-cyan-500/40 transition-all shadow-2xl">
+                  <div className="absolute -top-32 -right-32 w-96 h-96 bg-cyan-500/10 rounded-full blur-[100px] pointer-events-none group-hover:bg-cyan-500/20 transition-all" />
+                  <div className="flex flex-col md:flex-row gap-8 items-start relative z-10">
+                    <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center text-4xl shadow-lg shadow-cyan-500/30 flex-shrink-0">
+                      🌐
+                    </div>
+                    <div>
+                      <h3 className="text-cyan-400 font-black text-sm uppercase tracking-[0.3em] mb-2">OFFICIAL PORTFOLIO</h3>
+                      <h2 className="text-3xl sm:text-5xl font-black text-white mb-6 font-serif tracking-tight">Digital Presence & Architecture</h2>
+                      <p className="text-slate-300 text-base sm:text-lg leading-relaxed mb-8 max-w-4xl font-light">
+                        A comprehensive showcase of my journey as an AI & Data Science student. This portfolio serves as a central hub for my production-ready architectures, including <strong>HearWise</strong> (India's first school hearing screening platform) and <strong>Traffic Vision AI</strong> (YOLOv8 adaptive traffic management). It highlights my core competencies in React, TypeScript, Python, and Supabase, alongside a complete gallery of my 15+ professional certifications from institutions like Microsoft, Cisco, and IIT Bombay.
+                      </p>
+                      <a href="https://vikashsaravanann.github.io/Portfolio_Information/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-cyan-500/10 border border-cyan-500/30 hover:bg-cyan-500 hover:text-[#000b1d] text-cyan-400 font-black text-sm uppercase tracking-widest transition-all">
+                        Visit Portfolio Website <span>→</span>
+                      </a>
+                    </div>
                   </div>
                 </div>
               </RevealSection>
-            </motion.div>
-          )}
 
-          {/* ── TAB: SOCIAL LINKS ────────────────── */}
-          {activeTab === 'links' && (
-            <motion.div
-              key="links"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.4 }}
-              className="p-4 sm:p-8 space-y-6"
-            >
-              <RevealSection>
-                <h2 className="text-2xl sm:text-3xl font-black text-white uppercase tracking-wider mb-2">
-                  SOCIAL & PROFESSIONAL LINKS
-                </h2>
-                <p className="text-slate-500 text-xs uppercase tracking-widest">ALL PLATFORMS — VIKASH SARAVANAN</p>
-              </RevealSection>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-
-                {/* LinkedIn */}
-                <RevealSection delay={0.05}>
-                  <a href="https://linkedin.com/in/vikash-saravanan-j7528" target="_blank" rel="noopener noreferrer">
-                    <motion.div whileHover={{ y: -4, scale: 1.01 }} className="rounded-2xl border border-blue-500/30 bg-blue-500/5 hover:bg-blue-500/10 transition-all p-6 cursor-pointer h-full">
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className="w-10 h-10 rounded-xl bg-blue-500/20 border border-blue-500/30 flex items-center justify-center">
-                          <svg width="18" height="18" viewBox="0 0 24 24" fill="#3b82f6"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
-                        </div>
-                        <div>
-                          <div className="text-blue-400 font-black text-sm uppercase tracking-widest">LINKEDIN</div>
-                          <div className="text-slate-500 text-[10px] uppercase tracking-wider">PROFESSIONAL NETWORK</div>
-                        </div>
-                      </div>
-                      <div className="text-white font-bold text-xs uppercase tracking-wide mb-2">VIKASH SARAVANAN</div>
-                      <p className="text-slate-400 text-xs leading-relaxed uppercase">
-                        B.Tech AI & Data Science student. Hackathon finalist at Meta PyTorch OpenEnv × Scaler.
-                        15+ professional certifications. Open for remote internships in AI engineering and web development.
-                        Building HearWise — India's first school hearing screening platform.
-                        Connect for AI/ML, React, and startup opportunities.
+              {/* 4. LINKEDIN BLOCK */}
+              <RevealSection delay={0.3}>
+                <div className="rounded-[2.5rem] border border-blue-500/20 bg-gradient-to-br from-[#0a0f1a] to-blue-950/20 p-8 sm:p-12 relative overflow-hidden group hover:border-blue-500/40 transition-all shadow-2xl">
+                  <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-blue-500/10 rounded-full blur-[100px] pointer-events-none group-hover:bg-blue-500/20 transition-all" />
+                  <div className="flex flex-col md:flex-row gap-8 items-start relative z-10">
+                    <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-400 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/30 flex-shrink-0">
+                      <svg width="36" height="36" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                    </div>
+                    <div>
+                      <h3 className="text-blue-400 font-black text-sm uppercase tracking-[0.3em] mb-2">PROFESSIONAL NETWORK</h3>
+                      <h2 className="text-3xl sm:text-5xl font-black text-white mb-6 font-serif tracking-tight">Career & Industry Connections</h2>
+                      <p className="text-slate-300 text-base sm:text-lg leading-relaxed mb-8 max-w-4xl font-light">
+                        My primary channel for professional networking and industry engagement. Here, I actively connect with founders, AI engineers, and web developers. As a Meta PyTorch OpenEnv Hackathon Finalist, I leverage LinkedIn to share deep-dive technical insights, announce new project launches, and document my continuous learning journey. I am highly receptive to remote internships, AI engineering roles, and collaborative startup opportunities.
                       </p>
-                      <div className="mt-4 text-blue-400 text-[10px] uppercase tracking-widest font-black">OPEN PROFILE →</div>
-                    </motion.div>
-                  </a>
-                </RevealSection>
-
-                {/* GitHub */}
-                <RevealSection delay={0.1}>
-                  <a href="https://github.com/vikashsaravanann" target="_blank" rel="noopener noreferrer">
-                    <motion.div whileHover={{ y: -4, scale: 1.01 }} className="rounded-2xl border border-white/15 bg-white/3 hover:bg-white/6 transition-all p-6 cursor-pointer h-full">
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className="w-10 h-10 rounded-xl bg-white/10 border border-white/15 flex items-center justify-center">
-                          <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-                        </div>
-                        <div>
-                          <div className="text-white font-black text-sm uppercase tracking-widest">GITHUB</div>
-                          <div className="text-slate-500 text-[10px] uppercase tracking-wider">CODE REPOSITORIES</div>
-                        </div>
-                      </div>
-                      <div className="text-white font-bold text-xs uppercase tracking-wide mb-2">@VIKASHSARAVANANN</div>
-                      <p className="text-slate-400 text-xs leading-relaxed uppercase">
-                        Open source projects including HearWise (India's first school hearing screening platform),
-                        Traffic Vision AI (YOLOv8 adaptive traffic management), Meta PyTorch OpenEnv hackathon project,
-                        and personal portfolio. React + TypeScript + Supabase + Python ecosystem.
-                      </p>
-                      <div className="mt-4 text-slate-400 text-[10px] uppercase tracking-widest font-black">VIEW REPOSITORIES →</div>
-                    </motion.div>
-                  </a>
-                </RevealSection>
-
-                {/* Instagram */}
-                <RevealSection delay={0.15}>
-                  <a href="https://www.instagram.com/startupwithvikash/" target="_blank" rel="noopener noreferrer">
-                    <motion.div whileHover={{ y: -4, scale: 1.01 }} className="rounded-2xl border border-pink-500/30 bg-pink-500/5 hover:bg-pink-500/10 transition-all p-6 cursor-pointer h-full">
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 border border-pink-500/30 flex items-center justify-center text-lg">
-                          📸
-                        </div>
-                        <div>
-                          <div className="text-pink-400 font-black text-sm uppercase tracking-widest">INSTAGRAM</div>
-                          <div className="text-slate-500 text-[10px] uppercase tracking-wider">BUILD IN PUBLIC</div>
-                        </div>
-                      </div>
-                      <div className="text-white font-bold text-xs uppercase tracking-wide mb-2">@STARTUPWITHVIKASH</div>
-                      <p className="text-slate-400 text-xs leading-relaxed uppercase">
-                        Documenting the engineering journey of building HearWise and other AI projects in public.
-                        Sharing how I use Cursor AI, Gemini, Perplexity, n8n, and Gamma to ship production-ready
-                        code rapidly. Behind-the-scenes of building India's first school hearing screening startup.
-                        Follow for startup building, AI tools, and tech entrepreneur content.
-                      </p>
-                      <div className="mt-4 text-pink-400 text-[10px] uppercase tracking-widest font-black">FOLLOW →</div>
-                    </motion.div>
-                  </a>
-                </RevealSection>
-
-                {/* Portfolio */}
-                <RevealSection delay={0.2}>
-                  <a href="https://vikashsaravanann.github.io/Portfolio_Information/" target="_blank" rel="noopener noreferrer">
-                    <motion.div whileHover={{ y: -4, scale: 1.01 }} className="rounded-2xl border border-teal-500/30 bg-teal-500/5 hover:bg-teal-500/10 transition-all p-6 cursor-pointer h-full">
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className="w-10 h-10 rounded-xl bg-teal-500/20 border border-teal-500/30 flex items-center justify-center text-lg">🌐</div>
-                        <div>
-                          <div className="text-teal-400 font-black text-sm uppercase tracking-widest">PORTFOLIO</div>
-                          <div className="text-slate-500 text-[10px] uppercase tracking-wider">FULL PROFILE</div>
-                        </div>
-                      </div>
-                      <div className="text-white font-bold text-xs uppercase tracking-wide mb-2">VIKASH SARAVANAN — PORTFOLIO</div>
-                      <p className="text-slate-400 text-xs leading-relaxed uppercase">
-                        Complete professional portfolio — projects (HearWise, Traffic Vision AI, Meta PyTorch OpenEnv),
-                        15+ certifications (Microsoft, LinkedIn, Cisco, IIT Bombay, freeCodeCamp), technical skills
-                        (Python, React, TypeScript, Supabase, n8n, YOLOv8), personal gallery, journey timeline,
-                        and contact. Resume available for download.
-                      </p>
-                      <div className="mt-4 text-teal-400 text-[10px] uppercase tracking-widest font-black">VISIT PORTFOLIO →</div>
-                    </motion.div>
-                  </a>
-                </RevealSection>
-
-              </div>
-
-              {/* GDC / Centre of Excellence section */}
-              <RevealSection delay={0.25}>
-                <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-6 sm:p-8">
-                  <h3 className="text-emerald-400 font-black text-sm uppercase tracking-widest mb-4">
-                    🏛 GDC / CENTRE OF EXCELLENCE — AI SKILLS HUB
-                  </h3>
-                  <p className="text-slate-400 text-sm leading-relaxed mb-4 uppercase">
-                    Secured institutional commitment to the AI Skills Hub at Rathinam Technical Campus —
-                    Centre of Excellence for AI and Data Science. Premium access to enterprise-grade AI tooling,
-                    mentorship from industry professionals, and collaborative research environments.
-                    Building the next generation of AI engineers from Tamil Nadu.
-                  </p>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                    {[
-                      'AI SKILLS HUB ACCESS',
-                      'ENTERPRISE AI TOOLING',
-                      'INDUSTRY MENTORSHIP',
-                      'RESEARCH COLLABORATION',
-                      'HACKATHON NETWORK',
-                      'STARTUP INCUBATION',
-                    ].map(item => (
-                      <div key={item} className="flex items-center gap-2 text-slate-300 text-[10px] uppercase tracking-wider">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 flex-shrink-0" />
-                        {item}
-                      </div>
-                    ))}
+                      <a href="https://www.linkedin.com/in/vikash-saravanan-j7528/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-blue-500/10 border border-blue-500/30 hover:bg-blue-500 hover:text-white text-blue-400 font-black text-sm uppercase tracking-widest transition-all">
+                        Connect on LinkedIn <span>→</span>
+                      </a>
+                    </div>
                   </div>
                 </div>
               </RevealSection>
+
+              {/* 5. GITHUB BLOCK */}
+              <RevealSection delay={0.4}>
+                <div className="rounded-[2.5rem] border border-white/10 bg-gradient-to-br from-[#0a0f1a] to-white/5 p-8 sm:p-12 relative overflow-hidden group hover:border-white/30 transition-all shadow-2xl">
+                  <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[500px] h-96 bg-white/5 rounded-full blur-[100px] pointer-events-none group-hover:bg-white/10 transition-all" />
+                  <div className="flex flex-col md:flex-row gap-8 items-start relative z-10">
+                    <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center text-white shadow-lg shadow-black flex-shrink-0">
+                      <svg width="36" height="36" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                    </div>
+                    <div>
+                      <h3 className="text-gray-300 font-black text-sm uppercase tracking-[0.3em] mb-2">OPEN SOURCE REPOSITORIES</h3>
+                      <h2 className="text-3xl sm:text-5xl font-black text-white mb-6 font-serif tracking-tight">Code & Version Control</h2>
+                      <p className="text-slate-300 text-base sm:text-lg leading-relaxed mb-8 max-w-4xl font-light">
+                        The heartbeat of my technical execution. My GitHub profile hosts the entire source code architecture for <strong>HearWise Child Health</strong>, my <strong>Portfolio Information</strong> hub, and <strong>Traffic Vision AI</strong>. It reflects my commitment to clean code, modular React component design, and scalable Supabase backend integrations. Here, you can trace my precise commit history and review the raw logic powering my enterprise applications.
+                      </p>
+                      <a href="https://github.com/vikashsaravanann/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-white/5 border border-white/20 hover:bg-white hover:text-black text-white font-black text-sm uppercase tracking-widest transition-all">
+                        View GitHub Profile <span>→</span>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </RevealSection>
+
+              {/* 6. INSTAGRAM BLOCK */}
+              <RevealSection delay={0.5}>
+                <div className="rounded-[2.5rem] border border-pink-500/20 bg-gradient-to-br from-[#0a0f1a] to-pink-950/20 p-8 sm:p-12 relative overflow-hidden group hover:border-pink-500/40 transition-all shadow-2xl">
+                  <div className="absolute -bottom-32 right-0 w-96 h-96 bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-full blur-[100px] pointer-events-none group-hover:from-purple-500/20 group-hover:to-pink-500/20 transition-all" />
+                  <div className="flex flex-col md:flex-row gap-8 items-start relative z-10">
+                    <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-4xl shadow-lg shadow-pink-500/30 flex-shrink-0">
+                      📸
+                    </div>
+                    <div>
+                      <h3 className="text-pink-400 font-black text-sm uppercase tracking-[0.3em] mb-2">BUILD IN PUBLIC</h3>
+                      <h2 className="text-3xl sm:text-5xl font-black text-white mb-6 font-serif tracking-tight">The Startup Journey</h2>
+                      <p className="text-slate-300 text-base sm:text-lg leading-relaxed mb-8 max-w-4xl font-light">
+                        Transparency is key to my development process. On Instagram, I document the raw, unfiltered engineering journey behind HearWise. I share insights on rapidly shipping production code using modern tools like Cursor AI, Gemini, Perplexity, and n8n. It's a behind-the-scenes look at the late nights, bug fixes, and architectural breakthroughs required to build India's first school hearing screening startup from the ground up.
+                      </p>
+                      <a href="https://www.instagram.com/startupwithvikash/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-pink-500/10 border border-pink-500/30 hover:bg-gradient-to-r hover:from-purple-500 hover:to-pink-500 hover:text-white text-pink-400 font-black text-sm uppercase tracking-widest transition-all">
+                        Follow the Journey <span>→</span>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </RevealSection>
+
+              {/* 7. ABOUT HEARWISE BLOCK */}
+              <RevealSection delay={0.6}>
+                <div className="rounded-[2.5rem] border border-emerald-500/20 bg-gradient-to-br from-[#0a0f1a] to-emerald-950/20 p-8 sm:p-12 relative overflow-hidden group hover:border-emerald-500/40 transition-all shadow-2xl">
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-emerald-500/5 rounded-full blur-[120px] pointer-events-none group-hover:bg-emerald-500/10 transition-all" />
+                  <div className="flex flex-col md:flex-row gap-8 items-start relative z-10">
+                    <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-teal-400 to-emerald-600 flex items-center justify-center text-4xl shadow-lg shadow-emerald-500/30 flex-shrink-0">
+                      🦉
+                    </div>
+                    <div>
+                      <h3 className="text-emerald-400 font-black text-sm uppercase tracking-[0.3em] mb-2">HEARWISE TECHNOLOGIES</h3>
+                      <h2 className="text-3xl sm:text-5xl font-black text-white mb-6 font-serif tracking-tight">India's First School Hearing Screening Platform</h2>
+                      <p className="text-slate-300 text-base sm:text-lg leading-relaxed mb-8 max-w-4xl font-light">
+                        HearWise is a groundbreaking initiative designed to democratize early hearing issue detection across Indian schools. Built with an intuitive, multi-lingual React frontend and a highly secure Supabase backend, it allows schools and clinics to rapidly screen children, generate beautiful diagnostic PDFs, and track platform-wide analytics in real-time. Paired with <strong>HearBot</strong>—an AI assistant powered by Groq—HearWise is transforming pediatric audiology from an expensive clinical process into an accessible, scalable technological solution.
+                      </p>
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                        {['REACT + TS', 'SUPABASE', 'GROQ AI', 'TAILWIND'].map(tech => (
+                          <div key={tech} className="px-4 py-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 text-emerald-400 text-center text-xs font-black uppercase tracking-widest">
+                            {tech}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </RevealSection>
+
             </motion.div>
           )}
 

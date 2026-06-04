@@ -36,6 +36,15 @@ export default function Navbar() {
     return () => { document.body.style.overflow = ''; };
   }, [menuOpen]);
 
+  // Dynamic nav links
+  const activeNavLinks = [
+    { label: 'FEATURES', path: '/features' },
+    { label: 'ABOUT HEARWISE', path: '/about' },
+    { label: 'HEALTH OPERATIONS', path: '/hearing-health' },
+    ...(isAdmin ? [{ label: 'DASHBOARD', path: '/dashboard' }] : []),
+    { label: 'REGISTER SCHOOL', path: '/register-school' },
+  ];
+
   return (
     <>
       <nav
@@ -67,7 +76,7 @@ export default function Navbar() {
 
             {/* Desktop nav links */}
             <div className="hidden lg:flex items-center gap-1">
-              {NAV_LINKS.map(link => (
+              {activeNavLinks.map(link => (
                 <Link
                   key={link.path}
                   to={link.path}
@@ -150,7 +159,7 @@ export default function Navbar() {
           >
             {/* Nav links */}
             <div className="flex flex-col gap-2 mb-8">
-              {NAV_LINKS.map((link, i) => (
+              {activeNavLinks.map((link, i) => (
                 <motion.div
                   key={link.path}
                   initial={{ opacity: 0, x: -20 }}
