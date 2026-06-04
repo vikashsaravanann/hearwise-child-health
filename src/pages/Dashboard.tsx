@@ -609,11 +609,6 @@ export default function Dashboard() {
           <div className="text-center space-y-6 pb-8">
             <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
             <p className="text-slate-600 text-sm font-semibold uppercase tracking-[0.3em]">Hearwise Technologies · 2026 · Built by Vikash Saravanan</p>
-            <div className="flex justify-center gap-4">
-              <a href="https://vikashsaravanann.github.io/Portfolio_Information/" target="_blank" rel="noopener noreferrer" className="px-6 py-3 rounded-full border border-white/10 text-slate-400 hover:text-white hover:border-white/30 text-sm font-semibold transition-all">Portfolio</a>
-              <a href="https://www.linkedin.com/in/vikash-saravanan-j7528/" target="_blank" rel="noopener noreferrer" className="px-6 py-3 rounded-full border border-white/10 text-slate-400 hover:text-white hover:border-white/30 text-sm font-semibold transition-all">LinkedIn</a>
-              <a href="https://github.com/vikashsaravanann/" target="_blank" rel="noopener noreferrer" className="px-6 py-3 rounded-full border border-white/10 text-slate-400 hover:text-white hover:border-white/30 text-sm font-semibold transition-all">GitHub</a>
-            </div>
           </div>
         </Reveal>
 
