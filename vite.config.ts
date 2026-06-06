@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react-swc'
 import path from 'path'
 
 export default defineConfig({
-  base: '/hearwise-child-health/',
+  base: process.env.GITHUB_PAGES ? '/hearwise-child-health/' : '/',
   plugins: [react()],
   resolve: {
     alias: {
@@ -12,7 +12,7 @@ export default defineConfig({
   },
   build: {
     target: 'es2020',
-    outDir: 'docs',
+    outDir: 'dist',
     emptyOutDir: true,
     sourcemap: false,
     rollupOptions: {
