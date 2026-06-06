@@ -45,7 +45,7 @@ export default function Waitlist() {
 
   useEffect(() => {
     async function fetchCount() {
-      const { count, error } = await supabase
+      const { count, error } = await (supabase as any)
         .from('waitlist')
         .select('*', { count: 'exact', head: true });
       if (!error && count !== null) {
@@ -68,7 +68,7 @@ export default function Waitlist() {
 
     setIsSubmitting(true);
     try {
-      const { error } = await supabase.from('waitlist').insert({
+      const { error } = await (supabase as any).from('waitlist').insert({
         full_name: formData.fullName,
         role: formData.role,
         school_name: formData.schoolName,
@@ -106,7 +106,7 @@ export default function Waitlist() {
   };
 
   return (
-    <PageWrapper title="Early Access Waitlist" backPath="/">
+    <PageWrapper title="Early Access Waitlist" backTo="/">
       <BackButton />
       <div className="bg-[#000b1d] min-h-screen pb-24 text-white font-sans overflow-x-hidden relative">
         

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';

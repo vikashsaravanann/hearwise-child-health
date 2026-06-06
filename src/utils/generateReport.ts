@@ -102,9 +102,12 @@ export function generateHearWiseReport(data: ReportData): void {
     alternateRowStyles: { fillColor: [240, 253, 250] },
     columnStyles: {
       2: {
-        fontStyle: 'bold',
-        textColor: (cell: any) =>
-          cell.raw === 'PASS' ? [22, 163, 74] : [220, 38, 38]
+        fontStyle: 'bold'
+      }
+    },
+    didParseCell: (data) => {
+      if (data.section === 'body' && data.column.index === 2) {
+        data.cell.styles.textColor = data.cell.raw === 'PASS' ? [22, 163, 74] : [220, 38, 38];
       }
     },
     margin: { left: 14, right: pageWidth / 2 + 4 },

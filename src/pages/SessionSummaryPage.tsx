@@ -93,7 +93,7 @@ export default function SessionSummaryPage() {
       },
     });
 
-    const totalStartY = tableResult.finalY + 12;
+    const totalStartY = (tableResult as any).finalY + 12;
     doc.setFontSize(11);
     doc.setTextColor(20, 20, 20);
     doc.text(`${t('totalTestedLabel', lang)}: ${total}`, 14, totalStartY);

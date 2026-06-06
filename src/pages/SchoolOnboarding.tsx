@@ -13,7 +13,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { supabase } from '@/lib/supabase';
-import { CheckCircle2, ChevronRight, ArrowLeft, Building2, User, Cpu, PartyPopper, HelpCircle, Shield, Rocket, Target, ListChecks, CheckSquare, Sparkles } from 'lucide-react';
+import { CheckCircle2, ChevronRight, ArrowLeft, ArrowRight, Building2, User, Cpu, PartyPopper, HelpCircle, Shield, Rocket, Target, ListChecks, CheckSquare, Sparkles } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const TN_DISTRICTS = [
